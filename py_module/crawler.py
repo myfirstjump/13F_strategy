@@ -97,6 +97,7 @@ class Crawler(object):
             #     VALUES(%s,%d,%d,%s,%s,%s,%s,%s)"""
             #     , hedge_tuple
             # )
+            # conn.commit()
                 
             count = 0
             for (quarter, form_type), quarterly_link in holdings_urls.items():
@@ -160,7 +161,7 @@ class Crawler(object):
                 #     VALUES(%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s)"""
                 #     , holdings_tuple
                 # )
-
+                # conn.commit()
             time.sleep(5)
 
 
