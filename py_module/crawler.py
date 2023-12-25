@@ -67,8 +67,8 @@ class Crawler(object):
                 # 將資料組合成字典並添加到資料列表中
                 data.append({
                     'QUARTER': quarter,
-                    'HOLDINGS': holdings,
-                    'VALUE ($000)': value,
+                    'HOLDINGS': int(holdings),
+                    'VALUE ($000)': int("".join(value.split(','))),
                     'TOP HOLDINGS': top_holdings,
                     'FORM TYPE': form_type,
                     'DATE FILED': date_filed,
@@ -81,7 +81,7 @@ class Crawler(object):
             # hedge_fund_data.to_csv(os.path.join(output_folder, file_name), index=False)
 
             hedge_tuple = [tuple(row) for row in hedge_fund_data.values]
-            print(hedge_tuple)
+            # print(hedge_tuple)
             # cursor.executemany(
             #     """INSERT INTO [US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]
             #     (
@@ -139,6 +139,7 @@ class Crawler(object):
                 # holdings_data.to_csv(os.path.join(output_folder, file_name), index=False)
 
                 holdings_tuple = [tuple(row) for row in holdings_data.values]
+                # print(holdings_tuple)
                 #另一張表差不多，裡面SQL改寫就好
                 # cursor.executemany(
                 #     """INSERT INTO [US_DB].[dbo].[HOLDINGS_DATA]
