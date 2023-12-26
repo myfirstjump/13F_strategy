@@ -4,8 +4,9 @@ import requests
 from bs4 import BeautifulSoup
 import os
 import time
-# import pymssql
+import pymssql
 import pandas as pd
+import numpy as np
 
 class Crawler(object):
 
@@ -17,7 +18,8 @@ class Crawler(object):
 
 
         # conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
-        # cursor = conn.cursor(as_dict=True)
+        conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        cursor = conn.cursor(as_dict=True)
         # hedge_data = [()] #要塞進去資料，裡面是資料需要是tuple格式，外面用list包起來
         # holdings_tuple = [()]
 
@@ -76,28 +78,29 @@ class Crawler(object):
                     'HEDGE FUND': name,
                 })
             hedge_fund_data = pd.DataFrame(data)
-            output_folder = self.config_obj.assets_hedge_fund_data
-            file_name = "hedge_fund_portfolio_filings_" + str(idx+1) + "_" + "-".join(soup.title.string.split()) + ".csv"
+            hedge_fund_data = hedge_fund_data.replace(np.nan, None) # 部分資料為pandas nan，需轉為python None
+            # output_folder = self.config_obj.assets_hedge_fund_data
+            # file_name = "hedge_fund_portfolio_filings_" + str(idx+1) + "_" + "-".join(soup.title.string.split()) + ".csv"
             # hedge_fund_data.to_csv(os.path.join(output_folder, file_name), index=False)
 
             hedge_tuple = [tuple(row) for row in hedge_fund_data.values]
             # print(hedge_tuple)
-            # cursor.executemany(
-            #     """INSERT INTO [US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]
-            #     (
-            #     [QUARTER]
-            #     ,[HOLDINGS]
-            #     ,[VALUE]
-            #     ,[TOP_HOLDINGS]
-            #     ,[FORM_TYPE]
-            #     ,[DATE_FILED]
-            #     ,[FILING_ID]
-            #     ,[HEDGE_FUND]
-            #     ) 
-            #     VALUES(%s,%d,%d,%s,%s,%s,%s,%s)"""
-            #     , hedge_tuple
-            # )
-            # conn.commit()
+            cursor.executemany(
+                """INSERT INTO [US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]
+                (
+                [QUARTER]
+                ,[HOLDINGS]
+                ,[VALUE]
+                ,[TOP_HOLDINGS]
+                ,[FORM_TYPE]
+                ,[DATE_FILED]
+                ,[FILING_ID]
+                ,[HEDGE_FUND]
+                ) 
+                VALUES(%s,%d,%d,%s,%s,%s,%s,%s)"""
+                , hedge_tuple
+            )
+            conn.commit()
                 
             count = 0
             for (quarter, form_type), quarterly_link in holdings_urls.items():
@@ -129,39 +132,39 @@ class Crawler(object):
 
                 holdings_data = data['data']
                 holdings_data = pd.DataFrame(holdings_data, columns = ['SYM','ISSUER NAME','CL','CUSIP','VALUE ($000)','%','SHARES','PRINCIPAL','OPTION TYPE',])
+                holdings_data = holdings_data.replace(np.nan, None) # 部分資料為pandas nan，需轉為python None
                 holdings_data['HEDGE FUND'] = name
                 holdings_data['QUARTER'] = quarter
                 holdings_data['FORM TYPE'] = form_type
 
-                output_folder = os.path.join(self.config_obj.assets_holdings_data, name)
-                if not os.path.exists(output_folder):
-                    os.makedirs(output_folder)
-                file_name = "holdings_data_" + "-".join(str(quarter).split()) + "_" + form_type + "_" + str(count) + ".csv"
+                # output_folder = os.path.join(self.config_obj.assets_holdings_data, name)
+                # if not os.path.exists(output_folder):
+                #     os.makedirs(output_folder)
+                # file_name = "holdings_data_" + "-".join(str(quarter).split()) + "_" + form_type + "_" + str(count) + ".csv"
                 # holdings_data.to_csv(os.path.join(output_folder, file_name), index=False)
 
                 holdings_tuple = [tuple(row) for row in holdings_data.values]
-                # print(holdings_tuple)
-                #另一張表差不多，裡面SQL改寫就好
-                # cursor.executemany(
-                #     """INSERT INTO [US_DB].[dbo].[HOLDINGS_DATA]
-                #     (
-                #     [SYM]
-                #     ,[ISSUER_NAME]
-                #     ,[CL]
-                #     ,[CUSIP]
-                #     ,[VALUE]
-                #     ,[Percentile]
-                #     ,[SHARES]
-                #     ,[PRINCIPAL]
-                #     ,[OPTION_TYPE]
-                #     ,[HEDGE_FUND]
-                #     ,[QUARTER]
-                #     ,[FORM_TYPE]
-                #     ) 
-                #     VALUES(%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s)"""
-                #     , holdings_tuple
-                # )
-                # conn.commit()
+
+                cursor.executemany(
+                    """INSERT INTO [US_DB].[dbo].[HOLDINGS_DATA]
+                    (
+                    [SYM]
+                    ,[ISSUER_NAME]
+                    ,[CL]
+                    ,[CUSIP]
+                    ,[VALUE]
+                    ,[Percentile]
+                    ,[SHARES]
+                    ,[PRINCIPAL]
+                    ,[OPTION_TYPE]
+                    ,[HEDGE_FUND]
+                    ,[QUARTER]
+                    ,[FORM_TYPE]
+                    ) 
+                    VALUES(%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s)"""
+                    , holdings_tuple
+                )
+                conn.commit()
             time.sleep(5)
 
 
