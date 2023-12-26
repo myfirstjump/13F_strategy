@@ -17,8 +17,8 @@ class Crawler(object):
 
 
 
-        # conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
-        conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        # conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
         cursor = conn.cursor(as_dict=True)
         # hedge_data = [()] #要塞進去資料，裡面是資料需要是tuple格式，外面用list包起來
         # holdings_tuple = [()]
@@ -69,7 +69,7 @@ class Crawler(object):
                 # 將資料組合成字典並添加到資料列表中
                 data.append({
                     'QUARTER': quarter,
-                    'HOLDINGS': int(holdings),
+                    'HOLDINGS': int("".join(holdings.split(','))),
                     'VALUE ($000)': int("".join(value.split(','))),
                     'TOP HOLDINGS': top_holdings,
                     'FORM TYPE': form_type,
