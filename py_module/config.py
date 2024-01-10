@@ -8,11 +8,11 @@ class Configuration(object):
         self.assets_hedge_fund_data = os.path.join(working_dir, "assets\\hedge_fund_data") if os.name == 'nt' else os.path.join(working_dir, "assets/hedge_fund_data")
         self.assets_holdings_data = os.path.join(working_dir, "assets\\holdings_data") if os.name == 'nt' else os.path.join(working_dir, "assets/holdings_data")
         self.hedge_fund_urls = {
-            'SIR Capital Management':'https://13f.info/manager/0001434997-sir-capital-management-l-p', 
-            'Robotti Robert':'https://13f.info/manager/0001105838-robotti-robert', 
-            'Encompass Capital Advisors':'https://13f.info/manager/0001541901-encompass-capital-advisors-llc', 
-            'Elm Ridge Management':'https://13f.info/manager/0001483276-elm-ridge-management-llc', 
-            'RR Advisors':'https://13f.info/manager/0001322613-rr-advisors-llc', 
+            # 'SIR Capital Management':'https://13f.info/manager/0001434997-sir-capital-management-l-p', 
+            # 'Robotti Robert':'https://13f.info/manager/0001105838-robotti-robert', 
+            # 'Encompass Capital Advisors':'https://13f.info/manager/0001541901-encompass-capital-advisors-llc', 
+            # 'Elm Ridge Management':'https://13f.info/manager/0001483276-elm-ridge-management-llc', 
+            # 'RR Advisors':'https://13f.info/manager/0001322613-rr-advisors-llc', 
             'Peconic Partners':'https://13f.info/manager/0001050464-peconic-partners-llc',
             'Fairholme Capital Management':'https://13f.info/manager/0001056831-fairholme-capital-management-llc', 
             'Horizon Kinetics Asset Management':'https://13f.info/manager/0001056823-horizon-kinetics-asset-management-llc', 

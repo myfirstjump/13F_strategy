@@ -12,6 +12,7 @@ class Crawler(object):
 
     def __init__(self):
         self.config_obj = Configuration()
+        
     
     def web_crawler_13F(self):
 
