@@ -18,8 +18,8 @@ class Crawler(object):
 
 
 
-        conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
-        # conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        # conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
         cursor = conn.cursor(as_dict=True)
         # hedge_data = [()] #要塞進去資料，裡面是資料需要是tuple格式，外面用list包起來
         # holdings_tuple = [()]
@@ -86,22 +86,22 @@ class Crawler(object):
 
             hedge_tuple = [tuple(row) for row in hedge_fund_data.values]
             # print(hedge_tuple)
-            cursor.executemany(
-                """INSERT INTO [US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]
-                (
-                [QUARTER]
-                ,[HOLDINGS]
-                ,[VALUE]
-                ,[TOP_HOLDINGS]
-                ,[FORM_TYPE]
-                ,[DATE_FILED]
-                ,[FILING_ID]
-                ,[HEDGE_FUND]
-                ) 
-                VALUES(%s,%d,%d,%s,%s,%s,%s,%s)"""
-                , hedge_tuple
-            )
-            conn.commit()
+            # cursor.executemany(
+            #     """INSERT INTO [US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]
+            #     (
+            #     [QUARTER]
+            #     ,[HOLDINGS]
+            #     ,[VALUE]
+            #     ,[TOP_HOLDINGS]
+            #     ,[FORM_TYPE]
+            #     ,[DATE_FILED]
+            #     ,[FILING_ID]
+            #     ,[HEDGE_FUND]
+            #     ) 
+            #     VALUES(%s,%d,%d,%s,%s,%s,%s,%s)"""
+            #     , hedge_tuple
+            # )
+            # conn.commit()
                 
             count = 0
             for (quarter, form_type), quarterly_link in holdings_urls.items():
@@ -137,6 +137,7 @@ class Crawler(object):
                 holdings_data['HEDGE FUND'] = name
                 holdings_data['QUARTER'] = quarter
                 holdings_data['FORM TYPE'] = form_type
+                holdings_data['FILING_ID'] = filing_id
 
                 # output_folder = os.path.join(self.config_obj.assets_holdings_data, name)
                 # if not os.path.exists(output_folder):
@@ -161,8 +162,9 @@ class Crawler(object):
                     ,[HEDGE_FUND]
                     ,[QUARTER]
                     ,[FORM_TYPE]
+                    ,[FILING_ID]
                     ) 
-                    VALUES(%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s)"""
+                    VALUES(%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s)"""
                     , holdings_tuple
                 )
                 conn.commit()
