@@ -18,8 +18,8 @@ class Crawler(object):
 
 
 
-        # conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
-        conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        # conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
         cursor = conn.cursor(as_dict=True)
         # hedge_data = [()] #要塞進去資料，裡面是資料需要是tuple格式，外面用list包起來
         # holdings_tuple = [()]
