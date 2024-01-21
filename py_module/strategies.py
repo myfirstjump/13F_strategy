@@ -72,7 +72,7 @@ class Strategy13F(object):
         query = self.create_query_data_table(self.hedge_fund_portfolio_table) #'''TBD: 處理Restatement數據'''
         fund_data = self.sql_execute(query)
         fund_data = pd.DataFrame(fund_data)
-        hedge_fund_list = fund_data['HEDGE_FUND'].unique()
+        hedge_fund_list = fund_data['HEDGE_FUND'].unique()[0:3]
         print("總共包含{}個對沖基金資料".format(len(hedge_fund_list)))
         print('Hedge Funds:', )
         print(hedge_fund_list)
@@ -87,7 +87,6 @@ class Strategy13F(object):
 
         for idx, hedge_fund in enumerate(hedge_fund_list):
 
-            
             ### Calculation parameters
             previous_data = None
             market_value_list = []
@@ -95,24 +94,22 @@ class Strategy13F(object):
             quarter_scaling_out_list = []
             xirr_calculate_dict = {'date':[], 'amounts':[]}
 
-            data = fund_data[fund_data['HEDGE_FUND']==hedge_fund][['QUARTER','DATE_FILED']]
-            quarters_list = data['QUARTER'].values #'''TBD: 處理Restatement數據'''
-            date_list = data['DATE_FILED'].values #'''TBD: 依據13F公布時間入場'''
+            each_fund_data = self.each_fund_data_adjust(fund_data, hedge_fund)
+
+            quarters_list = each_fund_data['QUARTER'].values #'''TBD: 處理Restatement數據'''
+            date_list = each_fund_data['DATE_FILED'].values #'''TBD: 依據13F公布時間入場'''
+            filing_list = each_fund_data['FILING_ID']
             # print(quarters_list)
             # print(date_list)
             print(" === === === 第{}個對沖基金：{}，包含{}個季度資料。 === === === ".format(idx+1, hedge_fund, len(quarters_list)))
             
-            scaling_in = []
-            scaling_out = []
-            realized_profit_loss = []
-            trading_time = []
-            for idx_q, quarter in enumerate(quarters_list):
+            for idx_q, (quarter, holdings_time, filing_number) in enumerate(zip(quarters_list, date_list, filing_list)):
+
                 hedge_fund_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
                     
-
-                holdings_time = date_list[idx_q]
                 # print("     第{}個季度：{}，時間為{}".format(idx_q+1, quarter, holdings_time))
-                query = self.create_query_holdings(hedge_fund, quarter)
+                query = self.create_query_holdings(hedge_fund, quarter, filing_number)
+                print(query)
                 holdings_data = self.sql_execute(query)
                 holdings_data = pd.DataFrame(holdings_data)
                 '''3'''
@@ -129,8 +126,6 @@ class Strategy13F(object):
                 price_data = pd.DataFrame(price_data)
                 # print("Price_data:")
                 # print(price_data)
-                
-                
                 if len(price_data) == 0:
                     print('SYM：{}，無對應Price資料'.format(sym_str))
                     break
@@ -172,13 +167,7 @@ class Strategy13F(object):
             quarter_scaling_out_dict[hedge_fund] = quarter_scaling_out_list
 
         summary_table = pd.DataFrame(summary_data)
-        # print('市值：', market_value_dict)
-        # print('每季加碼：', quarter_scaling_in_dict)
-        # print('每季減碼：', quarter_scaling_out_dict)
-        # print('年化報酬率：', final_xirr)
-        print(summary_table)
         path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_summary_table.csv')
-        print(path)
         summary_table.to_csv(path, index=False)
 
     def sql_execute(self, query):
@@ -193,15 +182,38 @@ class Strategy13F(object):
         cursor.close()
         conn.close()
         return data
+
+    def each_fund_data_adjust(self, fund_data, hedge_fund):
+        # adjusted_fund_data = fund_data[fund_data['HEDGE_FUND']==hedge_fund]
+        df = fund_data[fund_data['HEDGE_FUND']==hedge_fund].drop(['HOLDINGS', 'VALUE', 'TOP_HOLDINGS', ], axis=1).reset_index(drop=True)
+
+        def calculate_base_date(row):
+            year = int(row['QUARTER'].split()[1])
+            if 'Q1' in row['QUARTER']:
+                return datetime.datetime(year, 5, 15)
+            elif 'Q2' in row['QUARTER']:
+                return datetime.datetime(year, 8, 14)
+            elif 'Q3' in row['QUARTER']:
+                return datetime.datetime(year, 11, 14)
+            elif 'Q4' in row['QUARTER']:
+                return datetime.datetime(year + 1, 2, 14)
+        df['BASE_DATE'] = df.apply(calculate_base_date, axis=1)# 新增 'BASE DATE' 欄位
+        df['DATE_FILED'] = pd.to_datetime(df['DATE_FILED'])# 將 'DATE_FILED' 轉換為日期時間格式
+
+        df = df[~(df['FORM_TYPE'] == 'NEW HOLDINGS')] # 刪除NEW HOLDINGS的Records
+        df = df[~((df['FORM_TYPE'] == 'RESTATEMENT') & (df['DATE_FILED'] > df['BASE_DATE']))] # 刪除 RESTATEMENT 大於 基準日期的Records。
+        sorting_key = df.groupby('BASE_DATE')['FILING_ID'].idxmax() # 取group中最大FILING_ID
+        df = df.loc[sorting_key]#.reset_index(drop=True)
+        return df
     
     def create_query_data_table(self, data_table):
         '''
         其中依照[DATE_FILED]做升續排列。
         '''
-        query = '''SELECT * FROM {} WITH(NOLOCK) WHERE [FORM_TYPE] = '13F-HR' ORDER BY [DATE_FILED] ASC'''.format(data_table)
+        query = '''SELECT * FROM {} WITH(NOLOCK) ORDER BY [DATE_FILED] ASC'''.format(data_table)
         return query
     
-    def create_query_holdings(self, fund, quarter):
+    def create_query_holdings(self, fund, quarter, filing_number):
         '''
         依據fund和quarter篩選holdings資料表的query語句
         
@@ -210,9 +222,10 @@ class Strategy13F(object):
         query = '''SELECT * FROM {} WITH(NOLOCK) 
         WHERE [HEDGE_FUND] = '{}' 
         AND [QUARTER] = '{}' 
+        AND [FILING_ID] = '{}'
         AND [OPTION_TYPE] IS NULL
         AND SUBSTRING([CUSIP], 7, 2) = '10'
-        '''.format(data_table, fund, quarter)
+        '''.format(data_table, fund, quarter, filing_number)
         return query
 
     def create_query_get_open_price(self, SYMs_tuple, date, fund, quarter):
@@ -271,6 +284,9 @@ class Strategy13F(object):
         return query
     
     def calculate_XIRR(self, data, holdings_time, market_value):
+        '''
+        將data資料加上最新時間/市值兌現，計算XIRR值。
+        '''
         data['date'].append(holdings_time)
         data['amounts'].append(market_value)
         result = xirr(data['date'], data['amounts'])

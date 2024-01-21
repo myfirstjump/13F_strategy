@@ -18,8 +18,8 @@ class Crawler(object):
 
 
 
-        conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
-        # conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        # conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
         cursor = conn.cursor(as_dict=True)
         # hedge_data = [()] #要塞進去資料，裡面是資料需要是tuple格式，外面用list包起來
         # holdings_tuple = [()]
@@ -66,7 +66,7 @@ class Crawler(object):
                 filing_id = cells[6].text.strip()
                 
                 
-                holdings_urls[(quarter, form_type)] = quarterly_link
+                holdings_urls[(quarter, form_type, filing_id)] = quarterly_link
                 # 將資料組合成字典並添加到資料列表中
                 data.append({
                     'QUARTER': quarter,
@@ -104,7 +104,7 @@ class Crawler(object):
             # conn.commit()
                 
             count = 0
-            for (quarter, form_type), quarterly_link in holdings_urls.items():
+            for (quarter, form_type, filing_id), quarterly_link in holdings_urls.items():
                 
                 count += 1
                 network_source = quarterly_link.split('-')[0].split('/')[-1]
@@ -168,7 +168,7 @@ class Crawler(object):
                     , holdings_tuple
                 )
                 conn.commit()
-            time.sleep(5)
+            time.sleep(10)
 
 
 
