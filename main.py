@@ -22,10 +22,10 @@ def main_flow():
     main_obj = StockStrategies()
 
     '''13F官網資料爬蟲'''
-    main_obj.data_crawl()
+    # main_obj.data_crawl()
 
     '''13F投資策略回測'''
-    # main_obj.strategy_13F_investing()
+    main_obj.strategy_13F_investing()
 
 
 
