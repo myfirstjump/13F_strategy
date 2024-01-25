@@ -100,8 +100,8 @@ class Strategy13F(object):
             for idx_q, (quarter, holdings_time, filing_number) in enumerate(zip(quarters_list, date_list, filing_list)):
 
                 hedge_fund_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
-                    
-                print("     第{}個季度：{}，時間為{}".format(idx_q+1, quarter, holdings_time))          
+                holdings_time = self.adjust_holdings_time(holdings_time, sorted_dates)
+                print("     第{}個季度：{}，時間為{}".format(idx_q+1, quarter, holdings_time))
                 query = self.create_query_holdings(hedge_fund, quarter, filing_number)
                 holdings_data = self.sql_execute(query)
                 holdings_data = pd.DataFrame(holdings_data)
@@ -113,18 +113,9 @@ class Strategy13F(object):
                     sym_str = sym_str.replace(']', ')')
                 else:
                     sym_str = tuple(sym_str)
-                holdings_time = self.adjust_holdings_time(holdings_time, sorted_dates)
                 query = self.create_query_get_open_price(sym_str, holdings_time, hedge_fund, quarter, filing_number)
                 price_data = self.sql_execute(query)
                 price_data = pd.DataFrame(price_data)
-                # print("Price_data:")
-                # print(price_data)
-                # if len(price_data) == 0:
-                #     # print('SYM：{}，無對應Price資料'.format(sym_str))
-                #     print('無對應Price資料')
-                #     break
-                # else:
-                #     pass
                 '''4'''
                 market_value = sum(price_data['Open'] * price_data['SHARES'])
                 if idx_q > 0: #扣除第一季，每季要計算的內容
@@ -141,14 +132,26 @@ class Strategy13F(object):
                     scaling_out_sum = 0
                     xirr_calculate_dict['date'].append(holdings_time)
                     xirr_calculate_dict['amounts'].append(-market_value)
-                
                 # 計算XIRR
                 temp_xirr_calculate_dict = copy.deepcopy(xirr_calculate_dict)
-                xirr = self.calculate_XIRR(temp_xirr_calculate_dict, holdings_time, market_value)
+                if idx_q == 0: # 第一季直接帶pyxirr公式計算結果為10%，沒有研究計算公式，故直接assign 0。
+                    xirr = 0
+                else:
+                    xirr = self.calculate_XIRR(temp_xirr_calculate_dict, holdings_time, market_value)
                 previous_data = price_data.copy()
 
                 hedge_fund_data = {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
                 summary_data.append({'hedge_fund': hedge_fund, **hedge_fund_data})
+            
+            # 以今日計算各指標(架構同上)
+            holdings_time = max_date # 可以自訂，此處以DB中最大有交易日期為主(2024-01-09)
+            query = self.create_query_get_open_price(sym_str, holdings_time, hedge_fund, quarter, filing_number)
+            price_data = self.sql_execute(query)
+            price_data = pd.DataFrame(price_data)
+            market_value = sum(price_data['Open'] * price_data['SHARES'])
+            xirr = self.calculate_XIRR(xirr_calculate_dict, holdings_time, market_value)
+            hedge_fund_data = {'date': holdings_time, '市值': market_value, '加碼': 0, '減碼': 0, 'XIRR':xirr}
+            summary_data.append({'hedge_fund': hedge_fund, **hedge_fund_data})
 
         summary_table = pd.DataFrame(summary_data)
         path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_summary_table.csv')
@@ -229,7 +232,7 @@ class Strategy13F(object):
         holdings_table = self.holdings_data_table
         query = ''' SELECT DISTINCT tb_price.[date], tb_price.[stock_id], tb_price.[Open], tb_holdings.[SHARES]
             FROM {} tb_price WITH(NOLOCK)
-			RIGHT JOIN {} tb_holdings WITH(NOLOCK) on tb_price.stock_id = tb_holdings.SYM
+			INNER JOIN {} tb_holdings WITH(NOLOCK) on tb_price.stock_id = tb_holdings.SYM
 			WHERE tb_price.[stock_id] IN {}
             AND tb_price.[date] = '{}'
             AND tb_holdings.[HEDGE_FUND] = '{}' 
@@ -282,5 +285,8 @@ class Strategy13F(object):
         '''
         data['date'].append(holdings_time)
         data['amounts'].append(market_value)
+        
         result = xirr(data['date'], data['amounts'])
+        # print('XIRR calculation:', data)
+        # print(result)
         return result
