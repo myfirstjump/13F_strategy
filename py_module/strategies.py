@@ -2,6 +2,7 @@ from py_module.config import Configuration
 
 import pymssql
 import pandas as pd
+import numpy as np
 import copy
 import os
 import datetime
@@ -70,6 +71,8 @@ class Strategy13F(object):
         fund_data = self.sql_execute(query)
         fund_data = pd.DataFrame(fund_data)
         hedge_fund_list = fund_data['HEDGE_FUND'].unique()
+        hedge_fund_list = ['Appaloosa', ]
+
         print("總共包含{}個對沖基金資料".format(len(hedge_fund_list)))
         print('Hedge Funds:', )
         print(hedge_fund_list)
@@ -90,6 +93,7 @@ class Strategy13F(object):
             xirr_calculate_dict = {'date':[], 'amounts':[]}
 
             each_fund_data = self.each_fund_data_adjust(fund_data, hedge_fund)
+            # print(each_fund_data)
 
             quarters_list = each_fund_data['QUARTER'].values
             date_list = each_fund_data['BASE_DATE'].values # 進場時間點使用13F公布時間
@@ -105,6 +109,8 @@ class Strategy13F(object):
                 query = self.create_query_holdings(hedge_fund, quarter, filing_number)
                 holdings_data = self.sql_execute(query)
                 holdings_data = pd.DataFrame(holdings_data)
+                # print('Holdings:')
+                # print(holdings_data)
                 '''3'''
                 sym_str = holdings_data['SYM'].dropna().values # TBD: 確認Drop數量
                 if len(sym_str) == 1:
@@ -116,6 +122,8 @@ class Strategy13F(object):
                 query = self.create_query_get_open_price(sym_str, holdings_time, hedge_fund, quarter, filing_number)
                 price_data = self.sql_execute(query)
                 price_data = pd.DataFrame(price_data)
+                print('price_data:')
+                print(price_data)
                 '''4'''
                 market_value = sum(price_data['Open'] * price_data['SHARES'])
                 if idx_q > 0: #扣除第一季，每季要計算的內容
@@ -155,7 +163,7 @@ class Strategy13F(object):
 
         summary_table = pd.DataFrame(summary_data)
         path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_summary_table.csv')
-        summary_table.to_csv(path, index=False)
+        # summary_table.to_csv(path, index=False)
 
     def sql_execute(self, query):
 
@@ -238,7 +246,8 @@ class Strategy13F(object):
             AND tb_holdings.[HEDGE_FUND] = '{}' 
             AND tb_holdings.[QUARTER] = '{}' 
             AND tb_holdings.[FILING_ID] = '{}'
-            AND tb_holdings.[OPTION_TYPE] IS NULL 
+            AND tb_holdings.[OPTION_TYPE] IS NULL
+            AND tb_holdings.[SHARES] IS NOT NULL
             AND SUBSTRING(tb_holdings.[CUSIP], 7, 2) = '10'
             '''.format(price_table, holdings_table, SYMs_tuple, date, fund, quarter, filing_number)
         return query
@@ -249,12 +258,12 @@ class Strategy13F(object):
         scaling_even = {}
 
         # 將兩個資料表合併
-        merged_data = current_data.merge(previous_data, on=['stock_id'], suffixes=('_current', '_previous'))
+        merged_data = current_data.merge(previous_data, on=['stock_id'], how='outer', suffixes=('_current', '_previous'))
 
         # 計算持股數量變化
         merged_data['shares_change'] = merged_data['SHARES_current'] - merged_data['SHARES_previous']
 
-        # print(merged_data)
+        print(merged_data)
         # 根據持股數量變化分類
         for index, row in merged_data.iterrows():
             stock_id = row['stock_id']
@@ -285,8 +294,11 @@ class Strategy13F(object):
         '''
         data['date'].append(holdings_time)
         data['amounts'].append(market_value)
-        
-        result = xirr(data['date'], data['amounts'])
-        # print('XIRR calculation:', data)
-        # print(result)
+        f = lambda d: d.date()
+        python_date = [f(d) for d in data['date']]
+        amounts = [int(a) for a in data['amounts']]
+        result = xirr(python_date, amounts)
+        # x = {'date':python_date, 'amounts':amounts}
+        # print(pd.DataFrame.from_dict(x))
+        # print("XIRR:", result)
         return result

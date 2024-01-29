@@ -43,6 +43,7 @@ class Configuration(object):
             'Brave Warrior Advisors':'https://13f.info/manager/0001553733-brave-warrior-advisors-llc',
         }
 	
+        self.dash_port = '8050'
 
 	
 
