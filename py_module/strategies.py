@@ -120,7 +120,7 @@ class Strategy13F(object):
                 holdings_data = pd.DataFrame(holdings_data)
                 # if quarter == 'Q4 2015':
                 #     print(holdings_data)
-                # holdings_data = self.holdings_data_adjust(holdings_data)
+                holdings_data = self.holdings_data_adjust(holdings_data)
                 # if quarter == 'Q4 2015':
                 #     print(holdings_data)
                 '''
