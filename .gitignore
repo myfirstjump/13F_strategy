@@ -8,6 +8,7 @@ bin-release/
 .settings/
 assets/hedge_fund_data/
 assets/holdings_data/
+assets/backtest_summary/
 __pycache__/
 
 # Executables

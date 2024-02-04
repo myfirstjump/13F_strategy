@@ -76,7 +76,7 @@ class Strategy13F(object):
         hedge_fund_list = fund_data['HEDGE_FUND'].unique()
         # hedge_fund_list = ['Appaloosa', ]
         hedge_fund_list = list(hedge_fund_list)
-        # hedge_fund_list = ['Citadel Advisors', 'Renaissance Technologies', 'Millennium Management']
+        # hedge_fund_list = ['Robotti Robert']
         # hedge_fund_list.remove('Citadel Advisors')
         # hedge_fund_list.remove('Renaissance Technologies')
         # hedge_fund_list.remove('Millennium Management')
@@ -118,7 +118,20 @@ class Strategy13F(object):
                 query = self.create_query_holdings(hedge_fund, quarter, filing_number)
                 holdings_data = self.sql_execute(query)
                 holdings_data = pd.DataFrame(holdings_data)
-                # print(holdings_data)
+                # if quarter == 'Q4 2015':
+                #     print(holdings_data)
+                # holdings_data = self.holdings_data_adjust(holdings_data)
+                # if quarter == 'Q4 2015':
+                #     print(holdings_data)
+                '''
+                        SYM                   ISSUER_NAME         CL      CUSIP  ...      HEDGE_FUND  QUARTER  FORM_TYPE           FILING_ID
+                0     GME             GAMESTOP CORP NEW       CL A  36467W109  ...  Robotti Robert  Q4 2015     13F-HR  000114036116052554
+                1    PSMT                PRICESMART INC        COM  741511109  ...  Robotti Robert  Q4 2015     13F-HR  000114036116052554
+                2    AEIS          ADVANCED ENERGY INDS        COM  007973100  ...  Robotti Robert  Q4 2015     13F-HR  000114036116052554
+                3    GASS                STEALTHGAS INC        SHS  Y81669106  ...  Robotti Robert  Q4 2015     13F-HR  000114036116052554
+                4     CNQ          CANADIAN NAT RES LTD        COM  136385101  ...  Robotti Robert  Q4 2015     13F-HR  000114036116052554
+                5     LOV            SPARK NETWORKS INC        COM  84651P100  ...  Robotti Robert  Q4 2015     13F-HR  000114036116052554
+                '''
                 # print(holdings_data['SHARES'].isnull().values.any())
 
                 if idx_q > 0: #扣除第一季，每季要計算的內容
@@ -272,6 +285,15 @@ class Strategy13F(object):
         AND [SHARES] IS NOT NULL 
         '''.format(data_table, fund, quarter, filing_number)
         return query
+    def holdings_data_adjust(self, df):
+
+        df['VALUE'] = pd.to_numeric(df['VALUE'], errors='coerce')  # 将VALUE列转换为数值，将无法转换的值设为NaN
+        df['Percentile'] = pd.to_numeric(df['Percentile'], errors='coerce')  # 将Percentile列转换为数值，将无法转换的值设为NaN
+        df['SHARES'] = pd.to_numeric(df['SHARES'], errors='coerce')  # 将SHARES列转换为数值，将无法转换的值设为NaN
+
+        df = df.groupby('SYM', as_index=False).agg({'VALUE':'sum', 'Percentile':'sum', 'SHARES':'sum'})
+
+        return df
     def adjust_holdings_time(self, holdings_time, sorted_dates):
         '''
         在輸入時間點為13F報告公布時間時，該日不一定有開市，所以依據時間調整。
