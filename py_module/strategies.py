@@ -3,6 +3,8 @@ from py_module.config import Configuration
 import pymssql
 import pandas as pd
 import numpy as np
+import sys
+np.set_printoptions(threshold=sys.maxsize)
 import copy
 import os
 import datetime
@@ -40,8 +42,8 @@ class Strategy13F(object):
     def __init__(self):
         self.config_obj = Configuration()
         self.hedge_fund_portfolio_table = '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]'
-        self.holdings_data_table = 'US_DB.dbo.HOLDINGS_DATA'
-        self.us_stock_info_table = 'US_DB.dbo.USStockInfo'
+        self.holdings_data_table = '[US_DB].[dbo].[HOLDINGS_DATA]'
+        self.us_stock_info_table = '[US_DB].[dbo].[USStockInfo]'
         self.us_stock_price_table = '[US_DB].[dbo].[USStockPrice]'
 
     def main_strategy_flow(self):
@@ -65,13 +67,19 @@ class Strategy13F(object):
         '''0'''
         ### Final Output Form
         summary_data = [] # 包含項目: {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
+        null_sym_counter = 0
 
         '''1'''
         query = self.create_query_data_table(self.hedge_fund_portfolio_table)
         fund_data = self.sql_execute(query)
         fund_data = pd.DataFrame(fund_data)
         hedge_fund_list = fund_data['HEDGE_FUND'].unique()
-        hedge_fund_list = ['Appaloosa', ]
+        # hedge_fund_list = ['Appaloosa', ]
+        hedge_fund_list = list(hedge_fund_list)
+        # hedge_fund_list = ['Citadel Advisors', 'Renaissance Technologies', 'Millennium Management']
+        # hedge_fund_list.remove('Citadel Advisors')
+        # hedge_fund_list.remove('Renaissance Technologies')
+        # hedge_fund_list.remove('Millennium Management')
 
         print("總共包含{}個對沖基金資料".format(len(hedge_fund_list)))
         print('Hedge Funds:', )
@@ -91,51 +99,90 @@ class Strategy13F(object):
 
             ### Calculation parameters
             previous_data = None
+            previous_holdings = None
             xirr_calculate_dict = {'date':[], 'amounts':[]}
 
             each_fund_data = self.each_fund_data_adjust(fund_data, hedge_fund)
-            # print(each_fund_data)
-
             quarters_list = each_fund_data['QUARTER'].values
             date_list = each_fund_data['BASE_DATE'].values # 進場時間點使用13F公布時間
             filing_list = each_fund_data['FILING_ID'].values
 
             print(" === === === 第{}個對沖基金：{}，包含{}個季度資料。 === === === ".format(idx+1, hedge_fund, len(quarters_list)))
+            # print(each_fund_data)
             
             for idx_q, (quarter, holdings_time, filing_number) in enumerate(zip(quarters_list, date_list, filing_list)):
                 hedge_fund_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
                 holdings_time = self.adjust_holdings_time(holdings_time, sorted_dates) # 以13F報告公布期限為基準(5/15, 8/15, 11/15, 2/14)
                 print("     第{}個季度：{}，時間為{}".format(idx_q+1, quarter, holdings_time))
+
                 query = self.create_query_holdings(hedge_fund, quarter, filing_number)
                 holdings_data = self.sql_execute(query)
                 holdings_data = pd.DataFrame(holdings_data)
-                print('Holdings:')
-                print(holdings_data)
-                '''3'''
-                sym_str = holdings_data['SYM'].dropna().values # TBD: 確認Drop數量
-                if len(sym_str) == 1:
-                    sym_str = str(sym_str)
-                    sym_str = sym_str.replace('[', '(')
-                    sym_str = sym_str.replace(']', ')')
-                else:
-                    sym_str = tuple(sym_str)
-                query = self.create_query_get_open_price(sym_str, holdings_time, hedge_fund, quarter, filing_number)
-                price_data = self.sql_execute(query)
-                price_data = pd.DataFrame(price_data)
-                print('price_data:')
-                print(price_data)
-                '''4'''
-                market_value = sum(price_data['Open'] * price_data['SHARES'])
+                # print(holdings_data)
+                # print(holdings_data['SHARES'].isnull().values.any())
+
                 if idx_q > 0: #扣除第一季，每季要計算的內容
-                    scaling_in, scaling_out, scaling_even = self.shares_difference_between_quarters(previous_data, price_data)
-                    scaling_in_sum = sum([i for i in  scaling_in.values()])
-                    scaling_out_sum = sum([i for i in  scaling_out.values()])
+
+                    merged_data = self.shares_difference_between_quarters(previous_holdings, holdings_data)
+                    '''
+                          SYM  SHARES_current  SHARES_previous  shares_change
+                    0     AGN         2937121          4261406       -1324285
+                    1    ETP1        11961842         11961842              0
+                    2     WPZ         9966502          9487301         479201
+                    3    GOOG          475000           483000          -8000
+                    4    META         1907350          2182350        -275000
+                    5     PNC         1950973          1950973              0
+                    6     BAC         8782641                0        8782641
+                    '''
+                    null_sym_counter = null_sym_counter + merged_data['SYM'].isna().sum()
+                    sym_str = merged_data['SYM'].dropna().values
+                    
+                    # print("SYMs:", sym_str)
+                    if len(sym_str) == 1:
+                        sym_str = str(sym_str)
+                        sym_str = sym_str.replace('[', '(')
+                        sym_str = sym_str.replace(']', ')')
+                    else:
+                        sym_str = tuple(sym_str)
+                    
+                    query = self.create_query_get_open_price_by_date_n_sym(sym_str, holdings_time)
+                    # print(query)
+                    price_data = self.sql_execute(query)
+                    
+                    price_data = pd.DataFrame(price_data)
+                    # print('price_data:')
+                    # print(price_data)
+                    '''
+                            date   SYM    Open
+                        0   2016-11-14  AAPL   26.93
+                        1   2016-11-14   ALL   69.76
+                        2   2016-11-14    AY   16.98
+                        3   2016-11-14   BAC   19.41
+                    '''
+                    market_value, scaling_in, scaling_out, scaling_even = self.calculate_scaling_in_and_out(merged_data, price_data)
                     # print("Shares Increased:", scaling_in)
                     # print("Shares Decreased:", scaling_out)
                     # print("Shares Unchanged:", scaling_even)
+                    scaling_in_sum = sum([i for i in  scaling_in.values()])
+                    scaling_out_sum = sum([i for i in  scaling_out.values()])
+                    
                     xirr_calculate_dict['date'].append(holdings_time)
                     xirr_calculate_dict['amounts'].append(-(scaling_in_sum - scaling_out_sum))
+                    
                 else: #第一季要計算的內容
+                    null_sym_counter = null_sym_counter + holdings_data['SYM'].isna().sum()
+                    sym_str = holdings_data['SYM'].dropna().values # TBD: 確認Drop數量
+                    if len(sym_str) == 1:
+                        sym_str = str(sym_str)
+                        sym_str = sym_str.replace('[', '(')
+                        sym_str = sym_str.replace(']', ')')
+                    else:
+                        sym_str = tuple(sym_str)
+                    query = self.create_query_get_open_price_by_date_n_sym(sym_str, holdings_time)
+                    price_data = self.sql_execute(query)
+                    price_data = pd.DataFrame(price_data)
+                    market_value = self.market_value_by_join_holdings_and_price(holdings_data, price_data)
+
                     scaling_in_sum = 0
                     scaling_out_sum = 0
                     xirr_calculate_dict['date'].append(holdings_time)
@@ -146,14 +193,14 @@ class Strategy13F(object):
                     xirr = 0
                 else:
                     xirr = self.calculate_XIRR(temp_xirr_calculate_dict, holdings_time, market_value)
-                previous_data = price_data.copy()
+                previous_holdings = holdings_data.copy()
 
                 hedge_fund_data = {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
                 summary_data.append({'hedge_fund': hedge_fund, **hedge_fund_data})
             
             # 以今日計算各指標(架構同上)
             holdings_time = max_date # 可以自訂，此處以DB中最大有交易日期為主(2024-01-09)
-            query = self.create_query_get_open_price(sym_str, holdings_time, hedge_fund, quarter, filing_number)
+            query = self.create_query_get_open_price_by_join_holdings_n_price(sym_str, holdings_time, hedge_fund, quarter, filing_number)
             price_data = self.sql_execute(query)
             price_data = pd.DataFrame(price_data)
             market_value = sum(price_data['Open'] * price_data['SHARES'])
@@ -163,11 +210,13 @@ class Strategy13F(object):
 
         summary_table = pd.DataFrame(summary_data)
         path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_summary_table.csv')
-        # summary_table.to_csv(path, index=False)
+        summary_table.to_csv(path, index=False)
+        print("NULL SYM COUNTER:", null_sym_counter)
 
     def sql_execute(self, query):
 
-        conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        # conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
         cursor = conn.cursor(as_dict=True)
         cursor.execute(query)
         # data = [row for row in cursor]
@@ -198,7 +247,7 @@ class Strategy13F(object):
         df = df[~(df['FORM_TYPE'] == 'NEW HOLDINGS')] # 刪除NEW HOLDINGS的Records
         df = df[~((df['FORM_TYPE'] == 'RESTATEMENT') & (df['DATE_FILED'] > df['BASE_DATE']))] # 刪除 RESTATEMENT 大於 基準日期的Records。
         sorting_key = df.groupby('BASE_DATE')['FILING_ID'].idxmax() # 取group中最大FILING_ID
-        df = df.loc[sorting_key]#.reset_index(drop=True)
+        df = df.loc[sorting_key].reset_index(drop=True)
         return df
     
     def create_query_data_table(self, data_table):
@@ -220,6 +269,7 @@ class Strategy13F(object):
         AND [FILING_ID] = '{}'
         AND [OPTION_TYPE] IS NULL
         AND SUBSTRING([CUSIP], 7, 2) = '10'
+        AND [SHARES] IS NOT NULL 
         '''.format(data_table, fund, quarter, filing_number)
         return query
     def adjust_holdings_time(self, holdings_time, sorted_dates):
@@ -232,7 +282,7 @@ class Strategy13F(object):
         # print('index: ', index)
         # print('修正日期:', target_date)
         return target_date
-    def create_query_get_open_price(self, SYMs_tuple, date, fund, quarter, filing_number):
+    def create_query_get_open_price_by_join_holdings_n_price(self, SYMs_tuple, date, fund, quarter, filing_number):
         '''
         依據holdings去查表price，透過stock_id(即holdings表中的SYM) join兩張表格，並加入SHARES資訊至price表。
         '''
@@ -251,24 +301,30 @@ class Strategy13F(object):
             AND SUBSTRING(tb_holdings.[CUSIP], 7, 2) = '10'
             '''.format(price_table, holdings_table, SYMs_tuple, date, fund, quarter, filing_number)
         return query
+    def create_query_get_open_price_by_date_n_sym(self, SYMs_tuple, date):
+        '''
+        依據holdings去查表price，透過stock_id(即holdings表中的SYM) join兩張表格，並加入SHARES資訊至price表。
+        '''
+        price_table = self.us_stock_price_table
+        query = ''' SELECT [date], [stock_id] SYM, [Open]
+            FROM {} WITH(NOLOCK) WHERE [date] = '{}' AND [stock_id] IN {}
+            '''.format(price_table, date, SYMs_tuple)
+        return query
 
-    def shares_difference_between_quarters(self, previous_data, current_data):
+    def calculate_scaling_in_and_out(self, merged_data, price_data):
         scaling_in = {}
         scaling_out = {}
         scaling_even = {}
-
-        # 將兩個資料表合併
-        merged_data = current_data.merge(previous_data, on=['stock_id'], how='outer', suffixes=('_current', '_previous'))
-
-        # 計算持股數量變化
-        merged_data['shares_change'] = merged_data['SHARES_current'] - merged_data['SHARES_previous']
-
-        print(merged_data)
+        market_value = 0
+        scaling_data = merged_data.merge(price_data, on=['SYM'])
+        # print('Scaling_data:')
+        # print(scaling_data)
         # 根據持股數量變化分類
-        for index, row in merged_data.iterrows():
-            stock_id = row['stock_id']
+        for index, row in scaling_data.iterrows():
+            stock_id = row['SYM']
             shares_change = row['shares_change']
-            Open_current = row['Open_current']
+            Open_current = row['Open']
+            SHARES_current = row['SHARES_current']
 
             if shares_change > 0:
                 scaling_in[stock_id] = shares_change * Open_current
@@ -276,9 +332,55 @@ class Strategy13F(object):
                 scaling_out[stock_id] = abs(shares_change) * Open_current
             else:
                 scaling_even[stock_id] = 0
+            market_value = market_value + SHARES_current * Open_current
 
-        return scaling_in, scaling_out, scaling_even
+        return market_value, scaling_in, scaling_out, scaling_even
+
+    def market_value_by_join_holdings_and_price(self, holdings_data, price_data):
+        market_value = 0
+        merged_data = holdings_data.merge(price_data, on=['SYM'])
+        # print('Holdings & Price:')
+        # print(merged_data)
+
+        for index, row in merged_data.iterrows():
+            shares = row['SHARES']
+            Open_current = row['Open']
+            market_value = market_value + shares * Open_current
+        return market_value
+    
+    def shares_difference_between_quarters(self, previous_holdings, holdings_data):
+        scaling_in = {}
+        scaling_out = {}
+        scaling_even = {}
+
+        previous_holdings = previous_holdings[['SYM', 'SHARES']]
+        holdings_data = holdings_data[['SYM', 'SHARES']]
+
+        # 將兩個資料表合併
+        merged_data = holdings_data.merge(previous_holdings, on=['SYM'], how='outer', suffixes=('_current', '_previous'))
+        merged_data['SHARES_current'].fillna(0, inplace=True)
+        merged_data['SHARES_previous'].fillna(0, inplace=True)
+        merged_data = merged_data.astype({'SHARES_current': int, 'SHARES_previous': int})
+        # 計算持股數量變化
+        merged_data['shares_change'] = merged_data['SHARES_current'] - merged_data['SHARES_previous']
         
+        # print(merged_data)
+        # 根據持股數量變化分類
+        # for index, row in merged_data.iterrows():
+        #     stock_id = row['SYM']
+        #     shares_change = row['shares_change']
+        #     Open_current = row['Open_current']
+
+        #     if shares_change > 0:
+        #         scaling_in[stock_id] = shares_change * Open_current
+        #     elif shares_change < 0:
+        #         scaling_out[stock_id] = abs(shares_change) * Open_current
+        #     else:
+        #         scaling_even[stock_id] = 0
+        
+        # return scaling_in, scaling_out, scaling_even
+
+        return merged_data
 
     def get_all_price_date(self, price_table):
 
