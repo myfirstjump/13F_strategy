@@ -68,6 +68,7 @@ class Strategy13F(object):
         ### Final Output Form
         summary_data = [] # 包含項目: {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
         null_sym_counter = 0
+        data_date_list = []
 
         '''1'''
         query = self.create_query_data_table(self.hedge_fund_portfolio_table)
@@ -114,6 +115,9 @@ class Strategy13F(object):
                 hedge_fund_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
                 holdings_time = self.adjust_holdings_time(holdings_time, sorted_dates) # 以13F報告公布期限為基準(5/15, 8/15, 11/15, 2/14)
                 print("     第{}個季度：{}，時間為{}".format(idx_q+1, quarter, holdings_time))
+
+                if holdings_time not in data_date_list:
+                    data_date_list.append(str(holdings_time))
 
                 query = self.create_query_holdings(hedge_fund, quarter, filing_number)
                 holdings_data = self.sql_execute(query)
@@ -213,6 +217,8 @@ class Strategy13F(object):
             
             # 以今日計算各指標(架構同上)
             holdings_time = max_date # 可以自訂，此處以DB中最大有交易日期為主(2024-01-09)
+            if holdings_time not in data_date_list:
+                    data_date_list.append(str(holdings_time))
             query = self.create_query_get_open_price_by_join_holdings_n_price(sym_str, holdings_time, hedge_fund, quarter, filing_number)
             price_data = self.sql_execute(query)
             price_data = pd.DataFrame(price_data)
@@ -220,7 +226,29 @@ class Strategy13F(object):
             xirr = self.calculate_XIRR(xirr_calculate_dict, holdings_time, market_value)
             hedge_fund_data = {'date': holdings_time, '市值': market_value, '加碼': 0, '減碼': 0, 'XIRR':xirr}
             summary_data.append({'hedge_fund': hedge_fund, **hedge_fund_data})
+        # 加入S&P500的資料
+        SNP500_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
+        data_date_str = tuple(data_date_list)
+        query = self.create_query_snp500_price_data(self.us_stock_price_table, data_date_str)
+        price_data = self.sql_execute(query)
+        price_data = pd.DataFrame(price_data)
+        xirr_calculate_dict = {'date':[], 'amounts':[]}
+        for index, row in price_data.iterrows():
+            holdings_time = row['date']
+            price = row['Open']
+            if index == 0:
+                xirr_calculate_dict['date'].append(holdings_time)
+                xirr_calculate_dict['amounts'].append(-price)
+            else:
+                xirr_calculate_dict['date'].append(holdings_time)
+                xirr_calculate_dict['amounts'].append(0)
 
+            if idx_q == 0: # 第一季直接帶pyxirr公式計算結果為10%，沒有研究計算公式，故直接assign 0。
+                xirr = 0
+            else:
+                xirr = self.calculate_XIRR(temp_xirr_calculate_dict, holdings_time, price)
+            SNP500_data = {'date': holdings_time, '市值': price, '加碼': 0, '減碼': 0, 'XIRR': xirr}
+            summary_data.append({'hedge_fund': 'S&P500', **SNP500_data})
         summary_table = pd.DataFrame(summary_data)
         path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_summary_table.csv')
         summary_table.to_csv(path, index=False)
@@ -419,10 +447,23 @@ class Strategy13F(object):
         data['date'].append(holdings_time)
         data['amounts'].append(market_value)
         f = lambda d: d.date()
-        python_date = [f(d) for d in data['date']]
+        if type(holdings_time) == pd._libs.tslibs.timestamps.Timestamp:
+            python_date = [f(d) for d in data['date']]
+        else:
+            python_date = [d for d in data['date']]
         amounts = [int(a) for a in data['amounts']]
         result = xirr(python_date, amounts)
         # x = {'date':python_date, 'amounts':amounts}
         # print(pd.DataFrame.from_dict(x))
         # print("XIRR:", result)
         return result
+
+    def create_query_snp500_price_data(self, price_table, date_str):
+        '''
+        S&P500在表單中的stock_id為^GSPC
+        '''
+        query = '''
+        SELECT [date],[stock_id],[Open]
+        FROM {} WHERE stock_id = '^GSPC' AND [date] IN {} 
+        '''.format(price_table, date_str)
+        return query
