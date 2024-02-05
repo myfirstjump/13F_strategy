@@ -76,7 +76,7 @@ class Strategy13F(object):
         fund_data = pd.DataFrame(fund_data)
         hedge_fund_list = fund_data['HEDGE_FUND'].unique()
         # hedge_fund_list = ['Appaloosa', ]
-        hedge_fund_list = list(hedge_fund_list)
+        hedge_fund_list = list(hedge_fund_list)[:1]
         # hedge_fund_list = ['Robotti Robert']
         # hedge_fund_list.remove('Citadel Advisors')
         # hedge_fund_list.remove('Renaissance Technologies')
@@ -242,7 +242,7 @@ class Strategy13F(object):
             else:
                 xirr_calculate_dict['date'].append(holdings_time)
                 xirr_calculate_dict['amounts'].append(0)
-
+            temp_xirr_calculate_dict = copy.deepcopy(xirr_calculate_dict)
             if idx_q == 0: # 第一季直接帶pyxirr公式計算結果為10%，沒有研究計算公式，故直接assign 0。
                 xirr = 0
             else:
@@ -256,8 +256,8 @@ class Strategy13F(object):
 
     def sql_execute(self, query):
 
-        # conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
-        conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        # conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
         cursor = conn.cursor(as_dict=True)
         cursor.execute(query)
         # data = [row for row in cursor]
