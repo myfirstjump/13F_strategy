@@ -4,7 +4,7 @@ import pymssql
 import pandas as pd
 import numpy as np
 import sys
-np.set_printoptions(threshold=sys.maxsize)
+# np.set_printoptions(threshold=sys.maxsize)
 import copy
 import os
 import datetime
@@ -49,34 +49,46 @@ class Strategy13F(object):
     def main_strategy_flow(self):
         '''
         美股13F投資策略回測程序
-            0. 設定需求資料物件。{'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
-            1. 連結至Database，獲取hedge fund清單、時間列(需要max date作為最後市值計算)
-            開始各hedge fund回測
-                開始各年份迴圈
-                    3. records SYM查表找尋price table open值
-                    4. 計算shares差異、市值差異(加碼、減碼)
-                    5. 紀錄交易時間、應收付損益
-                    6. 計算最大回撤dd
-                6.計算年化報酬
-                7.計算最終獲利
-                8.繪製資金曲線圖
-                9.各時間點加碼、減碼；淨加碼、減碼
-                10.更新下一輪參數 ex. previous_data = price_data
+            0. 定義Output obj、統計用obj:
+                -. summary_data: list
+                    {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
+                    主要輸出的物件，list每個元素是某hedge fund 在13F報告時間點的市值、加碼量、減碼量、XIRR計算值。
+                -. null_sym_counter: int
+                    計算holdings報告中的SYM，無法對應到price table的數量，作為後續調整參考使用。
+                -. data_date_list: list
+                    列舉13F報告所有filed date，供後續抓取S&P500資料比對用。
+            1. Read DB data
+                -. hedge fund data: fund_data
+                -. all date with price: sorted_dates, max_date(最後一天，用來計算最後統計量)
+            2. 各hedge fund計算迴圈
+                2.1. 定義迴圈內參數:
+                    -. previous_holdings: pd.DataFrame
+                        用來儲存上一個13F報告的holdings，主要用來計算shares差異。
+                    -. xirr_calculate_dict: {'date':[], 'amounts':[]}
+                        用來記錄holdings time和amounts，最後用來輸入至pyxirr計算XIRR值。
+                2.2. 調整fund_data:
+                    依據條件篩選fund_data中的records。(詳細如each_fund_data_adjust())
+                2.3. 各Quarter計算迴圈:
+                    2.3.1 定義回圈內參數:
+                        -. hedge_fund_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
+                            即要放在主要輸出summary_data中的元素，每一季的統計數據。
+                    2.3.2 調整holdings_time:
+                        由於13F報告日期不一訂有開市，故調整至下一個開市日期。(詳細如adjust_holdings_time())
         '''
 
-        '''0'''
+        '''0. 定義Output obj、統計用obj'''
         ### Final Output Form
         summary_data = [] # 包含項目: {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
         null_sym_counter = 0
         data_date_list = []
 
-        '''1'''
+        '''1. Read DB data'''
         query = self.create_query_data_table(self.hedge_fund_portfolio_table)
         fund_data = self.sql_execute(query)
         fund_data = pd.DataFrame(fund_data)
         hedge_fund_list = fund_data['HEDGE_FUND'].unique()
         # hedge_fund_list = ['Appaloosa', ]
-        hedge_fund_list = list(hedge_fund_list)[:1]
+        hedge_fund_list = list(hedge_fund_list)
         # hedge_fund_list = ['Robotti Robert']
         # hedge_fund_list.remove('Citadel Advisors')
         # hedge_fund_list.remove('Renaissance Technologies')
@@ -96,13 +108,12 @@ class Strategy13F(object):
         max_date = max(sorted_dates)
         print('歷史價格從{}到{}'.format(min_date, max_date))
 
+        '''2. 各hedge fund計算迴圈'''
         for idx, hedge_fund in enumerate(hedge_fund_list):
-
-            ### Calculation parameters
-            previous_data = None
+            '''2.1. 定義迴圈內參數'''
             previous_holdings = None
             xirr_calculate_dict = {'date':[], 'amounts':[]}
-
+            '''2.2. 調整fund_data'''
             each_fund_data = self.each_fund_data_adjust(fund_data, hedge_fund)
             quarters_list = each_fund_data['QUARTER'].values
             date_list = each_fund_data['BASE_DATE'].values # 進場時間點使用13F公布時間
@@ -110,9 +121,11 @@ class Strategy13F(object):
 
             print(" === === === 第{}個對沖基金：{}，包含{}個季度資料。 === === === ".format(idx+1, hedge_fund, len(quarters_list)))
             # print(each_fund_data)
-            
+            '''2.3. 各Quarter計算迴圈'''
             for idx_q, (quarter, holdings_time, filing_number) in enumerate(zip(quarters_list, date_list, filing_list)):
+                '''2.3.1 定義回圈內參數'''
                 hedge_fund_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
+                '''2.3.2 調整holdings_time'''
                 holdings_time = self.adjust_holdings_time(holdings_time, sorted_dates) # 以13F報告公布期限為基準(5/15, 8/15, 11/15, 2/14)
                 print("     第{}個季度：{}，時間為{}".format(idx_q+1, quarter, holdings_time))
 
@@ -268,8 +281,34 @@ class Strategy13F(object):
         conn.close()
         return data
 
+    def create_query_data_table(self, data_table):
+        '''
+        其中依照[DATE_FILED]做升續排列。
+        '''
+        query = '''SELECT * FROM {} WITH(NOLOCK) ORDER BY [DATE_FILED] ASC'''.format(data_table)
+        return query
+
     def each_fund_data_adjust(self, fund_data, hedge_fund):
-        # adjusted_fund_data = fund_data[fund_data['HEDGE_FUND']==hedge_fund]
+        '''
+        function:
+            依據條件篩選fund_data中的records，因為每個季度可能包含多個FILE。
+                QUARTER    FORM_TYPE  DATE_FILED           FILING_ID                 HEDGE_FUND
+            0   Q4 2013       13F-HR  2014-01-31  000090556714000001  Yacktman Asset Management
+            1   Q4 2013  RESTATEMENT  2014-02-13  000090556714000002  Yacktman Asset Management
+            2   Q1 2014       13F-HR  2014-05-06  000090556714000004  Yacktman Asset Management
+            3   Q2 2014       13F-HR  2014-08-04  000090556714000006  Yacktman Asset Management
+            4   Q3 2014       13F-HR  2014-11-04  000090556714000008  Yacktman Asset Management
+            5   Q3 2014  RESTATEMENT  2014-11-04  000090556714000009  Yacktman Asset Management
+            6   Q4 2014       13F-HR  2015-02-02  000090556715000001  Yacktman Asset Management
+        Input:
+            -. 原始fund_data(13F報告)
+            -. 目前處理的hedge_fund string
+        Output:
+            調整後之fund_data
+        '''
+        # 依據hedge_fund string篩選基金
+        # 刪除'HOLDINGS'(持股個數), 'VALUE'(總市值), 'TOP_HOLDINGS'(最高持股量的個股)
+        # 重製dataframe index
         df = fund_data[fund_data['HEDGE_FUND']==hedge_fund].drop(['HOLDINGS', 'VALUE', 'TOP_HOLDINGS', ], axis=1).reset_index(drop=True)
 
         def calculate_base_date(row):
@@ -282,22 +321,30 @@ class Strategy13F(object):
                 return datetime.datetime(year, 11, 14)
             elif 'Q4' in row['QUARTER']:
                 return datetime.datetime(year + 1, 2, 14)
+        # 新增欄位BASE_DATE，依據QUARTER欄位的資料，回傳Q1->5/15, Q2->8/14, Q3->11/14, Q4->2/14等日期
         df['BASE_DATE'] = df.apply(calculate_base_date, axis=1)# 新增 'BASE DATE' 基準日期欄位 (即5/15, 8/14, 11/14, 2/14)
         df['DATE_FILED'] = pd.to_datetime(df['DATE_FILED'])# 將 'DATE_FILED' 轉換為日期時間格式
 
         df = df[~(df['FORM_TYPE'] == 'NEW HOLDINGS')] # 刪除NEW HOLDINGS的Records
         df = df[~((df['FORM_TYPE'] == 'RESTATEMENT') & (df['DATE_FILED'] > df['BASE_DATE']))] # 刪除 RESTATEMENT 大於 基準日期的Records。
-        sorting_key = df.groupby('BASE_DATE')['FILING_ID'].idxmax() # 取group中最大FILING_ID
+        sorting_key = df.groupby('BASE_DATE')['FILING_ID'].idxmax() # 取group中最大FILING_ID，因為可能有多筆records，直接依據FILING_ID取最新的。
         df = df.loc[sorting_key].reset_index(drop=True)
         return df
-    
-    def create_query_data_table(self, data_table):
+    def adjust_holdings_time(self, holdings_time, sorted_dates):
         '''
-        其中依照[DATE_FILED]做升續排列。
+        function:
+            在輸入時間點為13F報告公布時間時，該日不一定有開市，所以依據時間調整。
+        input:
+            -.holdings_time(string):  該季資料之報告日期
+            -.sorted_dates(pd.Series(pd.datetime)):  price data所有日期，即有開市日期
         '''
-        query = '''SELECT * FROM {} WITH(NOLOCK) ORDER BY [DATE_FILED] ASC'''.format(data_table)
-        return query
-    
+        index = sorted_dates.searchsorted(holdings_time) # 找到日期在排序後的列表中的位置
+        target_date  = sorted_dates[index] if index < len(sorted_dates) else sorted_dates[-1] # 如果日期正好在列表中，返回該日期；否則返回下一個最接近的日期
+        print('原始日期:', holdings_time)
+        print('index: ', index)
+        print('修正日期:', target_date)
+        print(sorted_dates[index-1], sorted_dates[index], sorted_dates[index+1], )
+        return target_date        
     def create_query_holdings(self, fund, quarter, filing_number):
         '''
         依據fund和quarter篩選holdings資料表的query語句
@@ -322,16 +369,7 @@ class Strategy13F(object):
         df = df.groupby('SYM', as_index=False).agg({'VALUE':'sum', 'Percentile':'sum', 'SHARES':'sum'})
 
         return df
-    def adjust_holdings_time(self, holdings_time, sorted_dates):
-        '''
-        在輸入時間點為13F報告公布時間時，該日不一定有開市，所以依據時間調整。
-        '''
-        index = sorted_dates.searchsorted(holdings_time) # 找到日期在排序後的列表中的位置
-        target_date  = sorted_dates[index] if index < len(sorted_dates) else sorted_dates[-1] # 如果日期正好在列表中，返回該日期；否則返回下一個最接近的日期
-        # print('原始日期:', holdings_time)
-        # print('index: ', index)
-        # print('修正日期:', target_date)
-        return target_date
+
     def create_query_get_open_price_by_join_holdings_n_price(self, SYMs_tuple, date, fund, quarter, filing_number):
         '''
         依據holdings去查表price，透過stock_id(即holdings表中的SYM) join兩張表格，並加入SHARES資訊至price表。
