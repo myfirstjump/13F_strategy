@@ -59,7 +59,7 @@ class Strategy13F(object):
                     列舉13F報告所有filed date，供後續抓取S&P500資料比對用。
             1. Read DB data
                 -. hedge fund data: fund_data
-                -. all date with price: sorted_dates, max_date(最後一天，用來計算最後統計量)
+                -. date list which have the prices: sorted_dates, max_date(最後一天，用來計算最後統計量)
             2. 各hedge fund計算迴圈
                 2.1. 定義迴圈內參數:
                     -. previous_holdings: pd.DataFrame
@@ -69,11 +69,18 @@ class Strategy13F(object):
                 2.2. 調整fund_data:
                     依據條件篩選fund_data中的records。(詳細如each_fund_data_adjust())
                 2.3. 各Quarter計算迴圈:
-                    2.3.1 定義回圈內參數:
+                    2.3.1 定義迴圈內參數:
                         -. hedge_fund_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
                             即要放在主要輸出summary_data中的元素，每一季的統計數據。
                     2.3.2 調整holdings_time:
-                        由於13F報告日期不一訂有開市，故調整至下一個開市日期。(詳細如adjust_holdings_time())
+                        由於13F報告日期不一定有開市，故調整至下一個開市日期。(詳細如adjust_holdings_time())
+                    2.3.3 讀取holdings data，並進行特殊處理(詳細如holdings_data_adjust())
+                    2.3.4 IF-ELSE語句分別處理第一季/其他季
+                    2.3.5 以xirr_calculate_dict計算XIRR值
+                    2.3.6 將本季度holdings data暫存，作為下一季度計算使用。(previous_holdings)
+                    2.3.7 將統計數值回存至summary_data
+                2.4 計算當前持股市值。
+            3. 計算S&P500市值。
         '''
 
         '''0. 定義Output obj、統計用obj'''
@@ -131,15 +138,11 @@ class Strategy13F(object):
 
                 if holdings_time not in data_date_list:
                     data_date_list.append(str(holdings_time))
-
+                '''2.3.3 讀取holdings data'''
                 query = self.create_query_holdings(hedge_fund, quarter, filing_number)
                 holdings_data = self.sql_execute(query)
                 holdings_data = pd.DataFrame(holdings_data)
-                # if quarter == 'Q4 2015':
-                #     print(holdings_data)
                 holdings_data = self.holdings_data_adjust(holdings_data)
-                # if quarter == 'Q4 2015':
-                #     print(holdings_data)
                 '''
                         SYM                   ISSUER_NAME         CL      CUSIP  ...      HEDGE_FUND  QUARTER  FORM_TYPE           FILING_ID
                 0     GME             GAMESTOP CORP NEW       CL A  36467W109  ...  Robotti Robert  Q4 2015     13F-HR  000114036116052554
@@ -149,10 +152,19 @@ class Strategy13F(object):
                 4     CNQ          CANADIAN NAT RES LTD        COM  136385101  ...  Robotti Robert  Q4 2015     13F-HR  000114036116052554
                 5     LOV            SPARK NETWORKS INC        COM  84651P100  ...  Robotti Robert  Q4 2015     13F-HR  000114036116052554
                 '''
-                # print(holdings_data['SHARES'].isnull().values.any())
-
+                '''2.3.4 IF-ELSE語句分別處理第一季/其他季
+                        2.3.4.1 若為第一季
+                            2.3.4.1.1 確認有哪些股票代碼，存為sym_str，空值則計數後存入null_sym_counter。
+                            2.3.4.1.2 以holdings time和sym_str查詢當時股價。(create_query_get_open_price_by_date_n_sym())
+                            2.3.4.1.3 計算market value: 以holdings_data:SHARE、price_data:Open相乘得出股票市值。(market_value_by_join_holdings_and_price())
+                            2.3.4.1.4 第一季加減碼為0。
+                        2.3.4.2 若為其他季度
+                            2.3.4.2.1 計算本季度與上一季度的SHARE差值，主要用以計算加減碼金額。(shares_difference_between_quarters())
+                            2.3.4.2.2 確認有哪些股票代碼，存為sym_str，空值則計數後存入null_sym_counter。
+                            2.3.4.2.3 以holdings time和sym_str查詢當時股價。(create_query_get_open_price_by_date_n_sym())
+                            2.3.4.2.4 計算市值/加碼/減碼(calculate_scaling_in_and_out())
+                '''
                 if idx_q > 0: #扣除第一季，每季要計算的內容
-
                     merged_data = self.shares_difference_between_quarters(previous_holdings, holdings_data)
                     '''
                           SYM  SHARES_current  SHARES_previous  shares_change
@@ -176,9 +188,7 @@ class Strategy13F(object):
                         sym_str = tuple(sym_str)
                     
                     query = self.create_query_get_open_price_by_date_n_sym(sym_str, holdings_time)
-                    # print(query)
                     price_data = self.sql_execute(query)
-                    
                     price_data = pd.DataFrame(price_data)
                     # print('price_data:')
                     # print(price_data)
@@ -217,18 +227,19 @@ class Strategy13F(object):
                     scaling_out_sum = 0
                     xirr_calculate_dict['date'].append(holdings_time)
                     xirr_calculate_dict['amounts'].append(-market_value)
-                # 計算XIRR
+                '''2.3.5 以xirr_calculate_dict計算XIRR值'''
                 temp_xirr_calculate_dict = copy.deepcopy(xirr_calculate_dict)
                 if idx_q == 0: # 第一季直接帶pyxirr公式計算結果為10%，沒有研究計算公式，故直接assign 0。
                     xirr = 0
                 else:
                     xirr = self.calculate_XIRR(temp_xirr_calculate_dict, holdings_time, market_value)
+                '''2.3.6 將本季度holdings data暫存，作為下一季度計算使用。'''
                 previous_holdings = holdings_data.copy()
-
+                '''2.3.7 將統計數值回存至summary_data'''
                 hedge_fund_data = {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
                 summary_data.append({'hedge_fund': hedge_fund, **hedge_fund_data})
             
-            # 以今日計算各指標(架構同上)
+            '''2.4 計算當前持股市值。'''
             holdings_time = max_date # 可以自訂，此處以DB中最大有交易日期為主(2024-01-09)
             if holdings_time not in data_date_list:
                     data_date_list.append(str(holdings_time))
@@ -239,7 +250,7 @@ class Strategy13F(object):
             xirr = self.calculate_XIRR(xirr_calculate_dict, holdings_time, market_value)
             hedge_fund_data = {'date': holdings_time, '市值': market_value, '加碼': 0, '減碼': 0, 'XIRR':xirr}
             summary_data.append({'hedge_fund': hedge_fund, **hedge_fund_data})
-        # 加入S&P500的資料
+        '''計算S&P500年化報酬率'''
         SNP500_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
         data_date_str = tuple(data_date_list)
         query = self.create_query_snp500_price_data(self.us_stock_price_table, data_date_str)
@@ -335,20 +346,25 @@ class Strategy13F(object):
         function:
             在輸入時間點為13F報告公布時間時，該日不一定有開市，所以依據時間調整。
         input:
-            -.holdings_time(string):  該季資料之報告日期
-            -.sorted_dates(pd.Series(pd.datetime)):  price data所有日期，即有開市日期
+            -. holdings_time(string):  該季資料之報告日期
+            -. sorted_dates(pd.Series(pd.datetime)):  price data所有日期，即有開市日期
         '''
         index = sorted_dates.searchsorted(holdings_time) # 找到日期在排序後的列表中的位置
-        target_date  = sorted_dates[index] if index < len(sorted_dates) else sorted_dates[-1] # 如果日期正好在列表中，返回該日期；否則返回下一個最接近的日期
+        adjust_date  = sorted_dates[index] if index < len(sorted_dates) else sorted_dates[-1] # 如果日期正好在列表中，返回該日期；否則返回下一個最接近的日期
         print('原始日期:', holdings_time)
         print('index: ', index)
-        print('修正日期:', target_date)
+        print('修正日期:', adjust_date)
         print(sorted_dates[index-1], sorted_dates[index], sorted_dates[index+1], )
-        return target_date        
+        '''依照實際情況，13F報告公布後隔天買入，故應使用index+1日(sorted_dates[index+1])；而若本來就沒有開市，則使用下個開市日(adjust_date)'''
+        if holdings_time != adjust_date:
+            result_date = adjust_date
+        else:
+            result_date = sorted_dates[index+1]
+        print('使用日期:', result_date)
+        return result_date        
     def create_query_holdings(self, fund, quarter, filing_number):
         '''
         依據fund和quarter篩選holdings資料表的query語句
-        
         '''
         data_table = self.holdings_data_table
         query = '''SELECT * FROM {} WITH(NOLOCK) 
@@ -361,7 +377,14 @@ class Strategy13F(object):
         '''.format(data_table, fund, quarter, filing_number)
         return query
     def holdings_data_adjust(self, df):
-
+        '''
+        function:
+            依據SYM進行groupby，因為13F報告中，同一SYM可能會列舉多筆。故依據SYM加總VALUE、Percentile、SHARES等三個欄位數值(預先轉換為Numeric確保可加性。
+        input:
+            holdings_data
+        output:
+            adjusted holdings_data
+        '''
         df['VALUE'] = pd.to_numeric(df['VALUE'], errors='coerce')  # 将VALUE列转换为数值，将无法转换的值设为NaN
         df['Percentile'] = pd.to_numeric(df['Percentile'], errors='coerce')  # 将Percentile列转换为数值，将无法转换的值设为NaN
         df['SHARES'] = pd.to_numeric(df['SHARES'], errors='coerce')  # 将SHARES列转换为数值，将无法转换的值设为NaN
@@ -391,7 +414,13 @@ class Strategy13F(object):
         return query
     def create_query_get_open_price_by_date_n_sym(self, SYMs_tuple, date):
         '''
-        依據holdings去查表price，透過stock_id(即holdings表中的SYM) join兩張表格，並加入SHARES資訊至price表。
+        function:
+            建立query string: 以SYM字串以及date查詢price table裡面的開盤價。
+        input:
+            -. SYM tuple
+            -. date
+        output:
+            query(string)
         '''
         price_table = self.us_stock_price_table
         query = ''' SELECT [date], [stock_id] SYM, [Open]
@@ -425,6 +454,15 @@ class Strategy13F(object):
         return market_value, scaling_in, scaling_out, scaling_even
 
     def market_value_by_join_holdings_and_price(self, holdings_data, price_data):
+        '''
+        function:
+            計算股票市值，藉由holdings_data:SHARES、price_data:Open相乘來計算市值，並加總。
+        input:
+            -. holdings_data
+            -. price_data
+        output:
+            -. market_value
+        '''
         market_value = 0
         merged_data = holdings_data.merge(price_data, on=['SYM'])
         # print('Holdings & Price:')
