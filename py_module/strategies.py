@@ -53,6 +53,8 @@ class Strategy13F(object):
                 -. summary_data: list
                     {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
                     主要輸出的物件，list每個元素是某hedge fund 在13F報告時間點的市值、加碼量、減碼量、XIRR計算值。
+                -. summary_table: pd.DataFrame
+                    同summary_data的資料，但是更方便處理欄位關係。
                 -. null_sym_counter: int
                     計算holdings報告中的SYM，無法對應到price table的數量，作為後續調整參考使用。
                 -. data_date_list: list
@@ -85,7 +87,8 @@ class Strategy13F(object):
 
         '''0. 定義Output obj、統計用obj'''
         ### Final Output Form
-        summary_data = [] # 包含項目: {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
+        
+        summary_table = None
         null_sym_counter = 0
         data_date_list = []
 
@@ -97,9 +100,9 @@ class Strategy13F(object):
         # hedge_fund_list = ['Appaloosa', ]
         hedge_fund_list = list(hedge_fund_list)
         # hedge_fund_list = ['Robotti Robert']
-        # hedge_fund_list.remove('Citadel Advisors')
-        # hedge_fund_list.remove('Renaissance Technologies')
-        # hedge_fund_list.remove('Millennium Management')
+        hedge_fund_list.remove('Citadel Advisors')
+        hedge_fund_list.remove('Renaissance Technologies')
+        hedge_fund_list.remove('Millennium Management')
 
         print("總共包含{}個對沖基金資料".format(len(hedge_fund_list)))
         print('Hedge Funds:', )
@@ -118,6 +121,7 @@ class Strategy13F(object):
         '''2. 各hedge fund計算迴圈'''
         for idx, hedge_fund in enumerate(hedge_fund_list):
             '''2.1. 定義迴圈內參數'''
+            summary_data = [] # 包含項目: {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
             previous_holdings = None
             xirr_calculate_dict = {'date':[], 'amounts':[]}
             '''2.2. 調整fund_data'''
@@ -250,8 +254,14 @@ class Strategy13F(object):
             xirr = self.calculate_XIRR(xirr_calculate_dict, holdings_time, market_value)
             hedge_fund_data = {'date': holdings_time, '市值': market_value, '加碼': 0, '減碼': 0, 'XIRR':xirr}
             summary_data.append({'hedge_fund': hedge_fund, **hedge_fund_data})
+            hedge_summary = pd.DataFrame(summary_data)
+            hedge_summary = self.summary_statistical_calculates(hedge_summary)
+            if summary_table is None:
+                summary_table = hedge_summary
+            else:
+                summary_table = pd.concat([summary_table, hedge_summary], ignore_index=True)
         '''計算S&P500年化報酬率'''
-        SNP500_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
+        SNP500_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None, '淨投入額': None, '淨投入額占比': None, }
         data_date_str = tuple(data_date_list)
         query = self.create_query_snp500_price_data(self.us_stock_price_table, data_date_str)
         price_data = self.sql_execute(query)
@@ -271,9 +281,10 @@ class Strategy13F(object):
                 xirr = 0
             else:
                 xirr = self.calculate_XIRR(temp_xirr_calculate_dict, holdings_time, price)
-            SNP500_data = {'date': holdings_time, '市值': price, '加碼': 0, '減碼': 0, 'XIRR': xirr}
+            SNP500_data = {'date': holdings_time, '市值': price, '加碼': 0, '減碼': 0, 'XIRR': xirr, '淨投入額': 0, '淨投入額占比': 0, }
             summary_data.append({'hedge_fund': 'S&P500', **SNP500_data})
-        summary_table = pd.DataFrame(summary_data)
+        hedge_summary = pd.DataFrame(summary_data)
+        summary_table = pd.concat([summary_table, hedge_summary], ignore_index=True)
         if not os.path.exists(self.config_obj.backtest_summary):
             os.makedirs(self.config_obj.backtest_summary)
         path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_summary_table.csv')
@@ -282,8 +293,8 @@ class Strategy13F(object):
 
     def sql_execute(self, query):
 
-        conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
-        # conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        # conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
         cursor = conn.cursor(as_dict=True)
         cursor.execute(query)
         # data = [row for row in cursor]
@@ -518,6 +529,14 @@ class Strategy13F(object):
         # print(pd.DataFrame.from_dict(x))
         # print("XIRR:", result)
         return result
+
+    def summary_statistical_calculates(self, hedge_summary):
+        # 新增欄位 A 為 [加碼-減碼]
+        hedge_summary['淨投入額'] = hedge_summary['加碼'] - hedge_summary['減碼']
+
+        # 新增欄位 為 A/上一個row的市值
+        hedge_summary['淨投入額占比'] = hedge_summary['淨投入額'] / hedge_summary['市值'].shift(1)
+        return hedge_summary
 
     def create_query_snp500_price_data(self, price_table, date_str):
         '''
