@@ -361,7 +361,7 @@ class Strategy13F(object):
         else:
             result_date = sorted_dates[index+1]
         print('使用日期:', result_date)
-        return result_date        
+        return result_date    
     def create_query_holdings(self, fund, quarter, filing_number):
         '''
         依據fund和quarter篩選holdings資料表的query語句
@@ -489,23 +489,6 @@ class Strategy13F(object):
         merged_data = merged_data.astype({'SHARES_current': int, 'SHARES_previous': int})
         # 計算持股數量變化
         merged_data['shares_change'] = merged_data['SHARES_current'] - merged_data['SHARES_previous']
-        
-        # print(merged_data)
-        # 根據持股數量變化分類
-        # for index, row in merged_data.iterrows():
-        #     stock_id = row['SYM']
-        #     shares_change = row['shares_change']
-        #     Open_current = row['Open_current']
-
-        #     if shares_change > 0:
-        #         scaling_in[stock_id] = shares_change * Open_current
-        #     elif shares_change < 0:
-        #         scaling_out[stock_id] = abs(shares_change) * Open_current
-        #     else:
-        #         scaling_even[stock_id] = 0
-        
-        # return scaling_in, scaling_out, scaling_even
-
         return merged_data
 
     def get_all_price_date(self, price_table):
