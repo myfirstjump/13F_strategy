@@ -274,6 +274,8 @@ class Strategy13F(object):
             SNP500_data = {'date': holdings_time, '市值': price, '加碼': 0, '減碼': 0, 'XIRR': xirr}
             summary_data.append({'hedge_fund': 'S&P500', **SNP500_data})
         summary_table = pd.DataFrame(summary_data)
+        if not os.path.exists(self.config_obj.backtest_summary):
+            os.makedirs(self.config_obj.backtest_summary)
         path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_summary_table.csv')
         summary_table.to_csv(path, index=False)
         print("NULL SYM COUNTER:", null_sym_counter)
@@ -351,16 +353,16 @@ class Strategy13F(object):
         '''
         index = sorted_dates.searchsorted(holdings_time) # 找到日期在排序後的列表中的位置
         adjust_date  = sorted_dates[index] if index < len(sorted_dates) else sorted_dates[-1] # 如果日期正好在列表中，返回該日期；否則返回下一個最接近的日期
-        print('原始日期:', holdings_time)
-        print('index: ', index)
-        print('修正日期:', adjust_date)
-        print(sorted_dates[index-1], sorted_dates[index], sorted_dates[index+1], )
+        # print('原始日期:', holdings_time)
+        # print('index: ', index)
+        # print('修正日期:', adjust_date)
+        # print(sorted_dates[index-1], sorted_dates[index], sorted_dates[index+1], )
         '''依照實際情況，13F報告公布後隔天買入，故應使用index+1日(sorted_dates[index+1])；而若本來就沒有開市，則使用下個開市日(adjust_date)'''
         if holdings_time != adjust_date:
             result_date = adjust_date
         else:
             result_date = sorted_dates[index+1]
-        print('使用日期:', result_date)
+        # print('使用日期:', result_date)
         return result_date    
     def create_query_holdings(self, fund, quarter, filing_number):
         '''
