@@ -261,6 +261,7 @@ class Strategy13F(object):
             else:
                 summary_table = pd.concat([summary_table, hedge_summary], ignore_index=True)
         '''計算S&P500年化報酬率'''
+        summary_data = []
         SNP500_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None, '淨投入額': None, '淨投入額占比': None, }
         data_date_str = tuple(data_date_list)
         query = self.create_query_snp500_price_data(self.us_stock_price_table, data_date_str)
@@ -293,8 +294,8 @@ class Strategy13F(object):
 
     def sql_execute(self, query):
 
-        # conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
-        conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        # conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
         cursor = conn.cursor(as_dict=True)
         cursor.execute(query)
         # data = [row for row in cursor]
