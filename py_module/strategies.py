@@ -45,25 +45,29 @@ class Strategy13F(object):
         self.holdings_data_table = '[US_DB].[dbo].[HOLDINGS_DATA]'
         self.us_stock_info_table = '[US_DB].[dbo].[USStockInfo]'
         self.us_stock_price_table = '[US_DB].[dbo].[USStockPrice]'
+        self.tw_stock_price_table = '[STOCK_SKILL_DB].[dbo].[TW_STOCK_PRICE_Daily]'
+
+        self.us_sorted_dates = None
+        self.tws_sorted_dates = None
 
     def main_strategy_flow(self):
         '''
         美股13F投資策略回測程序
             0. 定義Output obj、統計用obj:
-                -. summary_data: list
-                    {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
-                    主要輸出的物件，list每個元素是某hedge fund 在13F報告時間點的市值、加碼量、減碼量、XIRR計算值。
                 -. summary_table: pd.DataFrame
                     同summary_data的資料，但是更方便處理欄位關係。
                 -. null_sym_counter: int
                     計算holdings報告中的SYM，無法對應到price table的數量，作為後續調整參考使用。
-                -. data_date_list: list
-                    列舉13F報告所有filed date，供後續抓取S&P500資料比對用。
+                -. base_13F_date_list: list
+                    列舉13F報告所有based date(截止日5/15, 8/14, 11/14, 2/14)，供後續抓取想比較的個股資料比對用。
             1. Read DB data
                 -. hedge fund data: fund_data
                 -. date list which have the prices: sorted_dates, max_date(最後一天，用來計算最後統計量)
             2. 各hedge fund計算迴圈
                 2.1. 定義迴圈內參數:
+                    -. summary_data: list of dict
+                        {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
+                        主要輸出的物件，list每個元素是某hedge fund 在13F報告時間點的市值、加碼量、減碼量、XIRR計算值。
                     -. previous_holdings: pd.DataFrame
                         用來儲存上一個13F報告的holdings，主要用來計算shares差異。
                     -. xirr_calculate_dict: {'date':[], 'amounts':[]}
@@ -82,7 +86,8 @@ class Strategy13F(object):
                     2.3.6 將本季度holdings data暫存，作為下一季度計算使用。(previous_holdings)
                     2.3.7 將統計數值回存至summary_data
                 2.4 計算當前持股市值。
-            3. 計算S&P500市值。
+            3. 加入其他想比較的個股。(S&P500、0050.TW)
+                由於TWS與US的開市時間不同，包裝一個函數能夠修改base_13F_date_list內元素，調整為有開市的時間，才找得到price。(詳細如individual_stock_summary())
         '''
 
         '''0. 定義Output obj、統計用obj'''
@@ -90,7 +95,7 @@ class Strategy13F(object):
         
         summary_table = None
         null_sym_counter = 0
-        data_date_list = []
+        base_13F_date_list = []
 
         '''1. Read DB data'''
         query = self.create_query_data_table(self.hedge_fund_portfolio_table)
@@ -112,11 +117,20 @@ class Strategy13F(object):
         query = self.get_all_price_date(self.us_stock_price_table) # 為了取得時間欄位
         all_date_list = self.sql_execute(query)
         all_date_list = pd.DataFrame(all_date_list)['date'].values
-        sorted_dates = sorted(all_date_list)
-        sorted_dates = pd.to_datetime(sorted_dates)
-        min_date = min(sorted_dates)
-        max_date = max(sorted_dates)
-        print('歷史價格從{}到{}'.format(min_date, max_date))
+        us_sorted_dates = sorted(all_date_list)
+        self.us_sorted_dates = pd.to_datetime(us_sorted_dates)
+        min_date = min(self.us_sorted_dates)
+        max_date = max(self.us_sorted_dates)
+        print('美股歷史價格從{}到{}'.format(min_date, max_date))
+
+        query = self.get_all_price_date(self.tw_stock_price_table) # 為了取得時間欄位
+        all_date_list = self.sql_execute(query)
+        all_date_list = pd.DataFrame(all_date_list)['date'].values
+        tws_sorted_dates = sorted(all_date_list)
+        self.tws_sorted_dates = pd.to_datetime(tws_sorted_dates)
+        tws_min_date = min(self.tws_sorted_dates)
+        tws_max_date = max(self.tws_sorted_dates)
+        print('TWS歷史價格從{}到{}'.format(tws_min_date, tws_max_date))
 
         '''2. 各hedge fund計算迴圈'''
         for idx, hedge_fund in enumerate(hedge_fund_list):
@@ -127,8 +141,12 @@ class Strategy13F(object):
             '''2.2. 調整fund_data'''
             each_fund_data = self.each_fund_data_adjust(fund_data, hedge_fund)
             quarters_list = each_fund_data['QUARTER'].values
-            date_list = each_fund_data['BASE_DATE'].values # 進場時間點使用13F公布時間
+            date_list = each_fund_data['DATE_FILED'].values # 進場時間點使用該基金13F公布時間
             filing_list = each_fund_data['FILING_ID'].values
+            if idx == 0:
+                base_13F_dates = each_fund_data['BASE_DATE'].values# 進場時間點使用13F公布截止時間
+                base_13F_date_list = pd.to_datetime(base_13F_dates, unit='ns')
+                base_13F_date_list = [str(date) for date in base_13F_date_list.tolist()]
 
             print(" === === === 第{}個對沖基金：{}，包含{}個季度資料。 === === === ".format(idx+1, hedge_fund, len(quarters_list)))
             # print(each_fund_data)
@@ -137,11 +155,9 @@ class Strategy13F(object):
                 '''2.3.1 定義回圈內參數'''
                 hedge_fund_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
                 '''2.3.2 調整holdings_time'''
-                holdings_time = self.adjust_holdings_time(holdings_time, sorted_dates) # 以13F報告公布期限為基準(5/15, 8/15, 11/15, 2/14)
+                holdings_time = self.adjust_holdings_time(holdings_time, self.us_sorted_dates) # 以13F報告公布期限為基準(5/15, 8/14, 11/14, 2/14)
                 print("     第{}個季度：{}，時間為{}".format(idx_q+1, quarter, holdings_time))
 
-                if holdings_time not in data_date_list:
-                    data_date_list.append(str(holdings_time))
                 '''2.3.3 讀取holdings data'''
                 query = self.create_query_holdings(hedge_fund, quarter, filing_number)
                 holdings_data = self.sql_execute(query)
@@ -245,8 +261,7 @@ class Strategy13F(object):
             
             '''2.4 計算當前持股市值。'''
             holdings_time = max_date # 可以自訂，此處以DB中最大有交易日期為主(2024-01-09)
-            if holdings_time not in data_date_list:
-                    data_date_list.append(str(holdings_time))
+            base_13F_date_list.append(str(holdings_time))
             query = self.create_query_get_open_price_by_join_holdings_n_price(sym_str, holdings_time, hedge_fund, quarter, filing_number)
             price_data = self.sql_execute(query)
             price_data = pd.DataFrame(price_data)
@@ -260,32 +275,14 @@ class Strategy13F(object):
                 summary_table = hedge_summary
             else:
                 summary_table = pd.concat([summary_table, hedge_summary], ignore_index=True)
-        '''計算S&P500年化報酬率'''
-        summary_data = []
-        SNP500_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None, '淨投入額': None, '淨投入額占比': None, }
-        data_date_str = tuple(data_date_list)
-        query = self.create_query_snp500_price_data(self.us_stock_price_table, data_date_str)
-        price_data = self.sql_execute(query)
-        price_data = pd.DataFrame(price_data)
-        xirr_calculate_dict = {'date':[], 'amounts':[]}
-        for index, row in price_data.iterrows():
-            holdings_time = row['date']
-            price = row['Open']
-            if index == 0:
-                xirr_calculate_dict['date'].append(holdings_time)
-                xirr_calculate_dict['amounts'].append(-price)
-            else:
-                xirr_calculate_dict['date'].append(holdings_time)
-                xirr_calculate_dict['amounts'].append(0)
-            temp_xirr_calculate_dict = copy.deepcopy(xirr_calculate_dict)
-            if idx_q == 0: # 第一季直接帶pyxirr公式計算結果為10%，沒有研究計算公式，故直接assign 0。
-                xirr = 0
-            else:
-                xirr = self.calculate_XIRR(temp_xirr_calculate_dict, holdings_time, price)
-            SNP500_data = {'date': holdings_time, '市值': price, '加碼': 0, '減碼': 0, 'XIRR': xirr, '淨投入額': 0, '淨投入額占比': 0, }
-            summary_data.append({'hedge_fund': 'S&P500', **SNP500_data})
-        hedge_summary = pd.DataFrame(summary_data)
-        summary_table = pd.concat([summary_table, hedge_summary], ignore_index=True)
+        '''3. 加入其他想比較的個股'''
+        individual_summary = self.individual_stock_summary(base_13F_date_list, 'us', '^GSPC')
+        summary_table = pd.concat([summary_table, individual_summary], ignore_index=True)
+        individual_summary = self.individual_stock_summary(base_13F_date_list, 'tw', '0050')
+        summary_table = pd.concat([summary_table, individual_summary], ignore_index=True)
+        individual_summary = self.individual_stock_summary(base_13F_date_list, 'tw', '0056')
+        summary_table = pd.concat([summary_table, individual_summary], ignore_index=True)
+
         if not os.path.exists(self.config_obj.backtest_summary):
             os.makedirs(self.config_obj.backtest_summary)
         path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_summary_table.csv')
@@ -294,8 +291,8 @@ class Strategy13F(object):
 
     def sql_execute(self, query):
 
-        conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
-        # conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        # conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
         cursor = conn.cursor(as_dict=True)
         cursor.execute(query)
         # data = [row for row in cursor]
@@ -489,9 +486,6 @@ class Strategy13F(object):
         return market_value
     
     def shares_difference_between_quarters(self, previous_holdings, holdings_data):
-        scaling_in = {}
-        scaling_out = {}
-        scaling_even = {}
 
         previous_holdings = previous_holdings[['SYM', 'SHARES']]
         holdings_data = holdings_data[['SYM', 'SHARES']]
@@ -538,13 +532,77 @@ class Strategy13F(object):
         # 新增欄位 為 A/上一個row的市值
         hedge_summary['淨投入額占比'] = hedge_summary['淨投入額'] / hedge_summary['市值'].shift(1)
         return hedge_summary
-
-    def create_query_snp500_price_data(self, price_table, date_str):
+   
+    def individual_stock_summary(self, original_date_list, market, sym_str):
         '''
-        S&P500在表單中的stock_id為^GSPC
+        function:
+            依據13F報告時間點，計算投資某個股的XIRR加入進行比較。
+            由於TWS與US的開市時間不同，包裝一個函數能夠修改original_date_list內元素，調整為有開市的時間，才找得到price。(詳細如individual_stock_summary())
+        input:
+            -. original_date_list: 包含13F各報告節點的截止時間，設定為買進個股的時間點。
+            -. market(string): 時間要調整到的目標市場 ex. 'tw', 'us'
+            -. sym_str: 該個股股票代碼
+        output:
+            individual_summary(pd.DataFrame): {'date': holdings_time, '市值': price, '加碼': 0, '減碼': 0, 'XIRR': xirr, '淨投入額': 0, '淨投入額占比': 0, }
+        '''
+        summary_data = []
+        individual_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None, '淨投入額': None, '淨投入額占比': None, }
+
+        if market == 'tw':
+            price_table = self.tw_stock_price_table
+        elif market == 'us':
+            price_table = self.us_stock_price_table
+        else:
+            price_table = self.us_stock_price_table
+
+        adjusted_date_list = self.adjust_date_str_for_market(original_date_list, market=market) # 台股與美股開市時間差異
+        data_date_str = tuple(adjusted_date_list)
+        query = self.create_query_stock_price_data(price_table, sym_str, data_date_str)
+        # print(query)
+        price_data = self.sql_execute(query)
+        price_data = pd.DataFrame(price_data)
+        xirr_calculate_dict = {'date':[], 'amounts':[]}
+        for index, row in price_data.iterrows():
+            holdings_time = row['date']
+            price = row['Open']
+            if index == 0:
+                xirr_calculate_dict['date'].append(holdings_time)
+                xirr_calculate_dict['amounts'].append(-price)
+            else:
+                xirr_calculate_dict['date'].append(holdings_time)
+                xirr_calculate_dict['amounts'].append(0)
+            temp_xirr_calculate_dict = copy.deepcopy(xirr_calculate_dict)
+            if index == 0: # 第一季直接帶pyxirr公式計算結果為10%，沒有研究計算公式，故直接assign 0。
+                xirr = 0
+            else:
+                xirr = self.calculate_XIRR(temp_xirr_calculate_dict, holdings_time, price)
+            individual_data = {'date': holdings_time, '市值': price, '加碼': 0, '減碼': 0, 'XIRR': xirr, '淨投入額': 0, '淨投入額占比': 0, }
+            summary_data.append({'hedge_fund': str(sym_str), **individual_data})
+        individual_summary = pd.DataFrame(summary_data)
+        return individual_summary
+    def adjust_date_str_for_market(self, base_13F_date_list, market):
+        adjusted_data_list = []
+        if market == 'tw':
+            soruce_date = self.tws_sorted_dates
+        elif market == 'us':
+            soruce_date = self.us_sorted_dates
+        else:
+            soruce_date = self.us_sorted_dates
+        
+        for date in base_13F_date_list:
+            index = soruce_date.searchsorted(date)
+            adjust_date  = soruce_date[index] if index < len(soruce_date) else soruce_date[-1] # 如果日期正好在列表中，返回該日期；否則返回下一個最接近的日期
+            print(adjust_date)
+            adjusted_data_list.append(str(adjust_date))
+            print(adjusted_data_list)
+        return adjusted_data_list
+
+    def create_query_stock_price_data(self, price_table, sym_str, date_str):
+        '''
+        依據price table查詢股價
         '''
         query = '''
         SELECT [date],[stock_id],[Open]
-        FROM {} WHERE stock_id = '^GSPC' AND [date] IN {} 
-        '''.format(price_table, date_str)
+        FROM {} WHERE stock_id = '{}' AND [date] IN {} 
+        '''.format(price_table, sym_str, date_str)
         return query
