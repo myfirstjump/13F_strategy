@@ -156,7 +156,7 @@ class Strategy13F(object):
                 hedge_fund_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
                 '''2.3.2 調整holdings_time'''
                 holdings_time = self.adjust_holdings_time(holdings_time, self.us_sorted_dates) # 以13F報告公布期限為基準(5/15, 8/14, 11/14, 2/14)
-                print("     第{}個季度：{}，時間為{}".format(idx_q+1, quarter, holdings_time))
+                # print("     第{}個季度：{}，時間為{}".format(idx_q+1, quarter, holdings_time))
 
                 '''2.3.3 讀取holdings data'''
                 query = self.create_query_holdings(hedge_fund, quarter, filing_number)
@@ -276,10 +276,13 @@ class Strategy13F(object):
             else:
                 summary_table = pd.concat([summary_table, hedge_summary], ignore_index=True)
         '''3. 加入其他想比較的個股'''
+        print(" === === === 加入個股比較 {} === === === ".format('S&P500'))
         individual_summary = self.individual_stock_summary(base_13F_date_list, 'us', '^GSPC')
         summary_table = pd.concat([summary_table, individual_summary], ignore_index=True)
+        print(" === === === 加入個股比較 {} === === === ".format('0050.TW'))
         individual_summary = self.individual_stock_summary(base_13F_date_list, 'tw', '0050')
         summary_table = pd.concat([summary_table, individual_summary], ignore_index=True)
+        print(" === === === 加入個股比較 {} === === === ".format('0056.TW'))
         individual_summary = self.individual_stock_summary(base_13F_date_list, 'tw', '0056')
         summary_table = pd.concat([summary_table, individual_summary], ignore_index=True)
 
@@ -592,9 +595,7 @@ class Strategy13F(object):
         for date in base_13F_date_list:
             index = soruce_date.searchsorted(date)
             adjust_date  = soruce_date[index] if index < len(soruce_date) else soruce_date[-1] # 如果日期正好在列表中，返回該日期；否則返回下一個最接近的日期
-            print(adjust_date)
             adjusted_data_list.append(str(adjust_date))
-            print(adjusted_data_list)
         return adjusted_data_list
 
     def create_query_stock_price_data(self, price_table, sym_str, date_str):
