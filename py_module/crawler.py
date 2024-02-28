@@ -12,18 +12,26 @@ class Crawler(object):
 
     def __init__(self):
         self.config_obj = Configuration()
+        self.hedge_fund_portfolio_table = '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]'
+        self.holdings_data_table = '[US_DB].[dbo].[HOLDINGS_DATA]'
+        self.us_stock_info_table = '[US_DB].[dbo].[USStockInfo]'
+        self.us_stock_price_table = '[US_DB].[dbo].[USStockPrice]'
+        self.tw_stock_price_table = '[STOCK_SKILL_DB].[dbo].[TW_STOCK_PRICE_Daily]'
         
     
     def web_crawler_13F(self):
-
+        '''
+        '''
 
         missing_counter = 0
         missing_info = []
-        # conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
-        conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
-        cursor = conn.cursor(as_dict=True)
-        # hedge_data = [()] #要塞進去資料，裡面是資料需要是tuple格式，外面用list包起來
-        # holdings_tuple = [()]
+        query = self.create_query_get_13F_filing_id_in_DB(self.hedge_fund_portfolio_table)
+        existed_filing_id = self.sql_execute(query)
+        existed_filing_id = pd.DataFrame(existed_filing_id)['FILING_ID'].values
+
+        query = self.create_query_get_13F_filing_id_in_DB(self.holdings_data_table)
+        holdings_existed_filing_id = self.sql_execute(query)
+        holdings_existed_filing_id = pd.DataFrame(holdings_existed_filing_id)['FILING_ID'].values
 
         urls = self.config_obj.hedge_fund_urls
         headers = {
@@ -76,33 +84,26 @@ class Crawler(object):
                     'TOP HOLDINGS': top_holdings,
                     'FORM TYPE': form_type,
                     'DATE FILED': date_filed,
-                    'FILING ID': filing_id,
+                    'FILING_ID': filing_id,
                     'HEDGE FUND': name,
                 })
             hedge_fund_data = pd.DataFrame(data)
             hedge_fund_data = hedge_fund_data.replace(np.nan, None) # 部分資料為pandas nan，需轉為python None
-            output_folder = self.config_obj.assets_hedge_fund_data
-            file_name = "hedge_fund_portfolio_filings_" + str(idx+1) + "_" + "-".join(soup.title.string.split()) + ".csv"
-            hedge_fund_data.to_csv(os.path.join(output_folder, file_name), index=False)
+            # output_folder = self.config_obj.assets_hedge_fund_data
+            # file_name = "hedge_fund_portfolio_filings_" + str(idx+1) + "_" + "-".join(soup.title.string.split()) + ".csv"
+            # hedge_fund_data.to_csv(os.path.join(output_folder, file_name), index=False)
 
-            # hedge_tuple = [tuple(row) for row in hedge_fund_data.values]
-            # print(hedge_tuple)
-            # cursor.executemany(
-            #     """INSERT INTO [US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]
-            #     (
-            #     [QUARTER]
-            #     ,[HOLDINGS]
-            #     ,[VALUE]
-            #     ,[TOP_HOLDINGS]
-            #     ,[FORM_TYPE]
-            #     ,[DATE_FILED]
-            #     ,[FILING_ID]
-            #     ,[HEDGE_FUND]
-            #     ) 
-            #     VALUES(%s,%d,%d,%s,%s,%s,%s,%s)"""
-            #     , hedge_tuple
-            # )
-            # conn.commit()
+            '''
+            確認DB中的資料，並比對差異。
+            '''
+            hedge_fund_data = self.remove_existed_records_by_filing_id(hedge_fund_data, existed_filing_id)
+            if len(hedge_fund_data) != 0:
+                self.insert_records_to_DB(table_name=self.hedge_fund_portfolio_table, data=hedge_fund_data)
+                print('{} hedge data have been stored.'.format(len(hedge_fund_data)))
+            else:
+                pass
+                # print('No extra hedge fund data should be stored.')
+
                 
             count = 0
             for (quarter, form_type, filing_id), quarterly_link in holdings_urls.items():
@@ -110,7 +111,7 @@ class Crawler(object):
                 count += 1
                 network_source = quarterly_link.split('-')[0].split('/')[-1]
                 network_source = "https://13f.info/data/13f/"  + network_source
-                print("基金", idx+1, " 資料", quarter, form_type," crawling...",)
+                # print("基金", idx+1, " 資料", quarter, form_type," crawling...",)
                 
                 # 添加相应的请求头信息
                 headers = {
@@ -142,41 +143,107 @@ class Crawler(object):
                 holdings_data['FORM TYPE'] = form_type
                 holdings_data['FILING_ID'] = filing_id
 
-                output_folder = os.path.join(self.config_obj.assets_holdings_data, name)
-                if not os.path.exists(output_folder):
-                    os.makedirs(output_folder)
-                file_name = "holdings_data_" + "-".join(str(quarter).split()) + "_" + form_type + "_" + str(count) + ".csv"
-                holdings_data.to_csv(os.path.join(output_folder, file_name), index=False)
+                # output_folder = os.path.join(self.config_obj.assets_holdings_data, name)
+                # if not os.path.exists(output_folder):
+                #     os.makedirs(output_folder)
+                # file_name = "holdings_data_" + "-".join(str(quarter).split()) + "_" + form_type + "_" + str(count) + ".csv"
+                # holdings_data.to_csv(os.path.join(output_folder, file_name), index=False)
 
-                # holdings_tuple = [tuple(row) for row in holdings_data.values]
+                holdings_data = self.remove_existed_records_by_filing_id(holdings_data, holdings_existed_filing_id)
+                if len(holdings_data) != 0:
+                    self.insert_records_to_DB(table_name=self.holdings_data_table, data=holdings_data)
+                    print('{} holdings data have been stored.'.format(len(holdings_data)))
+                else:
+                    pass
+                    # print('No extra hedge fund holdings data should be stored.')
 
-                # cursor.executemany(
-                #     """INSERT INTO [US_DB].[dbo].[HOLDINGS_DATA]
-                #     (
-                #     [SYM]
-                #     ,[ISSUER_NAME]
-                #     ,[CL]
-                #     ,[CUSIP]
-                #     ,[VALUE]
-                #     ,[Percentile]
-                #     ,[SHARES]
-                #     ,[PRINCIPAL]
-                #     ,[OPTION_TYPE]
-                #     ,[HEDGE_FUND]
-                #     ,[QUARTER]
-                #     ,[FORM_TYPE]
-                #     ,[FILING_ID]
-                #     ) 
-                #     VALUES(%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s)"""
-                #     , holdings_tuple
-                # )
-                # conn.commit()
             time.sleep(10)
         print("Missing holdings data number:", missing_counter)
         print("Missing holdings info:", missing_info)
+    
+    def sql_execute(self, query):
 
+        conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        # conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        cursor = conn.cursor(as_dict=True)
+        cursor.execute(query)
+        # data = [row for row in cursor]
+        data = []
+        for row in cursor:
+            data.append(row)
+        cursor.close()
+        conn.close()
+        return data
+    
+    def create_query_get_13F_filing_id_in_DB(self, table_name):
+            
+        query = '''SELECT DISTINCT [FILING_ID] 
+        FROM {}
+        '''.format(table_name)
+        return query
 
+    def insert_records_to_DB(self, table_name, data):
 
+        # conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        cursor = conn.cursor(as_dict=True)
 
+        data_tuple = [tuple(row) for row in data.values]
+        # print(hedge_tuple)
+        if table_name == '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]':
+
+            cursor.executemany(
+                """INSERT INTO [US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]
+                (
+                [QUARTER]
+                ,[HOLDINGS]
+                ,[VALUE]
+                ,[TOP_HOLDINGS]
+                ,[FORM_TYPE]
+                ,[DATE_FILED]
+                ,[FILING_ID]
+                ,[HEDGE_FUND]
+                ) 
+                VALUES (%s,%d,%d,%s,%s,%s,%s,%s)"""
+                , data_tuple
+            )
+            conn.commit()
+        
+        elif table_name == '[US_DB].[dbo].[HOLDINGS_DATA]':
+            
+            cursor.executemany(
+                    """INSERT INTO [US_DB].[dbo].[HOLDINGS_DATA]
+                    (
+                    [SYM]
+                    ,[ISSUER_NAME]
+                    ,[CL]
+                    ,[CUSIP]
+                    ,[VALUE]
+                    ,[Percentile]
+                    ,[SHARES]
+                    ,[PRINCIPAL]
+                    ,[OPTION_TYPE]
+                    ,[HEDGE_FUND]
+                    ,[QUARTER]
+                    ,[FORM_TYPE]
+                    ,[FILING_ID]
+                    ) 
+                    VALUES(%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s)"""
+                    , data_tuple
+            )
+            conn.commit()
+        
+        cursor.close()
+        conn.close()
+
+    def remove_existed_records_by_filing_id(self, hedge_fund_data, existed_filing_id):
+
+        # existed_filing_id = np.append(existed_filing_id, '000143499724000001')
+        remove_idx = []
+        for index, row in hedge_fund_data.iterrows():
+            if row['FILING_ID'] in existed_filing_id:
+                remove_idx.append(index)
+        adjusted_hedge_fund_data = hedge_fund_data.drop(remove_idx, axis=0)
+        return adjusted_hedge_fund_data
 
         
