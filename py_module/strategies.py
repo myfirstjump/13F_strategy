@@ -56,6 +56,8 @@ class Strategy13F(object):
             0. 定義Output obj、統計用obj:
                 -. summary_table: pd.DataFrame
                     同summary_data的資料，但是更方便處理欄位關係。
+                -. corr_analysis_data: list of dict
+                    用來儲存需要進行相關性分析資料 {'stock_id': None, 'spread_ratio': None, 'scaling': None}
                 -. null_sym_counter: int
                     計算holdings報告中的SYM，無法對應到price table的數量，作為後續調整參考使用。
                 -. base_13F_date_list: list
@@ -82,6 +84,7 @@ class Strategy13F(object):
                         由於13F報告日期不一定有開市，故調整至下一個開市日期。(詳細如adjust_holdings_time())
                     2.3.3 讀取holdings data，並進行特殊處理(詳細如holdings_data_adjust())
                     2.3.4 IF-ELSE語句分別處理第一季/其他季
+                        
                     2.3.5 以xirr_calculate_dict計算XIRR值
                     2.3.6 將本季度holdings data暫存，作為下一季度計算使用。(previous_holdings)
                     2.3.7 將統計數值回存至summary_data
@@ -104,7 +107,7 @@ class Strategy13F(object):
         hedge_fund_list = fund_data['HEDGE_FUND'].unique()
         # hedge_fund_list = ['Appaloosa', ]
         hedge_fund_list = list(hedge_fund_list)
-        # hedge_fund_list = ['Robotti Robert']
+        # hedge_fund_list = ['Fine Capital Partners']
         hedge_fund_list.remove('Citadel Advisors')
         hedge_fund_list.remove('Renaissance Technologies')
         hedge_fund_list.remove('Millennium Management')
@@ -136,8 +139,11 @@ class Strategy13F(object):
         for idx, hedge_fund in enumerate(hedge_fund_list):
             '''2.1. 定義迴圈內參數'''
             summary_data = [] # 包含項目: {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
+            corr_analysis_table = None #TBD
             previous_holdings = None
             xirr_calculate_dict = {'date':[], 'amounts':[]}
+            previous_holdings_time = None
+            previous_sym_str = tuple() #TBD
             '''2.2. 調整fund_data'''
             each_fund_data = self.each_fund_data_adjust(fund_data, hedge_fund)
             quarters_list = each_fund_data['QUARTER'].values
@@ -148,12 +154,13 @@ class Strategy13F(object):
                 base_13F_date_list = pd.to_datetime(base_13F_dates, unit='ns')
                 base_13F_date_list = [str(date) for date in base_13F_date_list.tolist()]
 
-            print(" === === === 第{}個對沖基金：{}，包含{}個季度資料。 === === === ".format(idx+1, hedge_fund, len(quarters_list)))
+            # print(" === === === 第{}個對沖基金：{}，包含{}個季度資料。 === === === ".format(idx+1, hedge_fund, len(quarters_list)))
             # print(each_fund_data)
             '''2.3. 各Quarter計算迴圈'''
             for idx_q, (quarter, holdings_time, filing_number) in enumerate(zip(quarters_list, date_list, filing_list)):
                 '''2.3.1 定義回圈內參數'''
                 hedge_fund_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
+                
                 '''2.3.2 調整holdings_time'''
                 holdings_time = self.adjust_holdings_time(holdings_time, self.us_sorted_dates) # 以13F報告公布期限為基準(5/15, 8/14, 11/14, 2/14)
                 # print("     第{}個季度：{}，時間為{}".format(idx_q+1, quarter, holdings_time))
@@ -185,7 +192,7 @@ class Strategy13F(object):
                             2.3.4.2.4 計算市值/加碼/減碼(calculate_scaling_in_and_out())
                 '''
                 if idx_q > 0: #扣除第一季，每季要計算的內容
-                    merged_data = self.shares_difference_between_quarters(previous_holdings, holdings_data)
+                    shares_data = self.shares_difference_between_quarters(previous_holdings, holdings_data)
                     '''
                           SYM  SHARES_current  SHARES_previous  shares_change
                     0     AGN         2937121          4261406       -1324285
@@ -196,8 +203,8 @@ class Strategy13F(object):
                     5     PNC         1950973          1950973              0
                     6     BAC         8782641                0        8782641
                     '''
-                    null_sym_counter = null_sym_counter + merged_data['SYM'].isna().sum()
-                    sym_str = merged_data['SYM'].dropna().values
+                    null_sym_counter = null_sym_counter + shares_data['SYM'].isna().sum()
+                    sym_str = shares_data['SYM'].dropna().values
                     
                     # print("SYMs:", sym_str)
                     if len(sym_str) == 1:
@@ -219,7 +226,7 @@ class Strategy13F(object):
                         2   2016-11-14    AY   16.98
                         3   2016-11-14   BAC   19.41
                     '''
-                    market_value, scaling_in, scaling_out, scaling_even = self.calculate_scaling_in_and_out(merged_data, price_data)
+                    market_value, scaling_in, scaling_out, scaling_even = self.calculate_scaling_in_and_out(shares_data, price_data)
                     # print("Shares Increased:", scaling_in)
                     # print("Shares Decreased:", scaling_out)
                     # print("Shares Unchanged:", scaling_even)
@@ -228,17 +235,32 @@ class Strategy13F(object):
                     
                     xirr_calculate_dict['date'].append(holdings_time)
                     xirr_calculate_dict['amounts'].append(-(scaling_in_sum - scaling_out_sum))
+
+                    ### correlation analysis TBD
+                    current_sym_str = holdings_data['SYM'].dropna().values 
+                    current_sym_str = tuple(current_sym_str)
+                    # print("SYMs:", current_sym_str)            
+                    # print("previous_sym_str:", previous_sym_str)
+                    sym_str_combined = set(previous_sym_str) | set(current_sym_str)
+                    sym_str_combined = tuple(sym_str_combined)
+                    price_ratio_data = self.get_price_change_ratio(previous_holdings_time, holdings_time, sym_str_combined)
+                    # print(price_ratio_data)
+                    corr_analysis_data = self.arrange_corr_analysis_data(price_ratio_data, shares_data)
+                    if corr_analysis_table is None:
+                        corr_analysis_table = corr_analysis_data
+                    else:
+                        corr_analysis_table = pd.concat([corr_analysis_table, corr_analysis_data], ignore_index=True)
                     
                 else: #第一季要計算的內容
                     null_sym_counter = null_sym_counter + holdings_data['SYM'].isna().sum()
-                    sym_str = holdings_data['SYM'].dropna().values # TBD: 確認Drop數量
-                    if len(sym_str) == 1:
-                        sym_str = str(sym_str)
-                        sym_str = sym_str.replace('[', '(')
-                        sym_str = sym_str.replace(']', ')')
+                    current_sym_str = holdings_data['SYM'].dropna().values # TBD: 確認Drop數量
+                    if len(current_sym_str) == 1:
+                        current_sym_str = str(current_sym_str)
+                        current_sym_str = current_sym_str.replace('[', '(')
+                        current_sym_str = current_sym_str.replace(']', ')')
                     else:
-                        sym_str = tuple(sym_str)
-                    query = self.create_query_get_open_price_by_date_n_sym(sym_str, holdings_time)
+                        current_sym_str = tuple(current_sym_str)
+                    query = self.create_query_get_open_price_by_date_n_sym(current_sym_str, holdings_time)
                     price_data = self.sql_execute(query)
                     price_data = pd.DataFrame(price_data)
                     market_value = self.market_value_by_join_holdings_and_price(holdings_data, price_data)
@@ -253,12 +275,13 @@ class Strategy13F(object):
                     xirr = 0
                 else:
                     xirr = self.calculate_XIRR(temp_xirr_calculate_dict, holdings_time, market_value)
-                '''2.3.6 將本季度holdings data暫存，作為下一季度計算使用。'''
+                '''2.3.6 將本季度holdings data/price_data暫存，作為下一季度計算使用。'''
                 previous_holdings = holdings_data.copy()
+                previous_holdings_time = holdings_time
+                previous_sym_str = current_sym_str # correlation analysis使用
                 '''2.3.7 將統計數值回存至summary_data'''
                 hedge_fund_data = {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
                 summary_data.append({'hedge_fund': hedge_fund, **hedge_fund_data})
-            
             '''2.4 計算當前持股市值。'''
             holdings_time = max_date # 可以自訂，此處以DB中最大有交易日期為主(2024-01-09)
             base_13F_date_list.append(str(holdings_time))
@@ -275,6 +298,12 @@ class Strategy13F(object):
                 summary_table = hedge_summary
             else:
                 summary_table = pd.concat([summary_table, hedge_summary], ignore_index=True)
+            
+            '''4. 相關性分析 TBD'''
+            # print(" === === === 第{}個對沖基金：{}，包含{}個季度資料。 === === === ".format(idx+1, hedge_fund, len(quarters_list)))
+            correlation = corr_analysis_table['price_change_ratio'].corr(corr_analysis_table['scaling'])
+            # print("Correlation between price_change_ratio and scaling:", correlation)
+            print("{} ---> {}".format(round(correlation, 2), hedge_fund))
         '''3. 加入其他想比較的個股'''
         print(" === === === 加入個股比較 {} === === === ".format('S&P500'))
         individual_summary = self.individual_stock_summary(base_13F_date_list, 'us', '^GSPC')
@@ -292,10 +321,12 @@ class Strategy13F(object):
         summary_table.to_csv(path, index=False)
         print("NULL SYM COUNTER:", null_sym_counter)
 
+
+
     def sql_execute(self, query):
 
-        # conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
-        conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        # conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
         cursor = conn.cursor(as_dict=True)
         cursor.execute(query)
         # data = [row for row in cursor]
@@ -311,6 +342,14 @@ class Strategy13F(object):
         其中依照[DATE_FILED]做升續排列。
         '''
         query = '''SELECT * FROM {} WITH(NOLOCK) ORDER BY [DATE_FILED] ASC'''.format(data_table)
+        return query
+
+    def get_all_price_date(self, price_table):
+
+        query = '''
+        SELECT DISTINCT [date]
+        FROM {}
+        '''.format(price_table)
         return query
 
     def each_fund_data_adjust(self, fund_data, hedge_fund):
@@ -406,7 +445,20 @@ class Strategy13F(object):
         df = df.groupby('SYM', as_index=False).agg({'VALUE':'sum', 'Percentile':'sum', 'SHARES':'sum'})
 
         return df
+    
+    def shares_difference_between_quarters(self, previous_holdings, holdings_data):
 
+        previous_holdings = previous_holdings[['SYM', 'SHARES']]
+        holdings_data = holdings_data[['SYM', 'SHARES']]
+
+        # 將兩個資料表合併
+        merged_data = holdings_data.merge(previous_holdings, on=['SYM'], how='outer', suffixes=('_current', '_previous'))
+        merged_data['SHARES_current'].fillna(0, inplace=True)
+        merged_data['SHARES_previous'].fillna(0, inplace=True)
+        merged_data = merged_data.astype({'SHARES_current': int, 'SHARES_previous': int})
+        # 計算持股數量變化
+        merged_data['shares_change'] = merged_data['SHARES_current'] - merged_data['SHARES_previous']
+        return merged_data
     def create_query_get_open_price_by_join_holdings_n_price(self, SYMs_tuple, date, fund, quarter, filing_number):
         '''
         依據holdings去查表price，透過stock_id(即holdings表中的SYM) join兩張表格，並加入SHARES資訊至price表。
@@ -443,6 +495,7 @@ class Strategy13F(object):
         return query
 
     def calculate_scaling_in_and_out(self, merged_data, price_data):
+        ''''''
         scaling_in = {}
         scaling_out = {}
         scaling_even = {}
@@ -464,9 +517,57 @@ class Strategy13F(object):
             else:
                 scaling_even[stock_id] = 0
             market_value = market_value + SHARES_current * Open_current
-
+        # print("scaling_in")
+        # print(scaling_in)
+        # print("scaling_out")
+        # print(scaling_out)
+        # print("scaling_even")
+        # print(scaling_even)
         return market_value, scaling_in, scaling_out, scaling_even
+    def get_price_change_ratio(self, previous_holdings_time, holdings_time, sym_str_combined):
+        '''
+        計算本季度與前一季度持股漲跌幅度
+        '''
+        if len(sym_str_combined) == 1:
+            sym_str_combined = str(sym_str_combined)
+            sym_str_combined = sym_str_combined.replace(',', '')
+        query = self.create_query_get_open_price_by_date_n_sym(sym_str_combined, previous_holdings_time)
+        previous_price_data = self.sql_execute(query)
+        previous_price_data = pd.DataFrame(previous_price_data)
+        query = self.create_query_get_open_price_by_date_n_sym(sym_str_combined, holdings_time)
+        price_data = self.sql_execute(query)
+        price_data = pd.DataFrame(price_data)
 
+        # 將兩個資料表合併
+        merged_data = price_data.merge(previous_price_data, on=['SYM'], how='outer', suffixes=('_current', '_previous'))
+
+        # merged_data['SHARES_current'].fillna(0, inplace=True)
+        # merged_data['SHARES_previous'].fillna(0, inplace=True)
+        # merged_data = merged_data.astype({'SHARES_current': int, 'SHARES_previous': int})
+        # 計算price change ratio
+        merged_data['price_change_ratio'] = (merged_data['Open_current'] - merged_data['Open_previous']) / merged_data['Open_previous']
+        
+        return merged_data
+    def arrange_corr_analysis_data(self, price_ratio_data, shares_data):
+        '''
+        function:
+
+        input:
+            -. price_ratio_data
+                date_current    SYM  Open_current date_previous  Open_previous  price_change_ratio
+            -. shares_data
+                SYM  SHARES_current  SHARES_previous  shares_change
+        '''
+        merged_data = price_ratio_data.merge(shares_data, on=['SYM'], how='outer')
+        merged_data['scaling'] = merged_data['shares_change'] * merged_data['Open_current']
+        merged_data = merged_data.dropna() #TBD: NA部分為SYM在price表中查不到資料者。
+        '''
+        merged data columns:
+            date_current    SYM  Open_current date_previous  Open_previous  price_change_ratio  SHARES_current  SHARES_previous  shares_change       scaling
+        '''
+        # merged_data = merged_data[['SYM', 'price_change_ratio', 'scaling']]
+        merged_data = merged_data[['price_change_ratio', 'scaling']]
+        return merged_data
     def market_value_by_join_holdings_and_price(self, holdings_data, price_data):
         '''
         function:
@@ -487,28 +588,6 @@ class Strategy13F(object):
             Open_current = row['Open']
             market_value = market_value + shares * Open_current
         return market_value
-    
-    def shares_difference_between_quarters(self, previous_holdings, holdings_data):
-
-        previous_holdings = previous_holdings[['SYM', 'SHARES']]
-        holdings_data = holdings_data[['SYM', 'SHARES']]
-
-        # 將兩個資料表合併
-        merged_data = holdings_data.merge(previous_holdings, on=['SYM'], how='outer', suffixes=('_current', '_previous'))
-        merged_data['SHARES_current'].fillna(0, inplace=True)
-        merged_data['SHARES_previous'].fillna(0, inplace=True)
-        merged_data = merged_data.astype({'SHARES_current': int, 'SHARES_previous': int})
-        # 計算持股數量變化
-        merged_data['shares_change'] = merged_data['SHARES_current'] - merged_data['SHARES_previous']
-        return merged_data
-
-    def get_all_price_date(self, price_table):
-
-        query = '''
-        SELECT DISTINCT [date]
-        FROM {}
-        '''.format(price_table)
-        return query
     
     def calculate_XIRR(self, data, holdings_time, market_value):
         '''
@@ -540,7 +619,7 @@ class Strategy13F(object):
         '''
         function:
             依據13F報告時間點，計算投資某個股的XIRR加入進行比較。
-            由於TWS與US的開市時間不同，包裝一個函數能夠修改original_date_list內元素，調整為有開市的時間，才找得到price。(詳細如individual_stock_summary())
+            由於TWS與US的開市時間不同，包裝一個函數能夠修改original_date_list內元素，調整為有開市的時間，才找得到price。
         input:
             -. original_date_list: 包含13F各報告節點的截止時間，設定為買進個股的時間點。
             -. market(string): 時間要調整到的目標市場 ex. 'tw', 'us'
