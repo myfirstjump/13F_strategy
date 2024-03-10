@@ -4,6 +4,10 @@ class Configuration(object):
 
     def __init__(self):
 
+
+        '''
+        Crawler
+        '''
         working_dir = os.getcwd() #返還main.py檔案資料夾
         self.assets_hedge_fund_data = os.path.join(working_dir, "assets\\hedge_fund_data") if os.name == 'nt' else os.path.join(working_dir, "assets/hedge_fund_data")
         self.assets_holdings_data = os.path.join(working_dir, "assets\\holdings_data") if os.name == 'nt' else os.path.join(working_dir, "assets/holdings_data")
@@ -42,9 +46,52 @@ class Configuration(object):
             'Altarock Partners':'https://13f.info/manager/0001631014-altarock-partners-llc', 
             'Brave Warrior Advisors':'https://13f.info/manager/0001553733-brave-warrior-advisors-llc',
         }
-	
+
+        ### 
         self.dash_port = '8050'
 
+        '''
+        Customized Hedge Components
+        '''
+        self.customize_enter_date = '2019-02-15'
+        self.target_hedge_funds = [
+            'Scion Asset Management',
+            'Peconic Partners',
+            'Altarock Partners',
+            'Elm Ridge Management',
+            'Goldentree Asset Management',
+            'Point72 Asset Management',
+            'SIR Capital Management',
+            'Duquesne Family Office',
+            'Lodge Hill Capital',
+            'Brave Warrior Advisors',
+            'Appaloosa',
+            'Yacktman Asset Management',
+            'Robotti Robert',
+            'Horizon Kinetics Asset Management',
+            'Stilwell Value',
+            'Fine Capital Partners',
+            'Dalal Street Holdings',
+            'Berkshire Hathaway',
+        ]
+
+        self.industry_top_selection = 3
+        self.company_top_selection = 3
+        self.enter_cost = 1000000
+
+        self.gics_dict = {
+            '10': 'Energy',
+            '15': 'Materials',
+            '20': 'Industrials',
+            '25': 'Consumer Discretionary',
+            '30': 'Consumer Staples',
+            '35': 'Health Care',
+            '40': 'Financials',
+            '45': 'Information Technology',
+            '50': 'Communication Services',
+            '55': 'Utilities',
+            '60': 'Real Estate',
+        }
 	
 
 	
