@@ -18,7 +18,7 @@ class StockStrategies(object):
 
     def strategy_13F_investing(self):
         # self.strategy_obj.back_test_flow()
-        self.strategy_obj.customize_hedge_components()
+        self.strategy_obj.customize_fund_components()
     
     def dash_server(self, data):
         self.dash_app = DashBuilder(data)

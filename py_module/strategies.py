@@ -116,7 +116,7 @@ class Strategy13F(object):
         hedge_fund_list = fund_data['HEDGE_FUND'].unique()
         # hedge_fund_list = ['Appaloosa', ]
         hedge_fund_list = list(hedge_fund_list)
-        # hedge_fund_list = ['Fine Capital Partners']
+        # hedge_fund_list = ['Scion Asset Management']
         # hedge_fund_list.remove('Citadel Advisors')
         # hedge_fund_list.remove('Renaissance Technologies')
         # hedge_fund_list.remove('Millennium Management')
@@ -330,7 +330,7 @@ class Strategy13F(object):
         summary_table.to_csv(path, index=False)
         print("NULL SYM COUNTER:", null_sym_counter)
 
-    def customize_hedge_components(self):
+    def customize_fund_components(self):
         '''
         function:
             製作自訂義基金。
@@ -348,24 +348,37 @@ class Strategy13F(object):
         '''
         enter_date = self.config_obj.customize_enter_date #2019 2/15 開始進場
         hedge_funds = self.config_obj.target_hedge_funds #XIRR表現在波克夏以上的基金
-
+        
         industry_top_selection = self.config_obj.industry_top_selection #各基金的前(三)市值產業
         company_top_selection = self.config_obj.company_top_selection #前(三)市值產業 的前(三)市值股票
-        enter_cost = self.config_obj.enter_cost / len(hedge_funds)
+        enter_cost = self.config_obj.enter_cost
 
         '''定義Output obj、統計用obj'''
         ### Final Output Form
         
         customized_table = None
-        null_sym_counter = 0
-        base_13F_date_list = []
+        # null_sym_counter = 0
+        # base_13F_date_list = []
 
         '''Read DB data'''
         query = self.create_query_data_table(self.hedge_fund_portfolio_table)
         fund_data = self.sql_execute(query)
         fund_data = pd.DataFrame(fund_data)
+        fund_data = fund_data[fund_data['HEDGE_FUND'].isin(hedge_funds)]
+        count_hedge_funds = fund_data.groupby('QUARTER')['HEDGE_FUND'].nunique().reset_index()
+        '''
+            QUARTER  HEDGE_FUND
+        0   Q1 2014          12
+        1   Q1 2015          15
+        2   Q1 2016          17
+        3   Q1 2017          16
+        4   Q1 2018          16
+        5   Q1 2019          18
+        '''
+        
+        
+        # hedge_funds = ['Dalal Street Holdings']
         hedge_fund_list = hedge_funds
-        # hedge_fund_list = ['Yacktman Asset Management']
 
         print("總共包含{}個對沖基金資料".format(len(hedge_fund_list)))
         print('Hedge Funds:', )
@@ -384,29 +397,30 @@ class Strategy13F(object):
         '''各hedge fund計算迴圈'''
         for idx, hedge_fund in enumerate(hedge_fund_list):
             '''定義迴圈內參數'''
-            summary_data = [] # 包含項目: {'SYM': , 'SHARES': 依照資金/比例分配後的SHARES, }
-            corr_analysis_table = None #TBD
-            previous_holdings = None
-            xirr_calculate_dict = {'date':[], 'amounts':[]}
-            previous_holdings_time = None
-            previous_sym_str = tuple() #TBD
+            # summary_data = [] # 包含項目: {'SYM': , 'SHARES': 依照資金/比例分配後的SHARES, }
+            # corr_analysis_table = None 
+            # previous_holdings = None
+            # xirr_calculate_dict = {'date':[], 'amounts':[]}
+            # previous_holdings_time = None
+            # previous_sym_str = tuple() #TBD
+            
             '''調整fund_data'''
             each_fund_data = self.each_fund_data_adjust(fund_data, hedge_fund)
             quarters_list = each_fund_data['QUARTER'].values
-            date_list = each_fund_data['DATE_FILED'].values # 進場時間點使用該基金13F公布時間
+            date_list = each_fund_data['BASE_DATE'].values #date_list = each_fund_data['DATE_FILED'].values # 進場時間點使用該基金13F公布時間
             filing_list = each_fund_data['FILING_ID'].values
-            if idx == 0:
-                base_13F_dates = each_fund_data['BASE_DATE'].values# 進場時間點使用13F公布截止時間
-                base_13F_date_list = pd.to_datetime(base_13F_dates, unit='ns')
-                base_13F_date_list = [str(date) for date in base_13F_date_list.tolist()]
+            # if idx == 0:
+            #     base_13F_dates = each_fund_data['BASE_DATE'].values# 進場時間點使用13F公布截止時間
+            #     base_13F_date_list = pd.to_datetime(base_13F_dates, unit='ns')
+            #     base_13F_date_list = [str(date) for date in base_13F_date_list.tolist()]
 
             print(" === === === 第{}個對沖基金：{}，包含{}個季度資料。 === === === ".format(idx+1, hedge_fund, len(quarters_list)))
             # print(each_fund_data)
             '''各Quarter計算迴圈'''
             for idx_q, (quarter, holdings_time, filing_number) in enumerate(zip(quarters_list, date_list, filing_list)):
                 '''定義回圈內參數'''
-                hedge_fund_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
-                
+                # hedge_fund_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
+                customized_holdings = None
                 '''調整holdings_time'''
                 holdings_time = self.adjust_holdings_time(holdings_time, self.us_sorted_dates) # 以13F報告公布期限為基準(5/15, 8/14, 11/14, 2/14)
                 print("     第{}個季度：{}，時間為{}".format(idx_q+1, quarter, holdings_time))
@@ -421,16 +435,15 @@ class Strategy13F(object):
                 else:
                     top_gics = self.get_top_gics_from_holdings(holdings_data, industry_top_selection)
                     customized_holdings = self.select_company_from_holdings(holdings_data, top_gics, company_top_selection)
-                    self.calculate_customized_shares(customized_holdings, enter_cost)
-                
+
+                    hedge_num = count_hedge_funds[count_hedge_funds['QUARTER'] == quarter]['HEDGE_FUND'].values[0]
+                    print('該季Hedge Fund數:', hedge_num)
+                    customized_holdings = self.calculate_customized_shares(customized_holdings, enter_cost, hedge_num)
+
                 if customized_table is None:
                     customized_table = customized_holdings
                 else:
                     customized_table = pd.concat([customized_table, customized_holdings], ignore_index=True)
-            
-                    
-            
-
         
         path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_customized_table_by_hedge.csv')
         customized_table.to_csv(path, index=False)
@@ -839,7 +852,16 @@ class Strategy13F(object):
         return query
 
     def get_top_gics_from_holdings(self, holdings_data, industry_top_selection):
-
+        '''
+        function:
+            依據GICs去計算Hedge持股的產業分布，列舉出前(industry_top_selection)市值高的產業。
+        input:
+            -. holdings_data:
+            -. industry_top_selection: int
+        output:
+            -. top_gics: list
+                前(industry_top_selection)產業list，如['20' '25' '60']。
+        '''
         if len(holdings_data) == 0:
             return None
         # top_gics = []
@@ -847,26 +869,35 @@ class Strategy13F(object):
         df = holdings_data.groupby('GICS', as_index=False).agg({'market_price':'sum'})
         df = df.sort_values('market_price', ascending=False)
         top_gics = df['GICS'][:industry_top_selection].values
-        # print(top_gics)
         return top_gics
     
     def select_company_from_holdings(self, holdings_data, top_gics, company_top_selection):
-        
+        '''
+        function:
+            依據top GICs，去篩選holdings_data。列篩選前(company_top_selection)市值高的公司，輸出table。
+        input:
+            -. holdings_data: df
+            -. top_gics: list
+            -. company_top_selection: int
+        output:
+            customized_holdings: df
+        '''
         customized_holdings = holdings_data[holdings_data['GICS'].isin(top_gics)]
         customized_holdings = customized_holdings.sort_values(by=['GICS', 'market_price'], ascending=False)
         customized_holdings = customized_holdings.groupby('GICS').apply(lambda x: x.nlargest(company_top_selection, 'market_price')).reset_index(drop=True)
         return customized_holdings
     
-    def calculate_customized_shares(self, customized_holdings, enter_cost):
+    def calculate_customized_shares(self, customized_holdings, enter_cost, hedge_num):
         
-
+        # print(customized_holdings)
         # 計算每個持股的投資金額
-        customized_holdings['investment_per_share'] = enter_cost / len(customized_holdings)
+        customized_holdings['investment_amount'] = enter_cost / hedge_num / len(customized_holdings)
 
         # 計算可以投入的股票數量（向下取整）
-        customized_holdings['shares_to_buy'] = customized_holdings['investment_per_share'] / customized_holdings['price']
+        customized_holdings['shares_to_buy'] = customized_holdings['investment_amount'] / customized_holdings['price']
         customized_holdings['shares_to_buy'] = customized_holdings['shares_to_buy'].astype(int)
 
+        # print(customized_holdings)
         return customized_holdings
 
     def arrange_customized_table(self, customized_table):
@@ -876,4 +907,5 @@ class Strategy13F(object):
         # 將 total_shares_to_buy 與原始 DataFrame 合併，以保留 SYM、QUARTER、date、price 欄位
         merged_df = pd.merge(total_shares_to_buy, customized_table[['SYM', 'QUARTER', 'date', 'price']], on=['SYM', 'QUARTER'], how='left')
         merged_df = merged_df.drop_duplicates()
+        merged_df['suggested_invest_amount'] = merged_df['shares_to_buy'] * merged_df['price']
         return merged_df
