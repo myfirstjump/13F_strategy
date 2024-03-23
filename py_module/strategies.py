@@ -293,7 +293,7 @@ class Strategy13F(object):
                 hedge_fund_data = {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
                 summary_data.append({'hedge_fund': hedge_fund, **hedge_fund_data})
             '''2.4 計算當前持股市值。'''
-            holdings_time = '2024-03-06'#self.max_date # 可以自訂，此處以DB中最大有交易日期為主(2024-01-09)
+            holdings_time = self.max_date#2024-03-06'#self.max_date # 可以自訂，此處以DB中最大有交易日期為主(2024-01-09)
             base_13F_date_list.append(str(holdings_time))
             query = self.create_query_get_open_price_by_join_holdings_n_price(sym_str, holdings_time, hedge_fund, quarter, filing_number)
             price_data = self.sql_execute(query)
@@ -326,9 +326,15 @@ class Strategy13F(object):
         '''4. 加入自定義基金比較'''
 
         customized_fund_list = {
-            '自定義基金:產業3公司3': (self.customize_fund_components, {'industry_top_selection': 3, 'company_top_selection': 3}),
-            '自定義基金:產業2公司3': (self.customize_fund_components, {'industry_top_selection': 2, 'company_top_selection': 3}),
-            '自定義基金:產業1公司3': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 3}),
+            '自組基金_產業前3公司前3': (self.customize_fund_components, {'industry_top_selection': 3, 'company_top_selection': 3}),
+            '自組基金_產業前3公司前2': (self.customize_fund_components, {'industry_top_selection': 3, 'company_top_selection': 2}),
+            '自組基金_產業前3公司前1': (self.customize_fund_components, {'industry_top_selection': 3, 'company_top_selection': 1}),
+            '自組基金_產業前2公司前3': (self.customize_fund_components, {'industry_top_selection': 2, 'company_top_selection': 3}),
+            '自組基金_產業前2公司前2': (self.customize_fund_components, {'industry_top_selection': 2, 'company_top_selection': 2}),
+            '自組基金_產業前2公司前1': (self.customize_fund_components, {'industry_top_selection': 2, 'company_top_selection': 1}),
+            '自組基金_產業前1公司前3': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 3}),
+            '自組基金_產業前1公司前2': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 2}),
+            '自組基金_產業前1公司前1': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 1}),
         }
 
         for k_, v_ in customized_fund_list.items():
@@ -339,10 +345,14 @@ class Strategy13F(object):
             summary_table = pd.concat([summary_table, customized_fund_summary], ignore_index=True)
 
         '''5. 輸出資料表格'''
+        XIRR_table = self.arragne_output_XIRR_excel_format(summary_table)
         if not os.path.exists(self.config_obj.backtest_summary):
             os.makedirs(self.config_obj.backtest_summary)
-        path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_summary_table.csv')
-        summary_table.to_csv(path, index=False)
+        path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_summary_table.xlsx')
+
+        with pd.ExcelWriter(path) as writer:  
+            summary_table.to_excel(writer, index=False, sheet_name='raw_data')
+            XIRR_table.to_excel(writer, sheet_name='XIRR排序')
         print("NULL SYM COUNTER:", null_sym_counter)
 
     def customize_fund_components(self, industry_top_selection, company_top_selection):
@@ -458,8 +468,8 @@ class Strategy13F(object):
 
     def sql_execute(self, query):
 
-        conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
-        # conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        # conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
         cursor = conn.cursor(as_dict=True)
         cursor.execute(query)
         # data = [row for row in cursor]
@@ -761,11 +771,8 @@ class Strategy13F(object):
         '''
         data['date'].append(holdings_time)
         data['amounts'].append(market_value)
-        f = lambda d: d.date()
-        if type(holdings_time) == pd._libs.tslibs.timestamps.Timestamp:
-            python_date = [f(d) for d in data['date']]
-        else:
-            python_date = [d for d in data['date']]
+        f = lambda d: d.date() if isinstance(d, pd._libs.tslibs.timestamps.Timestamp) else d
+        python_date = [f(d) for d in data['date']]
         amounts = [int(a) for a in data['amounts']]
         result = xirr(python_date, amounts)
         # x = {'date':python_date, 'amounts':amounts}
@@ -835,7 +842,6 @@ class Strategy13F(object):
         previous_holdings_time = None
         previous_sym_str = tuple() #TBD
         fund_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None, '淨投入額': None, '淨投入額占比': None, }
-        print(customized_fund_data.iloc[100:110,:])
         quarters_list = customized_fund_data['QUARTER'].drop_duplicates().values
         date_list = customized_fund_data['date'].drop_duplicates().values
 
@@ -929,7 +935,7 @@ class Strategy13F(object):
             summary_data.append({'hedge_fund': plan_name, **fund_data})
         
         
-        holdings_time = '2024-03-06'#self.max_date # 可以自訂，此處以DB中最大有交易日期為主(2024-01-09)
+        holdings_time = self.max_date#'2024-03-06'#self.max_date # 可以自訂，此處以DB中最大有交易日期為主(2024-01-09)
 
         # query = self.create_query_get_open_price_by_join_holdings_n_price(sym_str, holdings_time, hedge_fund, quarter, filing_number)
         # price_data = self.sql_execute(query)
@@ -937,9 +943,7 @@ class Strategy13F(object):
         query = self.create_query_get_open_price_for_customized_fund(current_sym_str, holdings_time)
         price_data = self.sql_execute(query)
         price_data = pd.DataFrame(price_data)
-        print(price_data)
         price_data = price_data.merge(holdings_data, on=['SYM'], how='left')
-        print(price_data)
 
         market_value = sum(price_data['Open'] * price_data['SHARES'])
         xirr = self.calculate_XIRR(xirr_calculate_dict, holdings_time, market_value)
@@ -1051,3 +1055,8 @@ class Strategy13F(object):
         merged_df['suggested_invest_amount'] = merged_df['shares_to_buy'] * merged_df['price']
         merged_df = merged_df.sort_values(by=['date'], ascending=True)
         return merged_df
+
+    def arragne_output_XIRR_excel_format(self, summary_table):
+        summary_table = summary_table[summary_table['date'] == self.max_date]
+        summary_table = summary_table.sort_values(by=['XIRR'], ascending=False)
+        return summary_table
