@@ -17,8 +17,9 @@ class StockStrategies(object):
         self.crawler_obj.web_crawler_13F()
 
     def strategy_13F_investing(self):
-        # self.strategy_obj.back_test_flow()
-        self.strategy_obj.customize_fund_components()
+        
+        # self.strategy_obj.customize_fund_components()
+        self.strategy_obj.back_test_flow()
     
     def dash_server(self, data):
         self.dash_app = DashBuilder(data)
