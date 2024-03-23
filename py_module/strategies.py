@@ -56,8 +56,26 @@ class Strategy13F(object):
         '''
         self.tw_stock_price_table = '[STOCK_SKILL_DB].[dbo].[TW_STOCK_PRICE_Daily]'
 
-        self.us_sorted_dates = None
-        self.tws_sorted_dates = None
+        # 找到price data中的date欄位，對日期進行排序，找到最大的日期
+        query = self.get_all_price_date(self.us_stock_price_table) # 為了取得時間欄位
+        all_date_list = self.sql_execute(query)
+        all_date_list = pd.DataFrame(all_date_list)['date'].values
+        us_sorted_dates = sorted(all_date_list)
+        self.us_sorted_dates = pd.to_datetime(us_sorted_dates)
+        self.min_date = min(self.us_sorted_dates)
+        self.max_date = max(self.us_sorted_dates)
+        print('美股歷史價格從{}到{}'.format(self.min_date, self.max_date))
+
+        query = self.get_all_price_date(self.tw_stock_price_table) # 為了取得時間欄位
+        all_date_list = self.sql_execute(query)
+        all_date_list = pd.DataFrame(all_date_list)['date'].values
+        tws_sorted_dates = sorted(all_date_list)
+        self.tws_sorted_dates = pd.to_datetime(tws_sorted_dates)
+        self.tws_min_date = min(self.tws_sorted_dates)
+        self.tws_max_date = max(self.tws_sorted_dates)
+        print('TWS歷史價格從{}到{}'.format(self.tws_min_date, self.tws_max_date))
+
+
 
     def back_test_flow(self):
         '''
@@ -100,7 +118,7 @@ class Strategy13F(object):
                 2.4 計算當前持股市值。
             3. 加入其他想比較的個股。(S&P500、0050.TW)
                 由於TWS與US的開市時間不同，包裝一個函數能夠修改base_13F_date_list內元素，調整為有開市的時間，才找得到price。(詳細如individual_stock_summary())
-            4. 加入自訂義基金比較
+            4. 加入自定義基金比較
             5. 輸出資料表格
         '''
 
@@ -127,25 +145,6 @@ class Strategy13F(object):
         print("總共包含{}個對沖基金資料".format(len(hedge_fund_list)))
         print('Hedge Funds:', )
         print(hedge_fund_list)
-
-        # 找到price data中的date欄位，對日期進行排序，找到最大的日期
-        query = self.get_all_price_date(self.us_stock_price_table) # 為了取得時間欄位
-        all_date_list = self.sql_execute(query)
-        all_date_list = pd.DataFrame(all_date_list)['date'].values
-        us_sorted_dates = sorted(all_date_list)
-        self.us_sorted_dates = pd.to_datetime(us_sorted_dates)
-        min_date = min(self.us_sorted_dates)
-        max_date = max(self.us_sorted_dates)
-        print('美股歷史價格從{}到{}'.format(min_date, max_date))
-
-        query = self.get_all_price_date(self.tw_stock_price_table) # 為了取得時間欄位
-        all_date_list = self.sql_execute(query)
-        all_date_list = pd.DataFrame(all_date_list)['date'].values
-        tws_sorted_dates = sorted(all_date_list)
-        self.tws_sorted_dates = pd.to_datetime(tws_sorted_dates)
-        tws_min_date = min(self.tws_sorted_dates)
-        tws_max_date = max(self.tws_sorted_dates)
-        print('TWS歷史價格從{}到{}'.format(tws_min_date, tws_max_date))
 
         '''2. 各hedge fund計算迴圈'''
         for idx, hedge_fund in enumerate(hedge_fund_list):
@@ -294,7 +293,7 @@ class Strategy13F(object):
                 hedge_fund_data = {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
                 summary_data.append({'hedge_fund': hedge_fund, **hedge_fund_data})
             '''2.4 計算當前持股市值。'''
-            holdings_time = '2024-03-06'#max_date # 可以自訂，此處以DB中最大有交易日期為主(2024-01-09)
+            holdings_time = '2024-03-06'#self.max_date # 可以自訂，此處以DB中最大有交易日期為主(2024-01-09)
             base_13F_date_list.append(str(holdings_time))
             query = self.create_query_get_open_price_by_join_holdings_n_price(sym_str, holdings_time, hedge_fund, quarter, filing_number)
             price_data = self.sql_execute(query)
@@ -324,13 +323,18 @@ class Strategy13F(object):
             individual_summary = self.individual_stock_summary(base_13F_date_list, v_, k_)
             summary_table = pd.concat([summary_table, individual_summary], ignore_index=True)
 
-        '''4. 加入自訂義基金比較'''
+        '''4. 加入自定義基金比較'''
 
-        customized_fund_list = {'plan_1':self.customize_fund_components}
+        customized_fund_list = {
+            '自定義基金:產業3公司3': (self.customize_fund_components, {'industry_top_selection': 3, 'company_top_selection': 3}),
+            '自定義基金:產業2公司3': (self.customize_fund_components, {'industry_top_selection': 2, 'company_top_selection': 3}),
+            '自定義基金:產業1公司3': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 3}),
+        }
 
         for k_, v_ in customized_fund_list.items():
-            print('=== === === 加入自訂義基金比較 {}'.format(k_))
-            customized_fund_data = v_()
+            print('=== === === 加入自定義基金進行比較 {}'.format(k_))
+            func_to_call, params = v_
+            customized_fund_data = func_to_call(**params)
             customized_fund_summary = self.customized_fund_stock_summary(k_, customized_fund_data)
             summary_table = pd.concat([summary_table, customized_fund_summary], ignore_index=True)
 
@@ -341,10 +345,10 @@ class Strategy13F(object):
         summary_table.to_csv(path, index=False)
         print("NULL SYM COUNTER:", null_sym_counter)
 
-    def customize_fund_components(self):
+    def customize_fund_components(self, industry_top_selection, company_top_selection):
         '''
         function:
-            製作自訂義基金。
+            製作自定義基金。
         Input:
         Output:
             仿製基金13F holdings table，包含欄位SYM、SHARES、date、price
@@ -358,12 +362,11 @@ class Strategy13F(object):
         7.回測計算MDD、XIRR
         '''
         enter_date = self.config_obj.customize_enter_date #2019 2/15 開始進場
-        hedge_funds = self.config_obj.target_hedge_funds #XIRR表現在波克夏以上的基金
+        hedge_funds = self.config_obj.target_hedge_funds[:3] #XIRR表現在波克夏以上的基金
         
-        industry_top_selection = self.config_obj.industry_top_selection #各基金的前(三)市值產業
-        company_top_selection = self.config_obj.company_top_selection #前(三)市值產業 的前(三)市值股票
+        # industry_top_selection = self.config_obj.industry_top_selection #各基金的前(三)市值產業 --> 改成以function params控制
+        # company_top_selection = self.config_obj.company_top_selection #前(三)市值產業 的前(三)市值股票 --> 改成以function params控制
         enter_cost = self.config_obj.enter_cost
-
         '''定義Output obj、統計用obj'''
         ### Final Output Form
         customized_table = None
@@ -390,16 +393,6 @@ class Strategy13F(object):
         # print("總共包含{}個對沖基金資料".format(len(hedge_fund_list)))
         # print('Hedge Funds:', )
         # print(hedge_fund_list)
-
-        # 找到price data中的date欄位，對日期進行排序，找到最大的日期
-        query = self.get_all_price_date(self.us_stock_price_table) # 為了取得時間欄位
-        all_date_list = self.sql_execute(query)
-        all_date_list = pd.DataFrame(all_date_list)['date'].values
-        us_sorted_dates = sorted(all_date_list)
-        self.us_sorted_dates = pd.to_datetime(us_sorted_dates)
-        min_date = min(self.us_sorted_dates)
-        max_date = max(self.us_sorted_dates)
-        # print('美股歷史價格從{}到{}'.format(min_date, max_date))
 
         '''各hedge fund計算迴圈'''
         for idx, hedge_fund in enumerate(hedge_fund_list):
@@ -640,6 +633,17 @@ class Strategy13F(object):
             AND SUBSTRING(tb_holdings.[CUSIP], 7, 2) = '10'
             '''.format(price_table, holdings_table, SYMs_tuple, date, fund, quarter, filing_number)
         return query
+    
+    def create_query_get_open_price_for_customized_fund(self, sym_str, holdings_time):
+
+        price_table = self.us_stock_price_table
+        query = '''
+        SELECT [date], [stock_id] SYM, [Open] FROM {} WITH(NOLOCK)
+        WHERE [stock_id] IN {}
+        AND [date] = '{}'
+        '''.format(price_table, sym_str, holdings_time)
+        return query
+
     def create_query_get_open_price_by_date_n_sym(self, SYMs_tuple, date):
         '''
         function:
@@ -824,16 +828,16 @@ class Strategy13F(object):
         individual_summary = pd.DataFrame(summary_data)
         return individual_summary
     
-    def customized_fund_stock_summary(self, plan_name , customized_fund_data):
+    def customized_fund_stock_summary(self, plan_name, customized_fund_data):
         summary_data = []
         previous_holdings = None
         xirr_calculate_dict = {'date':[], 'amounts':[]}
         previous_holdings_time = None
         previous_sym_str = tuple() #TBD
         fund_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None, '淨投入額': None, '淨投入額占比': None, }
-
-        quarters_list = customized_fund_data['QUARTER'].values
-        date_list = customized_fund_data['date'].values # 進場時間點使用該基金13F公布時間
+        print(customized_fund_data.iloc[100:110,:])
+        quarters_list = customized_fund_data['QUARTER'].drop_duplicates().values
+        date_list = customized_fund_data['date'].drop_duplicates().values
 
         '''2.3. 各Quarter計算迴圈'''
         for idx_q, (quarter, holdings_time) in enumerate(zip(quarters_list, date_list)):
@@ -923,7 +927,27 @@ class Strategy13F(object):
             '''2.3.7 將統計數值回存至summary_data'''
             fund_data = {'date': holdings_time, '市值': market_value, '加碼': scaling_in_sum, '減碼': scaling_out_sum, 'XIRR':xirr}
             summary_data.append({'hedge_fund': plan_name, **fund_data})
+        
+        
+        holdings_time = '2024-03-06'#self.max_date # 可以自訂，此處以DB中最大有交易日期為主(2024-01-09)
+
+        # query = self.create_query_get_open_price_by_join_holdings_n_price(sym_str, holdings_time, hedge_fund, quarter, filing_number)
+        # price_data = self.sql_execute(query)
+        # price_data = pd.DataFrame(price_data)
+        query = self.create_query_get_open_price_for_customized_fund(current_sym_str, holdings_time)
+        price_data = self.sql_execute(query)
+        price_data = pd.DataFrame(price_data)
+        print(price_data)
+        price_data = price_data.merge(holdings_data, on=['SYM'], how='left')
+        print(price_data)
+
+        market_value = sum(price_data['Open'] * price_data['SHARES'])
+        xirr = self.calculate_XIRR(xirr_calculate_dict, holdings_time, market_value)
+        hedge_fund_data = {'date': holdings_time, '市值': market_value, '加碼': 0, '減碼': 0, 'XIRR':xirr}
+        summary_data.append({'hedge_fund': plan_name, **hedge_fund_data})
         customized_fund_summary = pd.DataFrame(summary_data)
+        customized_fund_summary = self.summary_statistical_calculates(customized_fund_summary)
+
         return customized_fund_summary
     def adjust_date_str_for_market(self, base_13F_date_list, market):
         adjusted_data_list = []
@@ -1025,4 +1049,5 @@ class Strategy13F(object):
         merged_df = pd.merge(total_shares_to_buy, customized_table[['SYM', 'QUARTER', 'date', 'price']], on=['SYM', 'QUARTER'], how='left')
         merged_df = merged_df.drop_duplicates()
         merged_df['suggested_invest_amount'] = merged_df['shares_to_buy'] * merged_df['price']
+        merged_df = merged_df.sort_values(by=['date'], ascending=True)
         return merged_df
