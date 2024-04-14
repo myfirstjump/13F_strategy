@@ -2,6 +2,7 @@ from py_module.config import Configuration
 from py_module.crawler import Crawler
 from py_module.strategies import Strategy13F
 from py_module.dashboard import DashBuilder
+from py_module.database_CRUD import DatabaseManipulation
 
 import os
 import pandas as pd
@@ -11,7 +12,8 @@ class StockStrategies(object):
     def __init__(self):
         self.config_obj = Configuration()
         self.crawler_obj = Crawler()
-        self.strategy_obj = Strategy13F()
+        # self.strategy_obj = Strategy13F()
+        self.db_obj = DatabaseManipulation()
 
     def data_crawl(self):
         self.crawler_obj.web_crawler_13F()
@@ -19,7 +21,8 @@ class StockStrategies(object):
     def strategy_13F_investing(self):
         
         # self.strategy_obj.customize_fund_components()
-        self.strategy_obj.back_test_flow()
+        # self.strategy_obj.back_test_flow()
+        self.db_obj.Update_GICs_to_DB()
     
     def dash_server(self, data):
         self.dash_app = DashBuilder(data)

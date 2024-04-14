@@ -337,10 +337,14 @@ class Strategy13F(object):
             '自組基金_產業前1公司前1': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 1}),
         }
 
+        fund_components_dict = {}
+        fund_components_dict_by_hedge = {}
         for k_, v_ in customized_fund_list.items():
-            print('=== === === 加入自定義基金進行比較 {}'.format(k_))
+            print(' === === === 加入自定義基金進行比較 {}'.format(k_))
             func_to_call, params = v_
-            customized_fund_data = func_to_call(**params)
+            customized_fund_data, customized_table = func_to_call(**params)
+            fund_components_dict[k_] = customized_fund_data
+            fund_components_dict_by_hedge[k_] = customized_table
             customized_fund_summary = self.customized_fund_stock_summary(k_, customized_fund_data)
             summary_table = pd.concat([summary_table, customized_fund_summary], ignore_index=True)
 
@@ -349,11 +353,18 @@ class Strategy13F(object):
         if not os.path.exists(self.config_obj.backtest_summary):
             os.makedirs(self.config_obj.backtest_summary)
         path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_summary_table.xlsx')
-
         with pd.ExcelWriter(path) as writer:  
             summary_table.to_excel(writer, index=False, sheet_name='raw_data')
-            XIRR_table.to_excel(writer, sheet_name='XIRR排序')
+            XIRR_table.to_excel(writer, index=False, sheet_name='XIRR排序')
+            for fund_name, components_table in fund_components_dict.items():
+                components_table.to_excel(writer, index=False, sheet_name=fund_name)
         print("NULL SYM COUNTER:", null_sym_counter)
+
+        #Fund components by each hedge analysis
+        path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_customized_table_by_hedge.xlsx')
+        with pd.ExcelWriter(path) as writer:  
+            for fund_name, components_table in fund_components_dict_by_hedge.items():
+                components_table.to_excel(writer, index=False, sheet_name=fund_name)
 
     def customize_fund_components(self, industry_top_selection, company_top_selection):
         '''
@@ -372,7 +383,7 @@ class Strategy13F(object):
         7.回測計算MDD、XIRR
         '''
         enter_date = self.config_obj.customize_enter_date #2019 2/15 開始進場
-        hedge_funds = self.config_obj.target_hedge_funds[:3] #XIRR表現在波克夏以上的基金
+        hedge_funds = self.config_obj.target_hedge_funds #XIRR表現在波克夏以上的基金
         
         # industry_top_selection = self.config_obj.industry_top_selection #各基金的前(三)市值產業 --> 改成以function params控制
         # company_top_selection = self.config_obj.company_top_selection #前(三)市值產業 的前(三)市值股票 --> 改成以function params控制
@@ -455,7 +466,7 @@ class Strategy13F(object):
                 else:
                     customized_table = pd.concat([customized_table, customized_holdings], ignore_index=True)
         
-        # path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_customized_table_by_hedge.csv')
+        # path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_{}ind_{}com_customized_table_by_hedge.csv'.format(industry_top_selection, company_top_selection))
         # customized_table.to_csv(path, index=False)
 
         # 整理該hedge的customized table
@@ -463,7 +474,7 @@ class Strategy13F(object):
         # path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_customized_table_by_stock.csv')
         # customized_table_by_stock.to_csv(path, index=False)
 
-        return customized_table_by_stock
+        return customized_table_by_stock, customized_table
 
 
     def sql_execute(self, query):

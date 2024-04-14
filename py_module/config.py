@@ -12,6 +12,7 @@ class Configuration(object):
         self.assets_hedge_fund_data = os.path.join(working_dir, "assets\\hedge_fund_data") if os.name == 'nt' else os.path.join(working_dir, "assets/hedge_fund_data")
         self.assets_holdings_data = os.path.join(working_dir, "assets\\holdings_data") if os.name == 'nt' else os.path.join(working_dir, "assets/holdings_data")
         self.backtest_summary = os.path.join(working_dir, "assets\\backtest_summary") if os.name == 'nt' else os.path.join(working_dir, "assets/backtest_summary")
+        self.reference_folder = os.path.join(working_dir, "assets\\reference") if os.name == 'nt' else os.path.join(working_dir, "assets/reference")
         self.hedge_fund_urls = {
             'SIR Capital Management':'https://13f.info/manager/0001434997-sir-capital-management-l-p', 
             'Robotti Robert':'https://13f.info/manager/0001105838-robotti-robert', 
