@@ -36,7 +36,7 @@ class Crawler(object):
             'user-agent': 'Mozilla/5.0'
         }
         parameters = {}
-        self.config_obj.logger.warning("預計爬取共{}支基金資料".format(len(urls)))
+        self.config_obj.logger.warning("Web_crawler_13F，預計爬取共{}支基金資料".format(len(urls)))
 
         for idx, name in enumerate(urls):
             

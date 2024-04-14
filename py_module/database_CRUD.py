@@ -20,7 +20,8 @@ class DatabaseManipulation(object):
     
     def Update_GICs_to_DB(self):
         '''
-        1.讀取資料源: excel, csv, ...
+        1.讀取資料源: excel, csv, ...，通常為原有GICs表格資料不足，透過查詢後需要補充至資料庫的數據。
+            結構應該至少包含SYMBOL、SECTOR欄位。
         2.同時Read, Update資料，並將update log存檔
         '''
 

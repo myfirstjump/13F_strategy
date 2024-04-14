@@ -10,32 +10,6 @@ import os
 import datetime
 
 from pyxirr import xirr
-# from backtesting import Backtest, Strategy
-# from backtesting.lib import crossover
-
-# from backtesting.test import SMA, GOOG
-
-
-# class SmaCross(Strategy):
-#     def init(self):
-#         price = self.data.Close
-#         self.ma1 = self.I(SMA, price, 10)
-#         self.ma2 = self.I(SMA, price, 20)
-
-#     def next(self):
-#         if crossover(self.ma1, self.ma2):
-#             self.buy()
-#         elif crossover(self.ma2, self.ma1):
-#             self.sell()
-
-
-# bt = Backtest(GOOG, SmaCross, cash=20_000, commission=.002,
-#               exclusive_orders=True)
-# stats = bt.run()
-# print(stats)
-# bt.plot()
-
-# print(GOOG.head(10))
 
 class Strategy13F(object):
 
@@ -131,10 +105,9 @@ class Strategy13F(object):
         hedge_fund_list.remove('Citadel Advisors')
         hedge_fund_list.remove('Renaissance Technologies')
         hedge_fund_list.remove('Millennium Management')
-
-        print("總共包含{}個對沖基金資料".format(len(hedge_fund_list)))
-        print('Hedge Funds:', )
-        print(hedge_fund_list)
+        self.config_obj.logger.warning("Back_Test_flow，總共包含{}個對沖基金資料".format(len(hedge_fund_list)))
+        # print('Hedge Funds:', )
+        # print(hedge_fund_list)
 
         '''2. 各hedge fund計算迴圈'''
         for idx, hedge_fund in enumerate(hedge_fund_list):
@@ -156,6 +129,7 @@ class Strategy13F(object):
                 base_13F_date_list = [str(date) for date in base_13F_date_list.tolist()]
 
             print(" === === === 第{}個對沖基金：{}，包含{}個季度資料。 ".format(idx+1, hedge_fund, len(quarters_list)))
+            self.config_obj.logger.warning("Back_Test_flow，對沖基金{}，最後一個季度：{}".format(hedge_fund, quarters_list[-1]))
             # print(each_fund_data)
             '''2.3. 各Quarter計算迴圈'''
             for idx_q, (quarter, holdings_time, filing_number) in enumerate(zip(quarters_list, date_list, filing_list)):
@@ -341,6 +315,7 @@ class Strategy13F(object):
             for fund_name, components_table in fund_components_dict.items():
                 components_table.to_excel(writer, index=False, sheet_name=fund_name)
         print("NULL SYM COUNTER:", null_sym_counter)
+        # self.config_obj.logger.warning("Web_crawler_13F，預計爬取共{}支基金資料".format(len(urls)))
 
         #Fund components by each hedge analysis
         path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_customized_table_by_hedge.xlsx')
