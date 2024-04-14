@@ -46,14 +46,6 @@ class Strategy13F(object):
         self.us_stock_info_table = '[US_DB].[dbo].[USStockInfo]'
         self.us_stock_price_table = '[US_DB].[dbo].[USStockPrice]'
         self.us_stock_gics_table = '[US_DB].[dbo].[Company_GICS]'
-        '''
-        CompanyName	    Ticker	GICS_2_digit	GICS_4_digit	GICS_6_digit	GICS_8_digit
-        CORTEVA INC	    CTVA	15	            1510	        151010	        15101030
-        ALICO INC	    ALCO	30	            3020	        302020	        30202010
-        LIMONEIRA CO	LMNR	30	            3020	        302020	        30202010
-        S&W SEED CO	    SANW	30	            3020	        302020	        30202010
-        TEJON RANCH CO	TRC	    60	            6010	        601020	        60102010
-        '''
         self.tw_stock_price_table = '[STOCK_SKILL_DB].[dbo].[TW_STOCK_PRICE_Daily]'
 
         # 找到price data中的date欄位，對日期進行排序，找到最大的日期
@@ -74,8 +66,6 @@ class Strategy13F(object):
         self.tws_min_date = min(self.tws_sorted_dates)
         self.tws_max_date = max(self.tws_sorted_dates)
         print('TWS歷史價格從{}到{}'.format(self.tws_min_date, self.tws_max_date))
-
-
 
     def back_test_flow(self):
         '''
@@ -186,9 +176,6 @@ class Strategy13F(object):
                 0     GME             GAMESTOP CORP NEW       CL A  36467W109  ...  Robotti Robert  Q4 2015     13F-HR  000114036116052554
                 1    PSMT                PRICESMART INC        COM  741511109  ...  Robotti Robert  Q4 2015     13F-HR  000114036116052554
                 2    AEIS          ADVANCED ENERGY INDS        COM  007973100  ...  Robotti Robert  Q4 2015     13F-HR  000114036116052554
-                3    GASS                STEALTHGAS INC        SHS  Y81669106  ...  Robotti Robert  Q4 2015     13F-HR  000114036116052554
-                4     CNQ          CANADIAN NAT RES LTD        COM  136385101  ...  Robotti Robert  Q4 2015     13F-HR  000114036116052554
-                5     LOV            SPARK NETWORKS INC        COM  84651P100  ...  Robotti Robert  Q4 2015     13F-HR  000114036116052554
                 '''
                 '''2.3.4 IF-ELSE語句分別處理第一季/其他季
                         2.3.4.1 若為第一季
@@ -209,10 +196,6 @@ class Strategy13F(object):
                     0     AGN         2937121          4261406       -1324285
                     1    ETP1        11961842         11961842              0
                     2     WPZ         9966502          9487301         479201
-                    3    GOOG          475000           483000          -8000
-                    4    META         1907350          2182350        -275000
-                    5     PNC         1950973          1950973              0
-                    6     BAC         8782641                0        8782641
                     '''
                     null_sym_counter = null_sym_counter + shares_data['SYM'].isna().sum()
                     sym_str = shares_data['SYM'].dropna().values
@@ -235,7 +218,6 @@ class Strategy13F(object):
                         0   2016-11-14  AAPL   26.93
                         1   2016-11-14   ALL   69.76
                         2   2016-11-14    AY   16.98
-                        3   2016-11-14   BAC   19.41
                     '''
                     market_value, scaling_in, scaling_out, scaling_even = self.calculate_scaling_in_and_out(shares_data, price_data)
                     # print("Shares Increased:", scaling_in)
@@ -403,9 +385,6 @@ class Strategy13F(object):
         0   Q1 2014          12
         1   Q1 2015          15
         2   Q1 2016          17
-        3   Q1 2017          16
-        4   Q1 2018          16
-        5   Q1 2019          18
         '''
         
         # hedge_funds = ['Dalal Street Holdings']
@@ -479,8 +458,10 @@ class Strategy13F(object):
 
     def sql_execute(self, query):
 
-        # conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
-        conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        if self.config_obj.LOCAL_FLAG:
+            conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        else:
+            conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
         cursor = conn.cursor(as_dict=True)
         cursor.execute(query)
         # data = [row for row in cursor]
@@ -514,10 +495,6 @@ class Strategy13F(object):
             0   Q4 2013       13F-HR  2014-01-31  000090556714000001  Yacktman Asset Management
             1   Q4 2013  RESTATEMENT  2014-02-13  000090556714000002  Yacktman Asset Management
             2   Q1 2014       13F-HR  2014-05-06  000090556714000004  Yacktman Asset Management
-            3   Q2 2014       13F-HR  2014-08-04  000090556714000006  Yacktman Asset Management
-            4   Q3 2014       13F-HR  2014-11-04  000090556714000008  Yacktman Asset Management
-            5   Q3 2014  RESTATEMENT  2014-11-04  000090556714000009  Yacktman Asset Management
-            6   Q4 2014       13F-HR  2015-02-02  000090556715000001  Yacktman Asset Management
         Input:
             -. 原始fund_data(13F報告)
             -. 目前處理的hedge_fund string

@@ -1,0 +1,1289 @@
+2024-04-14 21:17:24,251 py_module.config WARNING 預計爬取共29支基金資料
+2024-04-14 21:17:24,719 py_module.config WARNING 第1支基金：SIR Capital Management
+2024-04-14 21:17:24,719 py_module.config WARNING     連線網址：https://13f.info/manager/0001434997-sir-capital-management-l-p
+2024-04-14 21:17:24,719 py_module.config WARNING     連線狀況：200
+2024-04-14 21:17:24,720 py_module.config WARNING     網頁Title：SIR Capital Management, L.P. 13F Filings
+2024-04-14 21:17:24,729 py_module.config INFO No hedge data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:25,136 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:25,555 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:25,970 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:26,386 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:26,799 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:27,220 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:27,640 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:28,077 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:28,497 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:28,922 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:29,456 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:29,892 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:30,381 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:30,805 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:31,220 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:31,644 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:32,071 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:32,496 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:33,485 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:33,895 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:34,855 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:35,282 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:35,717 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:36,129 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:36,554 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:36,969 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:37,396 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:38,373 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:38,804 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:39,214 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:40,145 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:40,568 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:41,006 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:41,414 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:42,402 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:42,822 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:43,235 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:43,648 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:44,066 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:44,483 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:44,891 py_module.config INFO No holdings data have been stored from hedge SIR Capital Management.
+2024-04-14 21:17:55,339 py_module.config WARNING 第2支基金：Robotti Robert
+2024-04-14 21:17:55,339 py_module.config WARNING     連線網址：https://13f.info/manager/0001105838-robotti-robert
+2024-04-14 21:17:55,339 py_module.config WARNING     連線狀況：200
+2024-04-14 21:17:55,339 py_module.config WARNING     網頁Title：Robotti Robert 13F Filings
+2024-04-14 21:17:55,348 py_module.config INFO No hedge data have been stored from hedge Robotti Robert.
+2024-04-14 21:17:56,347 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:17:56,768 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:17:57,187 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:17:58,160 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:17:58,605 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:17:59,024 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:17:59,444 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:17:59,860 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:00,840 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:01,269 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:02,258 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:03,239 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:04,212 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:05,158 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:05,569 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:05,991 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:06,972 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:07,383 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:08,338 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:09,351 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:09,765 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:10,741 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:11,157 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:12,194 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:12,604 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:13,580 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:14,145 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:15,128 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:16,136 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:17,090 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:18,068 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:18,671 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:19,639 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:20,568 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:20,983 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:21,410 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:21,833 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:22,249 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:23,239 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:24,214 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:24,632 py_module.config INFO No holdings data have been stored from hedge Robotti Robert.
+2024-04-14 21:18:35,080 py_module.config WARNING 第3支基金：Encompass Capital Advisors
+2024-04-14 21:18:35,080 py_module.config WARNING     連線網址：https://13f.info/manager/0001541901-encompass-capital-advisors-llc
+2024-04-14 21:18:35,081 py_module.config WARNING     連線狀況：200
+2024-04-14 21:18:35,081 py_module.config WARNING     網頁Title：Encompass Capital Advisors LLC 13F Filings
+2024-04-14 21:18:35,089 py_module.config INFO No hedge data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:36,045 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:36,458 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:36,896 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:37,855 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:38,803 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:39,212 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:39,632 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:40,061 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:40,471 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:41,435 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:41,845 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:42,256 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:43,250 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:44,229 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:44,644 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:45,597 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:46,578 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:47,561 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:47,976 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:49,217 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:50,225 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:50,634 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:51,060 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:52,066 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:53,041 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:53,469 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:54,460 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:54,888 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:55,331 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:56,293 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:57,291 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:58,262 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:18:59,316 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:19:00,286 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:19:01,269 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:19:02,252 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:19:02,671 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:19:03,085 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:19:04,020 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:19:04,447 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:19:05,428 py_module.config INFO No holdings data have been stored from hedge Encompass Capital Advisors.
+2024-04-14 21:19:16,771 py_module.config WARNING 第4支基金：Elm Ridge Management
+2024-04-14 21:19:16,772 py_module.config WARNING     連線網址：https://13f.info/manager/0001483276-elm-ridge-management-llc
+2024-04-14 21:19:16,772 py_module.config WARNING     連線狀況：200
+2024-04-14 21:19:16,772 py_module.config WARNING     網頁Title：Elm Ridge Management, LLC 13F Filings
+2024-04-14 21:19:16,781 py_module.config INFO No hedge data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:17,763 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:18,724 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:19,135 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:20,181 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:21,180 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:21,599 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:22,585 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:23,531 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:24,479 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:24,902 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:25,879 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:26,866 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:27,840 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:28,435 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:29,381 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:29,799 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:30,792 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:31,770 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:32,191 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:32,605 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:33,578 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:34,539 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:34,966 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:35,933 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:36,351 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:37,389 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:38,386 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:38,811 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:39,775 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:40,188 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:41,167 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:41,656 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:42,804 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:43,823 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:44,236 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:44,673 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:45,639 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:46,698 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:47,124 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:48,113 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:19:49,208 py_module.config INFO No holdings data have been stored from hedge Elm Ridge Management.
+2024-04-14 21:20:00,552 py_module.config WARNING 第5支基金：RR Advisors
+2024-04-14 21:20:00,552 py_module.config WARNING     連線網址：https://13f.info/manager/0001322613-rr-advisors-llc
+2024-04-14 21:20:00,553 py_module.config WARNING     連線狀況：200
+2024-04-14 21:20:00,553 py_module.config WARNING     網頁Title：RR Advisors, LLC 13F Filings
+2024-04-14 21:20:00,562 py_module.config INFO No hedge data have been stored from hedge RR Advisors.
+2024-04-14 21:20:01,532 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:01,971 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:02,590 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:03,576 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:04,567 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:04,991 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:05,400 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:05,819 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:06,819 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:07,783 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:08,748 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:09,728 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:10,760 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:11,729 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:12,152 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:13,152 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:14,177 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:14,610 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:15,607 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:16,566 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:17,018 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:17,456 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:17,881 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:18,865 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:19,871 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:21,075 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:21,555 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:22,552 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:23,697 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:24,129 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:24,546 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:25,557 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:26,741 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:27,709 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:28,718 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:29,171 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:29,595 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:30,029 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:30,462 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:31,462 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:31,895 py_module.config INFO No holdings data have been stored from hedge RR Advisors.
+2024-04-14 21:20:43,241 py_module.config WARNING 第6支基金：Peconic Partners
+2024-04-14 21:20:43,241 py_module.config WARNING     連線網址：https://13f.info/manager/0001050464-peconic-partners-llc
+2024-04-14 21:20:43,241 py_module.config WARNING     連線狀況：200
+2024-04-14 21:20:43,242 py_module.config WARNING     網頁Title：Peconic Partners LLC 13F Filings
+2024-04-14 21:20:43,251 py_module.config INFO No hedge data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:44,253 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:44,685 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:45,116 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:46,117 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:47,149 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:48,138 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:49,143 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:49,791 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:50,798 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:51,257 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:51,698 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:52,653 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:53,115 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:54,198 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:55,231 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:55,703 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:56,789 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:57,219 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:57,655 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:58,117 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:20:59,143 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:00,167 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:01,182 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:02,232 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:03,225 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:04,233 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:04,657 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:05,686 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:06,715 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:07,728 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:08,801 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:09,232 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:10,258 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:11,298 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:11,947 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:12,979 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:13,500 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:14,508 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:15,017 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:16,055 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:17,093 py_module.config INFO No holdings data have been stored from hedge Peconic Partners.
+2024-04-14 21:21:28,469 py_module.config WARNING 第7支基金：Fairholme Capital Management
+2024-04-14 21:21:28,469 py_module.config WARNING     連線網址：https://13f.info/manager/0001056831-fairholme-capital-management-llc
+2024-04-14 21:21:28,469 py_module.config WARNING     連線狀況：200
+2024-04-14 21:21:28,469 py_module.config WARNING     網頁Title：Fairholme Capital Management LLC 13F Filings
+2024-04-14 21:21:28,478 py_module.config INFO No hedge data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:29,432 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:30,400 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:31,391 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:32,378 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:33,339 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:34,333 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:35,306 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:36,288 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:37,272 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:38,234 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:39,211 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:40,201 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:41,219 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:42,186 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:43,221 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:44,211 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:45,198 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:46,174 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:47,143 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:48,112 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:49,115 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:50,094 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:51,081 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:52,057 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:53,037 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:54,011 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:54,962 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:55,930 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:56,904 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:57,915 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:58,904 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:21:59,875 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:22:00,906 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:22:01,549 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:22:02,524 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:22:03,474 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:22:04,462 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:22:05,437 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:22:06,445 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:22:07,448 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:22:08,466 py_module.config INFO No holdings data have been stored from hedge Fairholme Capital Management.
+2024-04-14 21:22:19,644 py_module.config WARNING 第8支基金：Horizon Kinetics Asset Management
+2024-04-14 21:22:19,644 py_module.config WARNING     連線網址：https://13f.info/manager/0001056823-horizon-kinetics-asset-management-llc
+2024-04-14 21:22:19,645 py_module.config WARNING     連線狀況：200
+2024-04-14 21:22:19,645 py_module.config WARNING     網頁Title：Horizon Kinetics Asset Management LLC 13F Filings
+2024-04-14 21:22:19,650 py_module.config INFO No hedge data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:20,865 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:22,121 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:23,408 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:24,682 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:25,794 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:26,931 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:27,992 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:28,749 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:29,492 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:30,602 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:31,339 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:32,080 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:32,844 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:33,594 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:34,505 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:35,799 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:37,238 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:37,998 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:38,812 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:39,569 py_module.config INFO No holdings data have been stored from hedge Horizon Kinetics Asset Management.
+2024-04-14 21:22:50,306 py_module.config WARNING 第9支基金：Scion Asset Management
+2024-04-14 21:22:50,307 py_module.config WARNING     連線網址：https://13f.info/manager/0001649339-scion-asset-management-llc
+2024-04-14 21:22:50,307 py_module.config WARNING     連線狀況：200
+2024-04-14 21:22:50,307 py_module.config WARNING     網頁Title：Scion Asset Management, LLC 13F Filings
+2024-04-14 21:22:50,314 py_module.config INFO No hedge data have been stored from hedge Scion Asset Management.
+2024-04-14 21:22:51,229 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:22:51,931 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:22:52,632 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:22:53,366 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:22:54,122 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:22:54,837 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:22:55,557 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:22:56,271 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:22:56,995 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:22:57,962 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:22:58,668 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:22:59,628 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:23:00,349 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:23:01,358 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:23:02,077 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:23:02,775 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:23:03,509 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:23:04,442 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:23:05,179 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:23:05,917 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:23:06,648 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:23:07,575 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:23:08,292 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:23:09,003 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:23:09,710 py_module.config INFO No holdings data have been stored from hedge Scion Asset Management.
+2024-04-14 21:23:20,860 py_module.config WARNING 第10支基金：Goldentree Asset Management
+2024-04-14 21:23:20,860 py_module.config WARNING     連線網址：https://13f.info/manager/0001278951-goldentree-asset-management-lp
+2024-04-14 21:23:20,861 py_module.config WARNING     連線狀況：200
+2024-04-14 21:23:20,861 py_module.config WARNING     網頁Title：Goldentree Asset Management LP 13F Filings
+2024-04-14 21:23:20,870 py_module.config INFO No hedge data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:21,636 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:22,368 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:23,099 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:23,800 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:24,539 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:25,249 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:25,960 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:26,660 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:27,374 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:28,083 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:29,092 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:29,795 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:30,520 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:31,250 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:32,211 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:32,926 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:33,845 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:34,823 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:35,525 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:36,246 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:36,970 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:37,668 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:38,377 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:39,097 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:39,803 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:40,536 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:41,262 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:41,971 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:42,700 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:43,421 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:44,129 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:45,093 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:45,800 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:46,537 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:47,501 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:48,210 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:48,922 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:49,631 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:50,580 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:51,308 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:52,020 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:52,759 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:23:53,470 py_module.config INFO No holdings data have been stored from hedge Goldentree Asset Management.
+2024-04-14 21:24:04,634 py_module.config WARNING 第11支基金：Lodge Hill Capital
+2024-04-14 21:24:04,635 py_module.config WARNING     連線網址：https://13f.info/manager/0001598245-lodge-hill-capital-llc
+2024-04-14 21:24:04,635 py_module.config WARNING     連線狀況：200
+2024-04-14 21:24:04,635 py_module.config WARNING     網頁Title：Lodge Hill Capital, LLC 13F Filings
+2024-04-14 21:24:04,644 py_module.config INFO No hedge data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:05,360 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:06,277 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:06,983 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:07,914 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:08,621 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:09,351 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:10,088 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:10,800 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:11,513 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:12,221 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:13,152 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:13,886 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:14,592 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:15,323 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:16,080 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:16,788 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:17,517 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:18,242 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:18,967 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:19,698 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:20,628 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:21,346 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:22,065 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:22,775 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:23,483 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:24,457 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:25,387 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:26,115 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:27,092 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:27,832 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:28,563 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:29,535 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:30,269 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:31,023 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:31,752 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:32,496 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:33,241 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:34,004 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:34,750 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:35,494 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:36,229 py_module.config INFO No holdings data have been stored from hedge Lodge Hill Capital.
+2024-04-14 21:24:47,117 py_module.config WARNING 第12支基金：Mangrove Partners
+2024-04-14 21:24:47,118 py_module.config WARNING     連線網址：https://13f.info/manager/0001535392-mangrove-partners-im-llc
+2024-04-14 21:24:47,118 py_module.config WARNING     連線狀況：200
+2024-04-14 21:24:47,118 py_module.config WARNING     網頁Title：Mangrove Partners Im, LLC 13F Filings
+2024-04-14 21:24:47,127 py_module.config INFO No hedge data have been stored from hedge Mangrove Partners.
+2024-04-14 21:24:47,857 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:24:48,894 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:24:49,635 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:24:50,392 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:24:51,136 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:24:51,892 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:24:52,654 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:24:53,418 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:24:54,169 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:24:54,909 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:24:55,657 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:24:56,397 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:24:57,402 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:24:58,360 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:24:59,335 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:00,067 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:00,789 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:01,526 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:02,255 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:02,970 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:03,716 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:04,426 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:05,145 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:05,864 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:06,590 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:07,306 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:08,011 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:08,735 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:09,473 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:10,422 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:18,267 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:18,990 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:19,709 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:20,705 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:21,428 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:22,401 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:23,124 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:23,850 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:24,580 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:25,305 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:26,013 py_module.config INFO No holdings data have been stored from hedge Mangrove Partners.
+2024-04-14 21:25:36,778 py_module.config WARNING 第13支基金：Stilwell Value
+2024-04-14 21:25:36,778 py_module.config WARNING     連線網址：https://13f.info/manager/0001397076-stilwell-value-llc
+2024-04-14 21:25:36,779 py_module.config WARNING     連線狀況：200
+2024-04-14 21:25:36,780 py_module.config WARNING     網頁Title：Stilwell Value LLC 13F Filings
+2024-04-14 21:25:36,789 py_module.config INFO No hedge data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:37,815 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:38,607 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:39,376 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:40,111 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:40,843 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:41,587 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:42,319 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:43,065 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:43,776 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:44,524 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:45,242 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:45,975 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:46,711 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:47,420 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:48,387 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:49,368 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:50,111 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:50,851 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:51,577 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:52,292 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:53,025 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:53,748 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:54,476 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:55,187 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:55,909 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:56,645 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:57,348 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:58,080 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:25:59,048 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:26:00,045 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:26:01,036 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:26:02,023 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:26:03,015 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:26:03,979 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:26:04,947 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:26:05,973 py_module.config INFO No holdings data have been stored from hedge Stilwell Value.
+2024-04-14 21:26:16,732 py_module.config WARNING 第14支基金：Greenlight Capital
+2024-04-14 21:26:16,732 py_module.config WARNING     連線網址：https://13f.info/manager/0001079114-greenlight-capital-inc
+2024-04-14 21:26:16,734 py_module.config WARNING     連線狀況：200
+2024-04-14 21:26:16,735 py_module.config WARNING     網頁Title：Greenlight Capital Inc 13F Filings
+2024-04-14 21:26:16,745 py_module.config INFO No hedge data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:17,477 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:18,437 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:19,361 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:20,331 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:21,316 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:22,304 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:23,263 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:24,229 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:25,181 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:26,173 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:27,164 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:28,130 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:29,115 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:30,091 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:31,074 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:31,992 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:32,977 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:33,933 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:34,868 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:35,786 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:36,747 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:37,686 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:38,667 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:39,685 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:40,657 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:41,580 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:26:42,568 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:01,403 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:02,419 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:03,399 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:04,401 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:05,377 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:06,362 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:07,365 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:08,369 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:09,328 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:10,238 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:11,232 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:12,241 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:13,234 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:14,188 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:15,170 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:16,157 py_module.config INFO No holdings data have been stored from hedge Greenlight Capital.
+2024-04-14 21:27:27,282 py_module.config WARNING 第15支基金：Chou Associates Management
+2024-04-14 21:27:27,282 py_module.config WARNING     連線網址：https://13f.info/manager/0001389403-chou-associates-management-inc
+2024-04-14 21:27:27,284 py_module.config WARNING     連線狀況：200
+2024-04-14 21:27:27,285 py_module.config WARNING     網頁Title：Chou Associates Management Inc. 13F Filings
+2024-04-14 21:27:27,294 py_module.config INFO No hedge data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:28,230 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:29,205 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:30,129 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:31,085 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:32,030 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:32,996 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:33,936 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:34,887 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:35,823 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:36,809 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:37,728 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:38,682 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:39,648 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:40,602 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:41,536 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:42,513 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:43,457 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:44,388 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:45,354 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:46,350 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:47,405 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:48,351 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:49,317 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:50,277 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:51,256 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:52,258 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:53,234 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:54,232 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:55,206 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:56,151 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:57,120 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:58,094 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:27:59,040 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:28:00,041 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:28:01,022 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:28:02,003 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:28:02,966 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:28:03,914 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:28:04,877 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:28:05,829 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:28:06,829 py_module.config INFO No holdings data have been stored from hedge Chou Associates Management.
+2024-04-14 21:28:18,122 py_module.config WARNING 第16支基金：Steinberg Asset Management
+2024-04-14 21:28:18,123 py_module.config WARNING     連線網址：https://13f.info/manager/0001169883-steinberg-asset-management-llc
+2024-04-14 21:28:18,124 py_module.config WARNING     連線狀況：200
+2024-04-14 21:28:18,125 py_module.config WARNING     網頁Title：Steinberg Asset Management LLC 13F Filings
+2024-04-14 21:28:18,134 py_module.config INFO No hedge data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:19,094 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:20,081 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:21,034 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:21,975 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:22,903 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:23,852 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:24,795 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:25,725 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:26,685 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:27,484 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:28,459 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:29,389 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:30,348 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:31,299 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:32,240 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:33,186 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:34,163 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:35,098 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:36,060 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:37,027 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:37,963 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:38,951 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:39,904 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:40,864 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:41,832 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:42,783 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:43,804 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:44,758 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:45,738 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:46,736 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:47,755 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:48,699 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:49,696 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:50,694 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:51,669 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:52,658 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:53,631 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:54,598 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:55,638 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:56,638 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:28:57,629 py_module.config INFO No holdings data have been stored from hedge Steinberg Asset Management.
+2024-04-14 21:29:08,781 py_module.config WARNING 第17支基金：Donald Smith
+2024-04-14 21:29:08,782 py_module.config WARNING     連線網址：https://13f.info/manager/0000814375-donald-smith-co-inc
+2024-04-14 21:29:08,783 py_module.config WARNING     連線狀況：200
+2024-04-14 21:29:08,784 py_module.config WARNING     網頁Title：Donald Smith & Co., Inc. 13F Filings
+2024-04-14 21:29:08,793 py_module.config INFO No hedge data have been stored from hedge Donald Smith.
+2024-04-14 21:29:09,767 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:10,752 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:11,701 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:12,669 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:13,632 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:14,617 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:15,548 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:16,500 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:17,447 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:18,379 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:19,365 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:20,314 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:21,164 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:22,137 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:23,119 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:24,122 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:25,177 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:26,183 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:27,163 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:28,173 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:29,163 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:30,135 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:31,130 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:32,108 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:33,097 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:34,107 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:35,102 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:36,064 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:37,092 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:38,090 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:39,059 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:40,097 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:41,137 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:42,149 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:43,144 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:44,133 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:45,121 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:46,122 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:47,125 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:48,096 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:29:49,073 py_module.config INFO No holdings data have been stored from hedge Donald Smith.
+2024-04-14 21:30:00,212 py_module.config WARNING 第18支基金：Fine Capital Partners
+2024-04-14 21:30:00,213 py_module.config WARNING     連線網址：https://13f.info/manager/0001339161-fine-capital-partners-l-p
+2024-04-14 21:30:00,215 py_module.config WARNING     連線狀況：200
+2024-04-14 21:30:00,215 py_module.config WARNING     網頁Title：Fine Capital Partners, L.P. 13F Filings
+2024-04-14 21:30:00,225 py_module.config INFO No hedge data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:01,189 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:02,150 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:03,164 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:04,127 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:05,113 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:06,048 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:07,005 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:07,959 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:08,929 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:09,899 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:10,816 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:11,757 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:12,714 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:13,669 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:14,654 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:15,632 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:17,705 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:18,658 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:19,611 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:20,545 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:21,507 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:22,447 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:23,369 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:24,323 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:25,248 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:26,221 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:27,170 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:28,081 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:29,029 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:29,958 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:30,912 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:31,856 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:32,858 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:33,832 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:34,789 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:35,753 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:36,711 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:37,681 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:38,671 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:39,636 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:40,588 py_module.config INFO No holdings data have been stored from hedge Fine Capital Partners.
+2024-04-14 21:30:51,748 py_module.config WARNING 第19支基金：Contrarian Capital Management
+2024-04-14 21:30:51,749 py_module.config WARNING     連線網址：https://13f.info/manager/0001050417-contrarian-capital-management-l-l-c
+2024-04-14 21:30:51,750 py_module.config WARNING     連線狀況：200
+2024-04-14 21:30:51,751 py_module.config WARNING     網頁Title：Contrarian Capital Management, L.L.C. 13F Filings
+2024-04-14 21:30:51,761 py_module.config INFO No hedge data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:30:52,570 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:30:53,512 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:30:54,460 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:30:55,424 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:30:56,358 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:30:57,303 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:30:58,254 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:30:59,201 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:00,152 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:01,068 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:02,004 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:02,935 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:03,839 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:04,760 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:05,717 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:06,658 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:07,660 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:08,647 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:09,645 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:10,611 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:11,617 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:12,585 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:13,524 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:14,533 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:15,268 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:15,980 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:16,716 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:17,445 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:18,169 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:18,903 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:19,608 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:20,352 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:21,087 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:21,798 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:22,495 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:23,231 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:23,956 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:24,687 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:25,424 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:26,167 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:26,882 py_module.config INFO No holdings data have been stored from hedge Contrarian Capital Management.
+2024-04-14 21:31:37,672 py_module.config WARNING 第20支基金：Masters Capital Management
+2024-04-14 21:31:37,673 py_module.config WARNING     連線網址：https://13f.info/manager/0001104186-masters-capital-management-llc
+2024-04-14 21:31:37,675 py_module.config WARNING     連線狀況：200
+2024-04-14 21:31:37,675 py_module.config WARNING     網頁Title：Masters Capital Management LLC 13F Filings
+2024-04-14 21:31:37,684 py_module.config INFO No hedge data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:38,424 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:39,144 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:39,865 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:40,573 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:41,293 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:41,996 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:42,709 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:43,441 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:44,162 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:44,869 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:45,598 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:46,307 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:47,040 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:47,757 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:48,486 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:49,234 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:49,959 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:50,733 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:51,448 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:52,178 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:52,886 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:53,631 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:54,365 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:55,112 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:55,869 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:56,580 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:57,298 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:58,026 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:58,735 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:31:59,464 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:32:00,188 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:32:00,925 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:32:01,690 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:32:02,418 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:32:03,146 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:32:03,850 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:32:04,565 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:32:05,277 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:32:05,987 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:32:06,723 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:32:07,440 py_module.config INFO No holdings data have been stored from hedge Masters Capital Management.
+2024-04-14 21:32:18,194 py_module.config WARNING 第21支基金：Yacktman Asset Management
+2024-04-14 21:32:18,194 py_module.config WARNING     連線網址：https://13f.info/manager/0000905567-yacktman-asset-management-lp
+2024-04-14 21:32:18,196 py_module.config WARNING     連線狀況：200
+2024-04-14 21:32:18,197 py_module.config WARNING     網頁Title：Yacktman Asset Management LP 13F Filings
+2024-04-14 21:32:18,206 py_module.config INFO No hedge data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:18,951 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:19,659 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:20,399 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:21,137 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:21,855 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:22,575 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:23,286 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:24,030 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:24,780 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:25,509 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:26,506 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:27,470 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:28,472 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:29,432 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:30,417 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:31,450 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:32,466 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:33,481 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:34,531 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:35,579 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:36,577 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:37,615 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:38,664 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:39,648 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:40,678 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:41,677 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:42,685 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:43,709 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:44,744 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:45,787 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:46,799 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:47,821 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:48,839 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:49,856 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:50,873 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:51,889 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:52,909 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:53,901 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:54,900 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:55,939 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:32:56,966 py_module.config INFO No holdings data have been stored from hedge Yacktman Asset Management.
+2024-04-14 21:33:08,371 py_module.config WARNING 第22支基金：Point72 Asset Management
+2024-04-14 21:33:08,371 py_module.config WARNING     連線網址：https://13f.info/manager/0001603466-point72-asset-management-l-p
+2024-04-14 21:33:08,372 py_module.config WARNING     連線狀況：200
+2024-04-14 21:33:08,373 py_module.config WARNING     網頁Title：Point72 Asset Management, L.P. 13F Filings
+2024-04-14 21:33:08,382 py_module.config INFO No hedge data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:10,291 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:12,243 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:14,159 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:16,081 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:17,813 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:19,656 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:21,462 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:23,101 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:24,721 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:26,242 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:27,744 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:29,330 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:31,387 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:33,296 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:35,200 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:37,123 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:39,193 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:41,364 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:43,876 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:45,914 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:47,949 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:50,153 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:52,237 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:53,753 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:55,805 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:57,776 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:33:59,686 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:34:01,626 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:34:03,435 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:34:05,294 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:34:07,124 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:34:08,923 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:34:10,388 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:34:12,322 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:34:14,173 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:34:15,987 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:34:17,744 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:34:19,474 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:34:21,275 py_module.config INFO No holdings data have been stored from hedge Point72 Asset Management.
+2024-04-14 21:34:32,661 py_module.config WARNING 第23支基金：Appaloosa
+2024-04-14 21:34:32,661 py_module.config WARNING     連線網址：https://13f.info/manager/0001656456-appaloosa-lp
+2024-04-14 21:34:32,662 py_module.config WARNING     連線狀況：200
+2024-04-14 21:34:32,664 py_module.config WARNING     網頁Title：Appaloosa LP 13F Filings
+2024-04-14 21:34:32,673 py_module.config INFO No hedge data have been stored from hedge Appaloosa.
+2024-04-14 21:34:33,672 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:34,677 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:35,665 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:36,667 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:37,661 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:38,610 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:39,608 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:40,616 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:41,611 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:42,561 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:43,526 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:44,594 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:45,607 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:46,273 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:47,284 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:48,297 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:49,300 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:50,291 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:51,309 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:52,294 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:53,277 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:53,938 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:54,964 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:55,974 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:57,002 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:58,016 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:34:59,046 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:35:00,052 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:35:01,078 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:35:02,073 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:35:03,142 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:35:04,168 py_module.config INFO No holdings data have been stored from hedge Appaloosa.
+2024-04-14 21:35:15,210 py_module.config WARNING 第24支基金：Pershing Square Capital Management
+2024-04-14 21:35:15,210 py_module.config WARNING     連線網址：https://13f.info/manager/0001336528-pershing-square-capital-management-l-p
+2024-04-14 21:35:15,212 py_module.config WARNING     連線狀況：200
+2024-04-14 21:35:15,213 py_module.config WARNING     網頁Title：Pershing Square Capital Management, L.P. 13F Filings
+2024-04-14 21:35:15,222 py_module.config INFO No hedge data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:16,221 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:17,233 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:18,197 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:19,189 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:20,190 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:21,165 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:22,156 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:23,114 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:24,095 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:25,066 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:26,020 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:27,001 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:28,001 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:29,000 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:30,014 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:31,020 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:32,029 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:33,017 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:34,052 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:35,052 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:36,019 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:36,993 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:37,962 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:38,921 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:39,912 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:40,902 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:41,872 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:42,888 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:43,852 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:44,507 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:45,516 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:46,497 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:47,143 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:48,135 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:49,120 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:50,068 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:51,067 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:52,069 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:53,055 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:54,005 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:54,947 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:55,908 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:35:56,921 py_module.config INFO No holdings data have been stored from hedge Pershing Square Capital Management.
+2024-04-14 21:36:07,372 py_module.config WARNING 第25支基金：Berkshire Hathaway
+2024-04-14 21:36:07,373 py_module.config WARNING     連線網址：https://13f.info/manager/0001067983-berkshire-hathaway-inc
+2024-04-14 21:36:07,375 py_module.config WARNING     連線狀況：200
+2024-04-14 21:36:07,375 py_module.config WARNING     網頁Title：Berkshire Hathaway Inc 13F Filings
+2024-04-14 21:36:07,385 py_module.config INFO No hedge data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:08,329 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:08,782 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:09,792 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:10,771 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:11,791 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:13,027 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:14,046 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:15,025 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:16,064 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:16,682 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:17,671 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:18,652 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:19,607 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:20,568 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:21,010 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:22,015 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:23,028 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:23,453 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:24,457 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:25,463 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:26,465 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:27,484 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:28,503 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:29,512 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:30,486 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:31,481 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:32,168 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:33,210 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:34,191 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:35,155 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:36,192 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:37,257 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:38,292 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:39,338 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:40,380 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:41,322 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:42,340 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:43,358 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:44,399 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:45,378 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:46,408 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:47,430 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:48,454 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:36:49,462 py_module.config INFO No holdings data have been stored from hedge Berkshire Hathaway.
+2024-04-14 21:37:00,481 py_module.config WARNING 第26支基金：Duquesne Family Office
+2024-04-14 21:37:00,481 py_module.config WARNING     連線網址：https://13f.info/manager/0001536411-duquesne-family-office-llc
+2024-04-14 21:37:00,483 py_module.config WARNING     連線狀況：200
+2024-04-14 21:37:00,484 py_module.config WARNING     網頁Title：Duquesne Family Office LLC 13F Filings
+2024-04-14 21:37:00,494 py_module.config INFO No hedge data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:01,478 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:02,467 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:03,474 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:04,473 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:05,481 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:06,507 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:07,522 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:08,495 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:09,495 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:10,480 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:11,445 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:12,434 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:13,417 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:14,432 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:15,460 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:16,477 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:17,481 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:18,502 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:19,547 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:20,544 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:21,544 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:22,570 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:23,589 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:24,583 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:25,630 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:26,384 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:27,105 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:27,847 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:28,560 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:29,268 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:30,007 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:30,748 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:31,482 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:32,216 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:32,960 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:34,684 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:35,440 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:36,148 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:36,868 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:37,617 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:38,321 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:39,049 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:39,757 py_module.config INFO No holdings data have been stored from hedge Duquesne Family Office.
+2024-04-14 21:37:50,513 py_module.config WARNING 第27支基金：Dalal Street Holdings
+2024-04-14 21:37:50,514 py_module.config WARNING     連線網址：https://13f.info/manager/0001549575-dalal-street-llc
+2024-04-14 21:37:50,515 py_module.config WARNING     連線狀況：200
+2024-04-14 21:37:50,516 py_module.config WARNING     網頁Title：Dalal Street, LLC 13F Filings
+2024-04-14 21:37:50,527 py_module.config INFO No hedge data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:37:51,248 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:37:51,982 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:37:52,685 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:37:53,391 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:37:54,099 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:37:54,818 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:37:55,625 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:37:56,328 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:37:57,033 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:37:57,753 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:37:58,475 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:37:59,193 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:37:59,913 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:00,622 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:01,354 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:02,056 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:02,796 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:03,503 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:04,202 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:04,931 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:05,654 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:06,379 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:07,114 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:07,826 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:08,540 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:09,271 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:09,970 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:10,689 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:11,402 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:12,119 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:12,860 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:13,611 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:14,370 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:15,102 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:15,833 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:16,549 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:17,274 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:18,002 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:18,727 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:19,452 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:20,174 py_module.config INFO No holdings data have been stored from hedge Dalal Street Holdings.
+2024-04-14 21:38:31,006 py_module.config WARNING 第28支基金：Altarock Partners
+2024-04-14 21:38:31,006 py_module.config WARNING     連線網址：https://13f.info/manager/0001631014-altarock-partners-llc
+2024-04-14 21:38:31,007 py_module.config WARNING     連線狀況：200
+2024-04-14 21:38:31,008 py_module.config WARNING     網頁Title：Altarock Partners LLC 13F Filings
+2024-04-14 21:38:31,017 py_module.config INFO No hedge data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:31,744 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:32,473 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:33,184 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:33,887 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:34,616 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:35,320 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:36,104 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:36,843 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:37,571 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:38,274 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:39,008 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:39,713 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:40,437 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:41,168 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:41,895 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:42,615 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:43,323 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:44,068 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:44,781 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:45,488 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:46,220 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:46,940 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:47,685 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:48,453 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:49,189 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:49,930 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:50,655 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:51,404 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:52,119 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:52,859 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:53,585 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:54,304 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:55,020 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:55,740 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:56,452 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:57,164 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:38:57,882 py_module.config INFO No holdings data have been stored from hedge Altarock Partners.
+2024-04-14 21:39:08,637 py_module.config WARNING 第29支基金：Brave Warrior Advisors
+2024-04-14 21:39:08,637 py_module.config WARNING     連線網址：https://13f.info/manager/0001553733-brave-warrior-advisors-llc
+2024-04-14 21:39:08,641 py_module.config WARNING     連線狀況：200
+2024-04-14 21:39:08,642 py_module.config WARNING     網頁Title：Brave Warrior Advisors, LLC 13F Filings
+2024-04-14 21:39:08,651 py_module.config INFO No hedge data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:09,392 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:10,125 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:10,828 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:11,528 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:12,277 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:12,988 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:13,727 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:14,492 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:15,213 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:15,930 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:16,667 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:17,391 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:18,132 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:18,856 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:19,575 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:20,318 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:21,048 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:21,757 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:22,503 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:23,225 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:23,963 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:24,716 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:25,426 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:26,130 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:26,842 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:27,555 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:28,262 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:28,980 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:30,028 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:30,739 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:31,438 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:32,158 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:32,856 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:33,578 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:34,293 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:35,019 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:35,744 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:36,472 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:37,196 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:37,899 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.
+2024-04-14 21:39:38,631 py_module.config INFO No holdings data have been stored from hedge Brave Warrior Advisors.

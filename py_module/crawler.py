@@ -7,6 +7,7 @@ import time
 import pymssql
 import pandas as pd
 import numpy as np
+import logging
 
 class Crawler(object):
 
@@ -17,14 +18,11 @@ class Crawler(object):
         self.us_stock_info_table = '[US_DB].[dbo].[USStockInfo]'
         self.us_stock_price_table = '[US_DB].[dbo].[USStockPrice]'
         self.tw_stock_price_table = '[STOCK_SKILL_DB].[dbo].[TW_STOCK_PRICE_Daily]'
-        
     
     def web_crawler_13F(self):
         '''
         '''
 
-        missing_counter = 0
-        missing_info = []
         query = self.create_query_get_13F_filing_id_in_DB(self.hedge_fund_portfolio_table)
         existed_filing_id = self.sql_execute(query)
         existed_filing_id = pd.DataFrame(existed_filing_id)['FILING_ID'].values
@@ -38,18 +36,17 @@ class Crawler(object):
             'user-agent': 'Mozilla/5.0'
         }
         parameters = {}
-        print("預計爬取共", len(urls), "支基金資料")
+        self.config_obj.logger.warning("預計爬取共{}支基金資料".format(len(urls)))
 
         for idx, name in enumerate(urls):
-            print("======================= 第", idx+1, "支基金:", name, " ======================= ")
+            
 
             response = requests.get(urls[name], headers = headers)
-            print("連線網址：", response.url)
-            print("連線狀況：", response.status_code)
-            # print("連線文字：", response.text)
             soup = BeautifulSoup(response.text, "html.parser")
-            print("網頁Title:", soup.title.string)
-
+            self.config_obj.logger.warning("第{}支基金：{}".format(idx+1, name))
+            self.config_obj.logger.warning("    連線網址：{}".format(response.url))
+            self.config_obj.logger.warning("    連線狀況：{}".format(response.status_code))
+            self.config_obj.logger.warning("    網頁Title：{}".format(soup.title.string))
             table = soup.find('table')
 
             # 初始化空的資料列表
@@ -99,21 +96,20 @@ class Crawler(object):
             hedge_fund_data = self.remove_existed_records_by_filing_id(hedge_fund_data, existed_filing_id)
             if len(hedge_fund_data) != 0:
                 self.insert_records_to_DB(table_name=self.hedge_fund_portfolio_table, data=hedge_fund_data)
-                print('{} hedge data have been stored.'.format(len(hedge_fund_data)))
+                # print('{} hedge data have been stored.'.format(len(hedge_fund_data)))
+                self.config_obj.logger.info('{} hedge data have been stored from hedge {}.'.format(len(hedge_fund_data), name))
             else:
+                self.config_obj.logger.info('No hedge data have been stored from hedge {}.'.format(name))
                 pass
-                # print('No extra hedge fund data should be stored.')
 
                 
             count = 0
             for (quarter, form_type, filing_id), quarterly_link in holdings_urls.items():
                 
-                count += 1
+                count += 1  
                 network_source = quarterly_link.split('-')[0].split('/')[-1]
                 network_source = "https://13f.info/data/13f/"  + network_source
-                # print("基金", idx+1, " 資料", quarter, form_type," crawling...",)
-                
-                # 添加相应的请求头信息
+
                 headers = {
                     'Accept': 'application/json, text/javascript, */*; q=0.01',
                     'Referer': quarterly_link,
@@ -128,12 +124,10 @@ class Crawler(object):
                 
                 if holdings_response.status_code == 200:
                     # time.sleep(10)
-                    data = holdings_response.json()  # 解析 JSON 格式的数据
+                    data = holdings_response.json()
                     
                 else:
-                    missing_counter += 1
-                    missing_info.append("基金" + str(idx+1) + " 資料" + str(quarter) + str(form_type))
-                    print("无法获取数据")
+                    self.config_obj.logger.error("基金{} 資料{}-{}連線狀態非200，無法獲取數據。".format(name, str(quarter), str(form_type)))
 
                 holdings_data = data['data']
                 holdings_data = pd.DataFrame(holdings_data, columns = ['SYM','ISSUER NAME','CL','CUSIP','VALUE ($000)','%','SHARES','PRINCIPAL','OPTION TYPE',])
@@ -153,18 +147,19 @@ class Crawler(object):
                 if len(holdings_data) != 0:
                     self.insert_records_to_DB(table_name=self.holdings_data_table, data=holdings_data)
                     print('{} holdings data have been stored.'.format(len(holdings_data)))
+                    self.config_obj.logger.info('{} holdings data have been stored from hedge {}.'.format(len(holdings_data), name))
                 else:
+                    self.config_obj.logger.info('No holdings data have been stored from hedge {}.'.format(name))
                     pass
-                    # print('No extra hedge fund holdings data should be stored.')
 
             time.sleep(10)
-        print("Missing holdings data number:", missing_counter)
-        print("Missing holdings info:", missing_info)
     
     def sql_execute(self, query):
 
-        # conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
-        conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        if self.config_obj.LOCAL_FLAG:
+            conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        else:
+            conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
         cursor = conn.cursor(as_dict=True)
         cursor.execute(query)
         # data = [row for row in cursor]
@@ -183,9 +178,12 @@ class Crawler(object):
         return query
 
     def insert_records_to_DB(self, table_name, data):
-
-        conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
-        # conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        
+        if self.config_obj.LOCAL_FLAG:
+            conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        else:
+            conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        
         cursor = conn.cursor(as_dict=True)
 
         data_tuple = [tuple(row) for row in data.values]
