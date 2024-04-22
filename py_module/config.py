@@ -60,26 +60,57 @@ class Configuration(object):
             Customized Hedge Components
             '''
             cls.customize_enter_date = '2019-02-15'
-            cls.target_hedge_funds = [
-                'Scion Asset Management',
-                'Peconic Partners',
-                'Altarock Partners',
-                'Elm Ridge Management',
-                'Goldentree Asset Management',
-                'Point72 Asset Management',
-                'SIR Capital Management',
-                'Duquesne Family Office',
-                'Lodge Hill Capital',
-                'Brave Warrior Advisors',
-                'Appaloosa',
-                'Yacktman Asset Management',
-                'Robotti Robert',
-                'Horizon Kinetics Asset Management',
-                'Stilwell Value',
-                'Fine Capital Partners',
-                'Dalal Street Holdings',
-                'Berkshire Hathaway',
-            ]
+            # cls.target_hedge_funds = [
+            #     'Scion Asset Management',
+            #     'Peconic Partners',
+            #     'Altarock Partners',
+            #     'Elm Ridge Management',
+            #     'Goldentree Asset Management',
+            #     'Point72 Asset Management',
+            #     'SIR Capital Management',
+            #     'Duquesne Family Office',
+            #     'Lodge Hill Capital',
+            #     'Brave Warrior Advisors',
+            #     'Appaloosa',
+            #     'Yacktman Asset Management',
+            #     'Robotti Robert',
+            #     'Horizon Kinetics Asset Management',
+            #     'Stilwell Value',
+            #     'Fine Capital Partners',
+            #     'Dalal Street Holdings',
+            #     'Berkshire Hathaway',
+            # ]
+
+            cls.target_hedge_funds_dict = {
+                'XIRR_output_filter': [
+                                    'Scion Asset Management',
+                                    'Peconic Partners',
+                                    'Altarock Partners',
+                                    'Elm Ridge Management',
+                                    'Goldentree Asset Management',
+                                    'Point72 Asset Management',
+                                    'SIR Capital Management',
+                                    'Duquesne Family Office',
+                                    'Lodge Hill Capital',
+                                    'Brave Warrior Advisors',
+                                    'Appaloosa',
+                                    'Yacktman Asset Management',
+                                    'Robotti Robert',
+                                    'Horizon Kinetics Asset Management',
+                                    'Stilwell Value',
+                                    'Fine Capital Partners',
+                                    'Dalal Street Holdings',
+                                    'Berkshire Hathaway',
+                ],
+                'sharpe_output_filter':[
+                                    'Yacktman Asset Management',
+                                    'Scion Asset Management',
+                                    'Altarock Partners',
+                                    'Brave Warrior Advisors',
+                                    'Pershing Square Capital Management',
+                                    'Stilwell Value',
+                ]
+            }
 
             cls.industry_top_selection = 3
             cls.company_top_selection = 3
@@ -98,6 +129,8 @@ class Configuration(object):
                 '55': 'Utilities',
                 '60': 'Real Estate',
             }
+
+
         return cls._instance
     
     def initialize_logger(self):

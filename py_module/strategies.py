@@ -21,6 +21,8 @@ class Strategy13F(object):
         self.us_stock_price_table = '[US_DB].[dbo].[USStockPrice]'
         self.us_stock_gics_table = '[US_DB].[dbo].[Company_GICS]'
         self.tw_stock_price_table = '[STOCK_SKILL_DB].[dbo].[TW_STOCK_PRICE_Daily]'
+        self.customized_fund_portfolio_table = '[US_DB].[dbo].[CUSTOMIZED_HEDGE_FUND_PORTFOLIO]'
+        self.customized_holdings_data_table = '[US_DB].[dbo].[CUSTOMIZED_HOLDINGS_DATA]'
 
         # 找到price data中的date欄位，對日期進行排序，找到最大的日期
         query = self.get_all_price_date(self.us_stock_price_table) # 為了取得時間欄位
@@ -40,6 +42,44 @@ class Strategy13F(object):
         self.tws_min_date = min(self.tws_sorted_dates)
         self.tws_max_date = max(self.tws_sorted_dates)
         print('TWS歷史價格從{}到{}'.format(self.tws_min_date, self.tws_max_date))
+
+    def costomized_hedge_build_and_store(self):
+        
+        customized_fund_list = {
+            'SHARPE_I3C3_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'SHARPE_I3C2_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'SHARPE_I3C1_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'SHARPE_I2C3_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'SHARPE_I2C2_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'SHARPE_I2C1_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'SHARPE_I1C3_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'SHARPE_I1C2_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'SHARPE_I1C1_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+        }
+
+        holdings_dict = {}
+        portfolio_dict = {}
+        for k_, v_ in customized_fund_list.items():
+            self.config_obj.logger.warning('建置自定義基金數據 {}'.format(k_))
+            func_to_call, params = v_
+            customized_fund_data, customized_table = func_to_call(**params)
+
+            holdings_data = self.modify_customized_fund_data_to_hlodings_data_structures(k_, customized_fund_data)
+            portfolio_data = self.arrage_customized_fund_portfolio_data(k_, holdings_data)
+            holdings_dict[k_] = holdings_data
+            portfolio_dict[k_] = portfolio_data
+
+        # path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + 'customized_data.xlsx')
+        # with pd.ExcelWriter(path) as writer:
+        #     for k_, v_ in holdings_dict.items():
+        #         holdings_dict[k_].to_excel(writer, index=False, sheet_name=k_)
+        #         portfolio_dict[k_].to_excel(writer, index=False, sheet_name=k_ + '_portfolio')
+        
+        for k_, v_ in holdings_dict.items():
+            table_name, inserted_rows = self.insert_records_to_DB(table_name=self.customized_holdings_data_table, data=v_)
+            self.config_obj.logger.warning('資料庫數據Insert:TABLE{} 筆數{}'.format(table_name, inserted_rows))
+            table_name, inserted_rows = self.insert_records_to_DB(table_name=self.customized_fund_portfolio_table, data=portfolio_dict[k_])
+            self.config_obj.logger.warning('資料庫數據Insert:TABLE{} 筆數{}'.format(table_name, inserted_rows))
 
     def back_test_flow(self):
         '''
@@ -323,15 +363,21 @@ class Strategy13F(object):
             for fund_name, components_table in fund_components_dict_by_hedge.items():
                 components_table.to_excel(writer, index=False, sheet_name=fund_name)
 
-    def customize_fund_components(self, industry_top_selection, company_top_selection):
+    def customize_fund_components(self, industry_top_selection, company_top_selection, mcap_weighted_flag):
         '''
         function:
             製作自定義基金。
         Input:
+            -.industry_top_selection: int
+                各基金取產業市值前幾
+            -.company_top_selection: int
+                各基金產業，取個股市值前幾
+            -.mcap_weighted_flag
+                產業、個股是否以市值加權 (mv: market)
         Output:
             仿製基金13F holdings table，包含欄位SYM、SHARES、date、price
         1.2019 2/15 開始進場
-        2.XIRR表現在波克夏以上的基金
+        2.XIRR表現在波克夏以上的基金 or 其他選擇方式(-. 單筆獲利計算夏普值排序)
         3.各基金的前(三)市值產業
         4.前(三)市值產業 的前(三)市值股票
         5.以100萬當入場金
@@ -340,10 +386,9 @@ class Strategy13F(object):
         7.回測計算MDD、XIRR
         '''
         enter_date = self.config_obj.customize_enter_date #2019 2/15 開始進場
-        hedge_funds = self.config_obj.target_hedge_funds #XIRR表現在波克夏以上的基金
+        # hedge_funds = self.config_obj.target_hedge_funds_dict['XIRR_output_filter'] #XIRR表現在波克夏以上的基金
+        hedge_funds = self.config_obj.target_hedge_funds_dict['sharpe_output_filter'] #計算已平倉獲利後，依照sharpe ratio、勝算比排序
         
-        # industry_top_selection = self.config_obj.industry_top_selection #各基金的前(三)市值產業 --> 改成以function params控制
-        # company_top_selection = self.config_obj.company_top_selection #前(三)市值產業 的前(三)市值股票 --> 改成以function params控制
         enter_cost = self.config_obj.enter_cost
         '''定義Output obj、統計用obj'''
         ### Final Output Form
@@ -413,7 +458,7 @@ class Strategy13F(object):
 
                     hedge_num = count_hedge_funds[count_hedge_funds['QUARTER'] == quarter]['HEDGE_FUND'].values[0]
                     # print('該季Hedge Fund數:', hedge_num)
-                    customized_holdings = self.calculate_customized_shares(customized_holdings, enter_cost, hedge_num)
+                    customized_holdings = self.calculate_customized_shares(customized_holdings, enter_cost, hedge_num, mcap_weighted_flag)
 
                 if customized_table is None:
                     customized_table = customized_holdings
@@ -506,7 +551,9 @@ class Strategy13F(object):
         #         pass
         #     else:
         #         each_df = each_df[~((each_df['FORM_TYPE'] == 'RESTATEMENT') & (df['DATE_FILED'] > df['BASE_DATE']))]
-        df = df[~((df['FORM_TYPE'] == 'RESTATEMENT') & (df['DATE_FILED'] > df['BASE_DATE']))] # 刪除 RESTATEMENT 大於 基準日期的Records。
+
+        '''有時只有RESTATEMENT資料，故下式先移除'''
+        # df = df[~((df['FORM_TYPE'] == 'RESTATEMENT') & (df['DATE_FILED'] > df['BASE_DATE']))] # 刪除 RESTATEMENT 大於 基準日期的Records。
 
 
         sorting_key = df.groupby('BASE_DATE')['FILING_ID'].idxmax() # 取group中最大FILING_ID，因為可能有多筆records，直接依據FILING_ID取最新的。
@@ -952,7 +999,14 @@ class Strategy13F(object):
         FROM {} tb_holdings WITH(NOLOCK)
         INNER JOIN {} tb_gics WITH(NOLOCK)
         ON tb_holdings.SYM = tb_gics.Ticker 
-        WHERE tb_holdings.[HEDGE_FUND] = '{}' AND tb_holdings.[QUARTER] = '{}' AND tb_holdings.[FILING_ID] = '{}') tb_hedge
+        WHERE 
+            tb_holdings.[HEDGE_FUND] = '{}' 
+            AND tb_holdings.[QUARTER] = '{}' 
+            AND tb_holdings.[FILING_ID] = '{}'
+            AND tb_holdings.[OPTION_TYPE] IS NULL
+            AND tb_holdings.[SHARES] IS NOT NULL
+            AND SUBSTRING(tb_holdings.[CUSIP], 7, 2) = '10'
+            ) tb_hedge
         INNER JOIN {} tb_price WITH(NOLOCK) 
         ON tb_hedge.SYM = tb_price.stock_id 
         WHERE tb_price.[date] = '{}'
@@ -995,17 +1049,40 @@ class Strategy13F(object):
         customized_holdings = customized_holdings.groupby('GICS').apply(lambda x: x.nlargest(company_top_selection, 'market_price')).reset_index(drop=True)
         return customized_holdings
     
-    def calculate_customized_shares(self, customized_holdings, enter_cost, hedge_num):
+    def calculate_customized_shares(self, customized_holdings, enter_cost, hedge_num, mcap_weighted_flag=True):
         
-        # print(customized_holdings)
-        # 計算每個持股的投資金額
-        customized_holdings['investment_amount'] = enter_cost / hedge_num / len(customized_holdings)
+        '''
+        以I3C3舉例
+            SYM    SHARES                 HEDGE_FUND  QUARTER GICS        date   price  market_price
+        0    PG   9488547  Yacktman Asset Management  Q2 2019   30  2019-08-15  116.80  1.108262e+09
+        1   PEP   6681723  Yacktman Asset Management  Q2 2019   30  2019-08-15  129.66  8.663522e+08
+        2    KO  13090104  Yacktman Asset Management  Q2 2019   30  2019-08-15   53.43  6.994043e+08
+        3   JNJ   4675761  Yacktman Asset Management  Q2 2019   35  2019-08-15  130.17  6.086438e+08
+        4   ELV    741333  Yacktman Asset Management  Q2 2019   35  2019-08-15  273.31  2.026137e+08
+        5   SYK     26692  Yacktman Asset Management  Q2 2019   35  2019-08-15  212.53  5.672851e+06
+        6  ORCL   8457482  Yacktman Asset Management  Q2 2019   45  2019-08-15   52.65  4.452864e+08
+        7  MSFT   3206658  Yacktman Asset Management  Q2 2019   45  2019-08-15  134.39  4.309428e+08
+        8  CSCO   4610142  Yacktman Asset Management  Q2 2019   45  2019-08-15   47.36  2.183363e+08
+        '''
+
+        if mcap_weighted_flag:# 計算每個持股的投資金額(方法2. 加權分配)
+            industry_market_values = customized_holdings.groupby('GICS')['market_price'].sum()
+            weights = industry_market_values / industry_market_values.sum()
+            industry_allocation = enter_cost / hedge_num * weights #各產業依照比重分配資金
+            # 根据每个GICS的市值分配資金到每支股票
+            for gics, allocation in industry_allocation.items():
+                subset = customized_holdings[customized_holdings['GICS'] == gics].copy()
+                total_market_value = subset['market_price'].sum()
+                subset['investment_amount'] = allocation * (subset['market_price'] / total_market_value)
+                customized_holdings.loc[customized_holdings['GICS'] == gics, 'investment_amount'] = subset['investment_amount']
+        else:# 計算每個持股的投資金額(方法1. 平均分配)
+            customized_holdings['investment_amount'] = enter_cost / hedge_num / len(customized_holdings)
+
 
         # 計算可以投入的股票數量（向下取整）
         customized_holdings['shares_to_buy'] = customized_holdings['investment_amount'] / customized_holdings['price']
         customized_holdings['shares_to_buy'] = customized_holdings['shares_to_buy'].astype(int)
 
-        # print(customized_holdings)
         return customized_holdings
 
     def arrange_customized_table(self, customized_table):
@@ -1023,3 +1100,145 @@ class Strategy13F(object):
         summary_table = summary_table[summary_table['date'] == self.max_date]
         summary_table = summary_table.sort_values(by=['XIRR'], ascending=False)
         return summary_table
+    
+
+    def modify_customized_fund_data_to_hlodings_data_structures(self, hedge_fund, customized_fund_data):
+
+        df = customized_fund_data
+        df['ISSUER_NAME'] = '-'
+        df['CL'] = '-'
+        df['CUSIP'] = '-'
+        df['PRINCIPAL'] = '-'
+        df['OPTION_TYPE'] = '-'
+        df['FORM_TYPE'] = '-'
+        df['HEDGE_FUND'] = hedge_fund
+        df['FILING_ID'] = '-'
+
+        df.rename(columns={'suggested_invest_amount': 'VALUE'}, inplace=True)
+        df['VALUE'] = df['VALUE'].astype(int)
+
+        total_value_by_quarter = df.groupby('QUARTER')['VALUE'].transform('sum')
+        df['Percentile'] = df['VALUE'] / total_value_by_quarter
+
+        df.rename(columns={'shares_to_buy': 'SHARES'}, inplace=True)
+
+        df = df[['SYM', 'ISSUER_NAME', 'CL', 'CUSIP', 'VALUE', 'Percentile', 'SHARES', 'PRINCIPAL', 'OPTION_TYPE', 'HEDGE_FUND', 'QUARTER', 'FORM_TYPE', 'FILING_ID']]
+        df = df.reset_index(drop=True)
+        return df
+    
+    def arrage_customized_fund_portfolio_data(self, hedge_fund, holdings_data):
+
+        current_date = datetime.datetime.now().date()
+
+        df = holdings_data.groupby('QUARTER').agg(
+            HOLDINGS=('SYM', 'count'),
+            VALUE=('VALUE', 'sum'),
+            TOP_HOLDINGS=('SYM', lambda x: ', '.join(x[:3])),
+        ).reset_index()
+
+        df['FORM_TYPE'] = '-'
+        df['DATE_FILED'] = current_date
+        df['FILING_ID'] = '-'
+        df['HEDGE_FUND'] = hedge_fund
+        df = df[['QUARTER', 'HOLDINGS', 'VALUE', 'TOP_HOLDINGS', 'FORM_TYPE', 'DATE_FILED', 'FILING_ID', 'HEDGE_FUND']]
+        return df
+    
+    def insert_records_to_DB(self, table_name, data):
+        
+        if self.config_obj.LOCAL_FLAG:
+            conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        else:
+            conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        
+        cursor = conn.cursor(as_dict=True)
+
+        data_tuple = [tuple(row) for row in data.values]
+        # print(hedge_tuple)
+        if table_name == '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]':
+
+            cursor.executemany(
+                """INSERT INTO [US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]
+                (
+                [QUARTER]
+                ,[HOLDINGS]
+                ,[VALUE]
+                ,[TOP_HOLDINGS]
+                ,[FORM_TYPE]
+                ,[DATE_FILED]
+                ,[FILING_ID]
+                ,[HEDGE_FUND]
+                ) 
+                VALUES (%s,%d,%d,%s,%s,%s,%s,%s)"""
+                , data_tuple
+            )
+            conn.commit()
+        
+        elif table_name == '[US_DB].[dbo].[HOLDINGS_DATA]':
+            
+            cursor.executemany(
+                    """INSERT INTO [US_DB].[dbo].[HOLDINGS_DATA]
+                    (
+                    [SYM]
+                    ,[ISSUER_NAME]
+                    ,[CL]
+                    ,[CUSIP]
+                    ,[VALUE]
+                    ,[Percentile]
+                    ,[SHARES]
+                    ,[PRINCIPAL]
+                    ,[OPTION_TYPE]
+                    ,[HEDGE_FUND]
+                    ,[QUARTER]
+                    ,[FORM_TYPE]
+                    ,[FILING_ID]
+                    ) 
+                    VALUES(%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s)"""
+                    , data_tuple
+            )
+            conn.commit()
+        
+        elif table_name == self.customized_fund_portfolio_table:
+            cursor.executemany(
+                """INSERT INTO [US_DB].[dbo].[CUSTOMIZED_HEDGE_FUND_PORTFOLIO]
+                (
+                [QUARTER]
+                ,[HOLDINGS]
+                ,[VALUE]
+                ,[TOP_HOLDINGS]
+                ,[FORM_TYPE]
+                ,[DATE_FILED]
+                ,[FILING_ID]
+                ,[HEDGE_FUND]
+                ) 
+                VALUES (%s,%d,%d,%s,%s,%s,%s,%s)"""
+                , data_tuple
+            )
+            conn.commit()
+        elif table_name == self.customized_holdings_data_table:
+            cursor.executemany(
+                    """INSERT INTO [US_DB].[dbo].[CUSTOMIZED_HOLDINGS_DATA]
+                    (
+                    [SYM]
+                    ,[ISSUER_NAME]
+                    ,[CL]
+                    ,[CUSIP]
+                    ,[VALUE]
+                    ,[Percentile]
+                    ,[SHARES]
+                    ,[PRINCIPAL]
+                    ,[OPTION_TYPE]
+                    ,[HEDGE_FUND]
+                    ,[QUARTER]
+                    ,[FORM_TYPE]
+                    ,[FILING_ID]
+                    ) 
+                    VALUES(%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s)"""
+                    , data_tuple
+            )
+            conn.commit()
+        
+        inserted_rows = cursor.rowcount
+        cursor.close()
+        conn.close()
+
+        return table_name, inserted_rows

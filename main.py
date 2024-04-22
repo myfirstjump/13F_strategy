@@ -23,8 +23,9 @@ class StockStrategies(object):
         self.db_obj.Update_GICs_to_DB()
 
     def strategy_13F_investing(self):
-        # self.strategy_obj.customize_fund_components()
-        self.strategy_obj.back_test_flow()
+        # self.strategy_obj.customize_fund_components(industry_top_selection=3, company_top_selection=3)
+        # self.strategy_obj.back_test_flow()
+        self.strategy_obj.costomized_hedge_build_and_store()
     
     def dash_server(self, data):
         self.dash_app = DashBuilder(data)
