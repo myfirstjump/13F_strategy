@@ -26,7 +26,15 @@ class StockStrategies(object):
         # self.strategy_obj.customize_fund_components(industry_top_selection=3, company_top_selection=3)
         # self.strategy_obj.back_test_flow()
         self.strategy_obj.costomized_hedge_build_and_store()
-        # self.strategy_obj.customize_fund_components_revised(industry_top_selection=3, company_top_selection=3, mcap_weighted_flag=True)
+        # self.strategy_obj.customize_fund_components_revised(hedge_funds_range=[
+        #                             'Yacktman Asset Management',
+        #                             'Scion Asset Management',
+        #                             'Altarock Partners',
+        #                             'Brave Warrior Advisors',
+        #                             'Pershing Square Capital Management',
+        #                             'Stilwell Value',
+        #         ], 
+        #                                                     industry_top_selection=3, company_top_selection=1, mcap_weighted_flag=True)
     
     def dash_server(self, data):
         self.dash_app = DashBuilder(data)
