@@ -57,75 +57,147 @@ class Strategy13F(object):
         #     'SHARPE_I1C1_mcap': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
         # }
         customized_fund_list = {
-            'I3C3_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I3C2_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I3C1_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I2C3_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I2C2_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I2C1_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I1C3_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I1C2_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I1C1_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I3C3_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I3C2_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I3C1_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I2C3_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I2C2_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I2C1_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I1C3_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I1C2_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I1C1_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
 
-            'I3C3_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I3C2_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I3C1_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I2C3_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I2C2_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I2C1_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I1C3_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I1C2_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I1C1_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I3C3_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I3C2_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I3C1_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I2C3_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I2C2_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I2C1_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I1C3_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I1C2_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I1C1_Yacktman_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
 
-            'I3C3_Scion_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I3C2_Scion_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I3C1_Scion_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I2C3_Scion_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I2C2_Scion_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I2C1_Scion_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I1C3_Scion_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I1C2_Scion_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I1C1_Scion_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I3C3_Scion_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I3C2_Scion_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I3C1_Scion_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I2C3_Scion_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I2C2_Scion_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I2C1_Scion_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I1C3_Scion_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I1C2_Scion_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I1C1_Scion_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
 
-            'I3C3_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I3C2_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I3C1_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I2C3_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I2C2_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I2C1_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I1C3_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I1C2_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I1C1_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I3C3_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I3C2_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I3C1_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I2C3_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I2C2_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I2C1_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I1C3_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I1C2_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I1C1_Altarock_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
         
-            'I3C3_Brave_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I3C2_Brave_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I3C1_Brave_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I2C3_Brave_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I2C2_Brave_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I2C1_Brave_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I1C3_Brave_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I1C2_Brave_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I1C1_Brave_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I3C3_Brave_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I3C2_Brave_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I3C1_Brave_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I2C3_Brave_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I2C2_Brave_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I2C1_Brave_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I1C3_Brave_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I1C2_Brave_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I1C1_Brave_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
 
-            'I3C3_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I3C2_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I3C1_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I2C3_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I2C2_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I2C1_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I1C3_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I1C2_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I1C1_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I3C3_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I3C2_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I3C1_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I2C3_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I2C2_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I2C1_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I1C3_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I1C2_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I1C1_Pershing_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
 
-            'I3C3_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I3C2_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I3C1_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I2C3_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I2C2_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I2C1_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I1C3_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I1C2_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I1C1_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I3C3_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I3C2_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I3C1_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I2C3_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I2C2_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I2C1_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I1C3_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I1C2_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I1C1_Stilwell_reinvest_0512': (self.customize_fund_components_revised, {'reinvest_flag':True, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+        
+        
+            'I3C3_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I3C2_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I3C1_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I2C3_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I2C2_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I2C1_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I1C3_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I1C2_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I1C1_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+
+            'I3C3_Yacktman_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I3C2_Yacktman_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I3C1_Yacktman_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I2C3_Yacktman_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I2C2_Yacktman_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I2C1_Yacktman_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I1C3_Yacktman_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I1C2_Yacktman_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I1C1_Yacktman_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+
+            'I3C3_Scion_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I3C2_Scion_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I3C1_Scion_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I2C3_Scion_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I2C2_Scion_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I2C1_Scion_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I1C3_Scion_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I1C2_Scion_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I1C1_Scion_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Scion Asset Management'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+
+            'I3C3_Altarock_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I3C2_Altarock_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I3C1_Altarock_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I2C3_Altarock_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I2C2_Altarock_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I2C1_Altarock_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I1C3_Altarock_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I1C2_Altarock_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I1C1_Altarock_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Altarock Partners'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+        
+            'I3C3_Brave_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I3C2_Brave_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I3C1_Brave_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I2C3_Brave_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I2C2_Brave_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I2C1_Brave_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I1C3_Brave_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I1C2_Brave_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I1C1_Brave_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Brave Warrior Advisors'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+
+            'I3C3_Pershing_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I3C2_Pershing_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I3C1_Pershing_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I2C3_Pershing_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I2C2_Pershing_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I2C1_Pershing_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I1C3_Pershing_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I1C2_Pershing_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I1C1_Pershing_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Pershing Square Capital Management'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+
+            'I3C3_Stilwell_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I3C2_Stilwell_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I3C1_Stilwell_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I2C3_Stilwell_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I2C2_Stilwell_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I2C1_Stilwell_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'I1C3_Stilwell_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'I1C2_Stilwell_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I1C1_Stilwell_100W_0512': (self.customize_fund_components_revised, {'reinvest_flag':False, 'hedge_funds_range': ['Stilwell Value'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+        
         }
 
 
@@ -437,7 +509,7 @@ class Strategy13F(object):
             for fund_name, components_table in fund_components_dict_by_hedge.items():
                 components_table.to_excel(writer, index=False, sheet_name=fund_name)
 
-    def customize_fund_components_revised(self, hedge_funds_range, industry_top_selection, company_top_selection, mcap_weighted_flag): 
+    def customize_fund_components_revised(self, reinvest_flag, hedge_funds_range, industry_top_selection, company_top_selection, mcap_weighted_flag): 
         
         '''
         相較於customize_fund_components()，迴圈先Quarter再Hedge，使得每季可以計算總資金變化。
@@ -509,31 +581,31 @@ class Strategy13F(object):
 
                 
                 holdings_data, holdings_GICs_data = self.group_by_GICs_from_holdings_data(holdings_data)
-                # '''儲存holdings_dict'''
+                '''儲存holdings_dict'''
                 # if hedge_fund not in holdings_dict.keys():
                 #     holdings_dict[hedge_fund] = holdings_data
                 # else:
                 #     holdings_dict[hedge_fund] = pd.concat([holdings_dict[hedge_fund], holdings_data], ignore_index=True)
-                # '''儲存GICs_dict'''
+                '''儲存GICs_dict'''
                 # if hedge_fund not in GICs_dict.keys():
                 #     GICs_dict[hedge_fund] = holdings_GICs_data
                 # else:
                 #     GICs_dict[hedge_fund] = pd.concat([GICs_dict[hedge_fund], holdings_GICs_data], ignore_index=True)
 
-                # if (hedge_fund == 'Stilwell Value') & (quarter == 'Q3 2016'):
+                # if (hedge_fund == 'Yacktman Asset Management') & (quarter == 'Q4 2013'):
                 industry_result_data, company_result_data = self.select_company_from_holdings_adjusted(holdings_data, holdings_GICs_data, industry_top_selection, company_top_selection)
 
-                # '''儲存industries_select_dict'''
-                # if hedge_fund not in industries_select_dict.keys():
-                #     industries_select_dict[hedge_fund] = industry_result_data
-                # else:
-                #     industries_select_dict[hedge_fund] = pd.concat([industries_select_dict[hedge_fund], industry_result_data], ignore_index=True)
+                '''儲存industries_select_dict'''
+        #         if hedge_fund not in industries_select_dict.keys():
+        #             industries_select_dict[hedge_fund] = industry_result_data
+        #         else:
+        #             industries_select_dict[hedge_fund] = pd.concat([industries_select_dict[hedge_fund], industry_result_data], ignore_index=True)
                 
-                # '''儲存company_select_dict'''
-                # if hedge_fund not in company_select_dict.keys():
-                #     company_select_dict[hedge_fund] = company_result_data
-                # else:
-                #     company_select_dict[hedge_fund] = pd.concat([company_select_dict[hedge_fund], company_result_data], ignore_index=True)
+                '''儲存company_select_dict'''
+        #         if hedge_fund not in company_select_dict.keys():
+        #             company_select_dict[hedge_fund] = company_result_data
+        #         else:
+        #             company_select_dict[hedge_fund] = pd.concat([company_select_dict[hedge_fund], company_result_data], ignore_index=True)
 
 
                 hedge_num = len(sub_fund_list) #本季有幾間hedge
@@ -552,7 +624,9 @@ class Strategy13F(object):
                 customized_table = q_customized_table_by_stock
             else:
                 customized_table = pd.concat([customized_table, q_customized_table_by_stock], ignore_index=True)
-            enter_cost = self.calculate_market_price_growth(q_customized_table_by_stock) #下一季的投資金額
+
+            if reinvest_flag: #利潤再投入
+                enter_cost = self.calculate_market_price_growth(q_customized_table_by_stock) #下一季的投資金額
 
         '''
         輸出Excel
@@ -1321,13 +1395,13 @@ class Strategy13F(object):
         '''1. 產業篩選'''
         def weights_diff_filter(data): #Top1若 > Top2 30%以上，則不繼續取Top2，依此類推
             indexes = []
-            for index, row in data.iterrows():
-                if index == 0:
+            for index, row in data.iterrows(): 
+                if index == 0: #情況一: 第一筆資料，納入
                     indexes.append(index)
                     pass
-                if row['WEIGHTS_diff'] > -0.3:
+                elif row['WEIGHTS_diff'] > -0.3: #情況二: 後續資料都要 > -30% 才納入
                     indexes.append(index)
-                else:
+                else:   #情況三: 有發生 < -30% 就break
                     break
             return indexes
         industry_weights_diff_filter_idx = weights_diff_filter(holdings_GICs_data)
