@@ -46,15 +46,15 @@ class Strategy13F(object):
     def costomized_hedge_build_and_store(self):
         
         customized_fund_list = {
-            'SHARPE_I3C3_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'SHARPE_I3C2_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'SHARPE_I3C1_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'SHARPE_I2C3_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'SHARPE_I2C2_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'SHARPE_I2C1_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'SHARPE_I1C3_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'SHARPE_I1C2_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'SHARPE_I1C1_mcap_weight': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'SHARPE_I3C3_mcap': (self.customize_fund_components, {'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'SHARPE_I3C2_mcap': (self.customize_fund_components, {'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'SHARPE_I3C1_mcap': (self.customize_fund_components, {'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'SHARPE_I2C3_mcap': (self.customize_fund_components, {'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'SHARPE_I2C2_mcap': (self.customize_fund_components, {'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'SHARPE_I2C1_mcap': (self.customize_fund_components, {'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            'SHARPE_I1C3_mcap': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            'SHARPE_I1C2_mcap': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'SHARPE_I1C1_mcap': (self.customize_fund_components, {'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
         }
 
         holdings_dict = {}
@@ -64,22 +64,24 @@ class Strategy13F(object):
             func_to_call, params = v_
             customized_fund_data, customized_table = func_to_call(**params)
 
-            holdings_data = self.modify_customized_fund_data_to_hlodings_data_structures(k_, customized_fund_data)
+            holdings_data = self.modify_customized_fund_data_to_holdings_data_structures(k_, customized_fund_data)
             portfolio_data = self.arrage_customized_fund_portfolio_data(k_, holdings_data)
             holdings_dict[k_] = holdings_data
             portfolio_dict[k_] = portfolio_data
 
-        # path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + 'customized_data.xlsx')
-        # with pd.ExcelWriter(path) as writer:
-        #     for k_, v_ in holdings_dict.items():
-        #         holdings_dict[k_].to_excel(writer, index=False, sheet_name=k_)
-        #         portfolio_dict[k_].to_excel(writer, index=False, sheet_name=k_ + '_portfolio')
+        path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + 'customized_data.xlsx')
+        with pd.ExcelWriter(path) as writer:
+            for k_, v_ in holdings_dict.items():
+                holdings_dict[k_].to_excel(writer, index=False, sheet_name=k_)
+                portfolio_dict[k_].to_excel(writer, index=False, sheet_name=k_ + '_portfolio')
         
-        for k_, v_ in holdings_dict.items():
-            table_name, inserted_rows = self.insert_records_to_DB(table_name=self.customized_holdings_data_table, data=v_)
-            self.config_obj.logger.warning('資料庫數據Insert:TABLE{} 筆數{}'.format(table_name, inserted_rows))
-            table_name, inserted_rows = self.insert_records_to_DB(table_name=self.customized_fund_portfolio_table, data=portfolio_dict[k_])
-            self.config_obj.logger.warning('資料庫數據Insert:TABLE{} 筆數{}'.format(table_name, inserted_rows))
+
+
+        # for k_, v_ in holdings_dict.items():
+        #     table_name, inserted_rows = self.insert_records_to_DB(table_name=self.customized_holdings_data_table, data=v_)
+        #     self.config_obj.logger.warning('資料庫數據Insert:TABLE{} 筆數{}'.format(table_name, inserted_rows))
+        #     table_name, inserted_rows = self.insert_records_to_DB(table_name=self.customized_fund_portfolio_table, data=portfolio_dict[k_])
+        #     self.config_obj.logger.warning('資料庫數據Insert:TABLE{} 筆數{}'.format(table_name, inserted_rows))
 
     def back_test_flow(self):
         '''
@@ -363,6 +365,118 @@ class Strategy13F(object):
             for fund_name, components_table in fund_components_dict_by_hedge.items():
                 components_table.to_excel(writer, index=False, sheet_name=fund_name)
 
+    def customize_fund_components_revised(self, industry_top_selection, company_top_selection, mcap_weighted_flag): 
+        
+        '''
+        相較於customize_fund_components()，迴圈先Quarter再Hedge，使得每季可以計算總資金變化。
+
+        function:
+            製作自定義基金。
+        Input:
+            -.industry_top_selection: int
+                各基金取產業市值前幾
+            -.company_top_selection: int
+                各基金產業，取個股市值前幾
+            -.mcap_weighted_flag
+                產業、個股是否以市值加權 (mv: market)
+        '''
+        enter_date = self.config_obj.customize_enter_date #2019 2/15 開始進場
+        # hedge_funds = self.config_obj.target_hedge_funds_dict['XIRR_output_filter'] #XIRR表現在波克夏以上的基金
+        hedge_funds = self.config_obj.target_hedge_funds_dict['sharpe_output_filter'] #計算已平倉獲利後，依照sharpe ratio、勝算比排序
+        
+        enter_cost = self.config_obj.enter_cost
+        '''定義Output obj、統計用obj'''
+        ### Final Output Form
+        adjusted_fund_data = None
+
+        '''Read DB data'''
+        query = self.create_query_data_table(self.hedge_fund_portfolio_table)
+        fund_data = self.sql_execute(query)
+        fund_data = pd.DataFrame(fund_data)
+        fund_data = fund_data[fund_data['HEDGE_FUND'].isin(hedge_funds)]
+        hedge_fund_list = hedge_funds
+
+
+        '''各hedge fund計算迴圈'''
+        for idx, hedge_fund in enumerate(hedge_fund_list):
+            '''調整fund_data'''
+            each_fund_data = self.each_fund_data_adjust(fund_data, hedge_fund, date_13F_flag=False)
+
+            if adjusted_fund_data is None:
+                    adjusted_fund_data = each_fund_data
+            else:
+                adjusted_fund_data = pd.concat([adjusted_fund_data, each_fund_data], ignore_index=True)
+
+        adjusted_fund_data = adjusted_fund_data.sort_values(by=['BASE_DATE'], ascending=True).reset_index(drop=True)
+        # print(adjusted_fund_data)
+        date_list = adjusted_fund_data['BASE_DATE'].unique()
+        quarters_list = adjusted_fund_data['QUARTER'].unique()
+        
+
+        holdings_dict = {}
+        GICs_dict = {}
+        select_dict = {}
+        for idx_q, (quarter, holdings_time) in enumerate(zip(quarters_list, date_list)):
+
+            holdings_time = self.adjust_holdings_time(holdings_time, self.us_sorted_dates) # 調整為隔日，並且是有開市的日期 (TBD:修訂另一版為當日非隔日)
+            sub_fund_list = adjusted_fund_data[adjusted_fund_data['QUARTER']==quarter]['HEDGE_FUND'].values
+            for idx, hedge_fund in enumerate(sub_fund_list):
+
+                filing_number = adjusted_fund_data[(adjusted_fund_data['QUARTER']==quarter) & (adjusted_fund_data['HEDGE_FUND']==hedge_fund)]['FILING_ID'].values[0]
+                query = self.create_query_holdings_with_gics_n_price(hedge_fund, quarter, filing_number, holdings_time)
+                holdings_data = self.sql_execute(query)
+                holdings_data = pd.DataFrame(holdings_data)
+
+
+                
+                holdings_data, holdings_GICs_data = self.group_by_GICs_from_holdings_data(holdings_data)
+                '''儲存holdings_dict'''
+                if hedge_fund not in holdings_dict.keys():
+                    holdings_dict[hedge_fund] = holdings_data
+                else:
+                    holdings_dict[hedge_fund] = pd.concat([holdings_dict[hedge_fund], holdings_data], ignore_index=True)
+                '''儲存GICs_dict'''
+                if hedge_fund not in GICs_dict.keys():
+                    GICs_dict[hedge_fund] = holdings_GICs_data
+                else:
+                    GICs_dict[hedge_fund] = pd.concat([GICs_dict[hedge_fund], holdings_GICs_data], ignore_index=True)
+
+                if (hedge_fund == 'Scion Asset Management') & (quarter =='Q4 2020'):
+                    adjusted_holdings_data = self.select_company_from_holdings_adjusted(holdings_data, holdings_GICs_data, industry_top_selection, company_top_selection)
+
+                '''儲存select_dict'''
+                # if hedge_fund not in select_dict.keys():
+                #     select_dict[hedge_fund] = adjusted_holdings_data
+                # else:
+                #     select_dict[hedge_fund] = pd.concat([select_dict[hedge_fund], adjusted_holdings_data], ignore_index=True)
+
+                # top_gics = self.get_top_gics_from_holdings(holdings_data, industry_top_selection)
+                # customized_holdings = self.select_company_from_holdings(holdings_data, top_gics, company_top_selection)
+
+                # hedge_num = len(sub_fund_list)
+                # print('該季Hedge Fund數:', hedge_num)
+                # customized_holdings = self.calculate_customized_shares(customized_holdings, enter_cost, hedge_num, mcap_weighted_flag)
+
+
+        '''
+        輸出Excel
+        '''
+        # path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_hedge_holdings_original.xlsx')
+        # with pd.ExcelWriter(path) as writer:
+        #     for k_, v_ in holdings_dict.items():
+        #         holdings_dict[k_].to_excel(writer, index=False, sheet_name=k_)
+        
+        # path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_hedge_holdings_GICs.xlsx')
+        # with pd.ExcelWriter(path) as writer:
+        #     for k_, v_ in GICs_dict.items():
+        #         GICs_dict[k_].to_excel(writer, index=False, sheet_name=k_)
+
+        # path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_select_industry.xlsx')
+        # with pd.ExcelWriter(path) as writer:
+        #     for k_, v_ in select_dict.items():
+        #         select_dict[k_].to_excel(writer, index=False, sheet_name=k_)
+
+
     def customize_fund_components(self, industry_top_selection, company_top_selection, mcap_weighted_flag):
         '''
         function:
@@ -425,7 +539,7 @@ class Strategy13F(object):
             # previous_sym_str = tuple() #TBD
             
             '''調整fund_data'''
-            each_fund_data = self.each_fund_data_adjust(fund_data, hedge_fund)
+            each_fund_data = self.each_fund_data_adjust(fund_data, hedge_fund, date_13F_flag=False)
             quarters_list = each_fund_data['QUARTER'].values
             date_list = each_fund_data['BASE_DATE'].values #date_list = each_fund_data['DATE_FILED'].values # 進場時間點使用該基金13F公布時間
             filing_list = each_fund_data['FILING_ID'].values
@@ -442,7 +556,8 @@ class Strategy13F(object):
                 # hedge_fund_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None}
                 customized_holdings = None
                 '''調整holdings_time'''
-                holdings_time = self.adjust_holdings_time(holdings_time, self.us_sorted_dates) # 以13F報告公布期限為基準(5/15, 8/14, 11/14, 2/14)
+
+                holdings_time = self.adjust_holdings_time(holdings_time, self.us_sorted_dates) # 修正為有開市的日期(美股or台股)
                 # print("     第{}個季度：{}，時間為{}".format(idx_q+1, quarter, holdings_time))
 
                 query = self.create_query_holdings_with_gics_n_price(hedge_fund, quarter, filing_number, holdings_time)
@@ -507,7 +622,7 @@ class Strategy13F(object):
         '''.format(price_table)
         return query
 
-    def each_fund_data_adjust(self, fund_data, hedge_fund):
+    def each_fund_data_adjust(self, fund_data, hedge_fund, date_13F_flag=True):
         '''
         function:
             依據條件篩選fund_data中的records，因為每個季度可能包含多個FILE。
@@ -518,24 +633,40 @@ class Strategy13F(object):
         Input:
             -. 原始fund_data(13F報告)
             -. 目前處理的hedge_fund string
+            -. date_13F_flag: boolean
+                False的話使用Q的最後一天，True(default)則使用13F報告時間。
         Output:
             調整後之fund_data
+                1.新增BASE_DATE欄位，多用於後面查price。
+                2.刪除多餘的報告，每季基本上只留下一組資料。
         '''
         # 依據hedge_fund string篩選基金
         # 刪除'HOLDINGS'(持股個數), 'VALUE'(總市值), 'TOP_HOLDINGS'(最高持股量的個股)
         # 重製dataframe index
         df = fund_data[fund_data['HEDGE_FUND']==hedge_fund].drop(['HOLDINGS', 'VALUE', 'TOP_HOLDINGS', ], axis=1).reset_index(drop=True)
 
-        def calculate_base_date(row):
-            year = int(row['QUARTER'].split()[1])
-            if 'Q1' in row['QUARTER']:
-                return datetime.datetime(year, 5, 15)
-            elif 'Q2' in row['QUARTER']:
-                return datetime.datetime(year, 8, 14)
-            elif 'Q3' in row['QUARTER']:
-                return datetime.datetime(year, 11, 14)
-            elif 'Q4' in row['QUARTER']:
-                return datetime.datetime(year + 1, 2, 14)
+        if date_13F_flag: #某些狀況要使用13F報告公布日期
+            def calculate_base_date(row):
+                year = int(row['QUARTER'].split()[1])
+                if 'Q1' in row['QUARTER']:
+                    return datetime.datetime(year, 5, 15)
+                elif 'Q2' in row['QUARTER']:
+                    return datetime.datetime(year, 8, 14)
+                elif 'Q3' in row['QUARTER']:
+                    return datetime.datetime(year, 11, 14)
+                elif 'Q4' in row['QUARTER']:
+                    return datetime.datetime(year + 1, 2, 14)
+        else:   #某些狀況要使用每季最後一天
+            def calculate_base_date(row):
+                year = int(row['QUARTER'].split()[1])
+                if 'Q1' in row['QUARTER']:
+                    return datetime.datetime(year, 3, 31)
+                elif 'Q2' in row['QUARTER']:
+                    return datetime.datetime(year, 6, 30)
+                elif 'Q3' in row['QUARTER']:
+                    return datetime.datetime(year, 9, 30)
+                elif 'Q4' in row['QUARTER']:
+                    return datetime.datetime(year, 12, 31)
         # 新增欄位BASE_DATE，依據QUARTER欄位的資料，回傳Q1->5/15, Q2->8/14, Q3->11/14, Q4->2/14等日期
         df['BASE_DATE'] = df.apply(calculate_base_date, axis=1)# 新增 'BASE DATE' 基準日期欄位 (即5/15, 8/14, 11/14, 2/14)
         df['DATE_FILED'] = pd.to_datetime(df['DATE_FILED'])# 將 'DATE_FILED' 轉換為日期時間格式
@@ -1031,7 +1162,37 @@ class Strategy13F(object):
         df = holdings_data.groupby('GICS', as_index=False).agg({'market_price':'sum'})
         df = df.sort_values('market_price', ascending=False)
         top_gics = df['GICS'][:industry_top_selection].values
+        # print(top_gics)
         return top_gics
+
+    def group_by_GICs_from_holdings_data(self, holdings_data):
+        '''
+        上方函數get_top_gics_from_holdings的細部拆解，僅執行group並計算cmap後排列產業。
+        '''
+        holdings_data['market_price'] = holdings_data['price'] * holdings_data['SHARES']
+        company_market_values = holdings_data['market_price'].sum()
+        holdings_data['WEIGHTS'] = holdings_data['market_price'] / company_market_values
+        
+        def get_GICs_industry_name(row):
+            return self.config_obj.gics_dict[row['GICS']]
+
+        holdings_data['INDUSTRY'] = holdings_data.apply(get_GICs_industry_name, axis=1)# 新增 'BASE DATE' 基準日期欄位 (即5/15, 8/14, 11/14, 2/14)
+        holdings_data = holdings_data.sort_values('market_price', ascending=False)
+        holdings_data['WEIGHTS_diff'] = holdings_data['WEIGHTS'].diff()
+        # holdings_data['WEIGHTS_diff'].iloc[0] = 0
+
+        '''Group by產業別'''
+        gics_df = holdings_data.groupby('GICS', as_index=False).agg({'INDUSTRY':'first', 'market_price':'sum', 'HEDGE_FUND':'first', 'QUARTER':'first', 'date':'first'})
+        gics_df = gics_df.sort_values('market_price', ascending=False)
+
+        industry_market_values = gics_df['market_price'].sum()
+        gics_df['WEIGHTS'] = gics_df['market_price'] / industry_market_values
+        gics_df['WEIGHTS_diff'] = gics_df['WEIGHTS'].diff()
+        # gics_df['WEIGHTS_diff'].iloc[0] = 0
+
+        gics_df = gics_df[['GICS','INDUSTRY', 'WEIGHTS', 'WEIGHTS_diff','market_price','HEDGE_FUND','QUARTER','date',]]
+
+        return holdings_data, gics_df
     
     def select_company_from_holdings(self, holdings_data, top_gics, company_top_selection):
         '''
@@ -1046,8 +1207,91 @@ class Strategy13F(object):
         '''
         customized_holdings = holdings_data[holdings_data['GICS'].isin(top_gics)]
         customized_holdings = customized_holdings.sort_values(by=['GICS', 'market_price'], ascending=False)
+        # print(customized_holdings)
         customized_holdings = customized_holdings.groupby('GICS').apply(lambda x: x.nlargest(company_top_selection, 'market_price')).reset_index(drop=True)
         return customized_holdings
+    
+    def select_company_from_holdings_adjusted(self, holdings_data, holdings_GICs_data, industry_top_selection, company_top_selection):
+
+        holdings_data = holdings_data.reset_index(drop=True)
+        holdings_GICs_data = holdings_GICs_data.reset_index(drop=True)
+        print('holdings_data', holdings_data)
+        
+        '''1. 產業篩選'''
+        def weights_diff_filter(data): #Top1若 > Top2 30%以上，則不繼續取Top2，依此類推
+            indexes = []
+            for index, row in data.iterrows():
+                indexes.append(index)
+                if row['WEIGHTS_diff'] < -0.3:
+                    break
+            if len(indexes) == 1:
+                return indexes
+            elif len(indexes) == len(data):
+                return indexes
+            else:
+                return indexes[0:-1]
+        industry_weights_diff_filter_idx = weights_diff_filter(holdings_GICs_data)
+
+        def weights_diff_addition(data): #Top1~3之外，若第4名差距<2% --> 納入，依此類推
+            marked_indexes = []
+            for index, row in data.iterrows():
+                if row['WEIGHTS_diff'] > -0.02:
+                    marked_indexes.append(index)
+            return marked_indexes
+        industry_weights_diff_addition_idx = weights_diff_addition(holdings_GICs_data)
+
+        #捨棄與前面差距30%以上的產業
+        filtered_data = holdings_GICs_data.loc[industry_weights_diff_filter_idx]
+        #套用自訂參數，選擇前industry_top_selection
+        top_filtered_data = filtered_data.iloc[0:industry_top_selection,:]
+        #加入與前項差距小於2%的產業
+        from_idx = len(top_filtered_data)
+        addition_indexes = []
+        for index, row in holdings_GICs_data.iterrows():
+            if (index >= from_idx) & (index in industry_weights_diff_addition_idx):
+                addition_indexes.append(index)
+            elif (index in top_filtered_data.index):
+                pass
+            else:
+                break
+        addtion_rows = holdings_GICs_data.loc[addition_indexes]
+        industry_result_data = pd.concat([top_filtered_data, addtion_rows], ignore_index=True)
+        selected_industries = industry_result_data['GICS'].values
+
+        '''2. 公司篩選'''
+        holdings_data = holdings_data[holdings_data['GICS'].isin(selected_industries)] # 前一步驟所篩選的產業
+        holdings_data = holdings_data.reset_index(drop=True)
+        print('holdings_data', holdings_data)
+        company_weights_diff_filter_idx = weights_diff_filter(holdings_data)
+        print('company_weights_diff_filter_idx', company_weights_diff_filter_idx)
+        company_weights_diff_addition_idx = weights_diff_addition(holdings_data)
+        print('company_weights_diff_addition_idx', company_weights_diff_addition_idx)
+
+        #重新計算占比
+        company_market_values = holdings_data['market_price'].sum()
+        holdings_data['WEIGHTS'] = holdings_data['market_price'] / company_market_values
+        holdings_data['WEIGHTS_diff'] = holdings_data['WEIGHTS'].diff()
+        print('重算占比holdings_data', holdings_data)
+
+        #捨棄與前面差距30%以上的公司
+        filtered_data = holdings_data.loc[company_weights_diff_filter_idx]
+        #套用自訂參數，選擇前company_top_selection
+        top_filtered_data = filtered_data.iloc[0:company_top_selection,:]
+        #加入與前項差距小於2%的公司
+        from_idx = len(top_filtered_data)
+        addition_indexes = []
+        for index, row in holdings_data.iterrows():
+            if (index >= from_idx) & (index in company_weights_diff_addition_idx):
+                addition_indexes.append(index)
+            elif (index in top_filtered_data.index):
+                pass
+            else:
+                break
+        addtion_rows = holdings_data.loc[addition_indexes]
+        company_result_data = pd.concat([top_filtered_data, addtion_rows], ignore_index=True)
+
+
+        return company_result_data
     
     def calculate_customized_shares(self, customized_holdings, enter_cost, hedge_num, mcap_weighted_flag=True):
         
@@ -1102,7 +1346,7 @@ class Strategy13F(object):
         return summary_table
     
 
-    def modify_customized_fund_data_to_hlodings_data_structures(self, hedge_fund, customized_fund_data):
+    def modify_customized_fund_data_to_holdings_data_structures(self, hedge_fund, customized_fund_data):
 
         df = customized_fund_data
         df['ISSUER_NAME'] = '-'
