@@ -31,7 +31,8 @@ class Crawler(object):
         holdings_existed_filing_id = self.sql_execute(query)
         holdings_existed_filing_id = pd.DataFrame(holdings_existed_filing_id)['FILING_ID'].values
 
-        urls = self.config_obj.hedge_fund_urls
+        # urls = self.config_obj.hedge_fund_urls
+        urls = self.config_obj.all_13F_manager_urls
         headers = {
             'user-agent': 'Mozilla/5.0'
         }
@@ -96,8 +97,7 @@ class Crawler(object):
             hedge_fund_data = self.remove_existed_records_by_filing_id(hedge_fund_data, existed_filing_id)
             if len(hedge_fund_data) != 0:
                 self.insert_records_to_DB(table_name=self.hedge_fund_portfolio_table, data=hedge_fund_data)
-                # print('{} hedge data have been stored.'.format(len(hedge_fund_data)))
-                self.config_obj.logger.info('{} hedge data have been stored from hedge {}.'.format(len(hedge_fund_data), name))
+                self.config_obj.logger.info('{} hedge data have been stored from hedge {}.(DB:{})'.format(len(hedge_fund_data), name, self.hedge_fund_portfolio_table))
             else:
                 self.config_obj.logger.info('No hedge data have been stored from hedge {}.'.format(name))
                 pass
@@ -147,7 +147,7 @@ class Crawler(object):
                 if len(holdings_data) != 0:
                     self.insert_records_to_DB(table_name=self.holdings_data_table, data=holdings_data)
                     print('{} holdings data have been stored.'.format(len(holdings_data)))
-                    self.config_obj.logger.info('{} holdings data have been stored from hedge {}.'.format(len(holdings_data), name))
+                    self.config_obj.logger.info('{} holdings data have been stored from hedge {}.(DB:{})'.format(len(holdings_data), name, self.holdings_data_table))
                 else:
                     self.config_obj.logger.info('No holdings data have been stored from hedge {}.'.format(name))
                     pass
