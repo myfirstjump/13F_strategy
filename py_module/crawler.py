@@ -32,127 +32,130 @@ class Crawler(object):
         holdings_existed_filing_id = pd.DataFrame(holdings_existed_filing_id)['FILING_ID'].values
 
         # urls = self.config_obj.hedge_fund_urls
-        urls = self.config_obj.all_13F_manager_urls
-        headers = {
-            'user-agent': 'Mozilla/5.0'
-        }
-        parameters = {}
-        self.config_obj.logger.warning("Web_crawler_13F，預計爬取共{}支基金資料".format(len(urls)))
+        # urls = self.config_obj.popular_13F_manager_urls
+        urls = self.get_all_13F_manager_urls()
 
-        for idx, name in enumerate(urls):
+
+        # headers = {
+        #     'user-agent': 'Mozilla/5.0'
+        # }
+        # parameters = {}
+        # self.config_obj.logger.warning("Web_crawler_13F，預計爬取共{}支基金資料".format(len(urls)))
+
+        # for idx, name in enumerate(urls):
             
 
-            response = requests.get(urls[name], headers = headers)
-            soup = BeautifulSoup(response.text, "html.parser")
-            self.config_obj.logger.warning("第{}支基金：{}".format(idx+1, name))
-            self.config_obj.logger.warning("    連線網址：{}".format(response.url))
-            self.config_obj.logger.warning("    連線狀況：{}".format(response.status_code))
-            self.config_obj.logger.warning("    網頁Title：{}".format(soup.title.string))
-            table = soup.find('table')
+        #     response = requests.get(urls[name], headers = headers)
+        #     soup = BeautifulSoup(response.text, "html.parser")
+        #     self.config_obj.logger.warning("第{}支基金：{}".format(idx+1, name))
+        #     self.config_obj.logger.warning("    連線網址：{}".format(response.url))
+        #     self.config_obj.logger.warning("    連線狀況：{}".format(response.status_code))
+        #     self.config_obj.logger.warning("    網頁Title：{}".format(soup.title.string))
+        #     table = soup.find('table')
 
-            # 初始化空的資料列表
-            data = []
-            holdings_urls = {}
+        #     # 初始化空的資料列表
+        #     data = []
+        #     holdings_urls = {}
 
-            # 遍歷表格的每一列（排除表頭）
-            for row in table.find_all('tr')[1:]:
-                '''
-                get manager表格資料
-                '''
-                # 找到列中的每個資料單元格
-                cells = row.find_all('td')
-                quarterly_link = "https://13f.info" + row.find('a')['href']
+        #     # 遍歷表格的每一列（排除表頭）
+        #     for row in table.find_all('tr')[1:]:
+        #         '''
+        #         get manager表格資料
+        #         '''
+        #         # 找到列中的每個資料單元格
+        #         cells = row.find_all('td')
+        #         quarterly_link = "https://13f.info" + row.find('a')['href']
                                 
-                # 提取所需欄位的資料
-                quarter = cells[0].text.strip()
-                holdings = cells[1].text.strip()
-                value = cells[2].text.strip()
-                top_holdings = cells[3].text.strip()
-                form_type = cells[4].text.strip()
-                date_filed = cells[5].text.strip()
-                filing_id = cells[6].text.strip()
+        #         # 提取所需欄位的資料
+        #         quarter = cells[0].text.strip()
+        #         holdings = cells[1].text.strip()
+        #         value = cells[2].text.strip()
+        #         top_holdings = cells[3].text.strip()
+        #         form_type = cells[4].text.strip()
+        #         date_filed = cells[5].text.strip()
+        #         filing_id = cells[6].text.strip()
                 
                 
-                holdings_urls[(quarter, form_type, filing_id)] = quarterly_link
-                # 將資料組合成字典並添加到資料列表中
-                data.append({
-                    'QUARTER': quarter,
-                    'HOLDINGS': int("".join(holdings.split(','))),
-                    'VALUE ($000)': int("".join(value.split(','))),
-                    'TOP HOLDINGS': top_holdings,
-                    'FORM TYPE': form_type,
-                    'DATE FILED': date_filed,
-                    'FILING_ID': filing_id,
-                    'HEDGE FUND': name,
-                })
-            hedge_fund_data = pd.DataFrame(data)
-            hedge_fund_data = hedge_fund_data.replace(np.nan, None) # 部分資料為pandas nan，需轉為python None
-            # output_folder = self.config_obj.assets_hedge_fund_data
-            # file_name = "hedge_fund_portfolio_filings_" + str(idx+1) + "_" + "-".join(soup.title.string.split()) + ".csv"
-            # hedge_fund_data.to_csv(os.path.join(output_folder, file_name), index=False)
+        #         holdings_urls[(quarter, form_type, filing_id)] = quarterly_link
+        #         # 將資料組合成字典並添加到資料列表中
+        #         data.append({
+        #             'QUARTER': quarter,
+        #             'HOLDINGS': int("".join(holdings.split(','))),
+        #             'VALUE ($000)': int("".join(value.split(','))),
+        #             'TOP HOLDINGS': top_holdings,
+        #             'FORM TYPE': form_type,
+        #             'DATE FILED': date_filed,
+        #             'FILING_ID': filing_id,
+        #             'HEDGE FUND': name,
+        #         })
+        #     hedge_fund_data = pd.DataFrame(data)
+        #     hedge_fund_data = hedge_fund_data.replace(np.nan, None) # 部分資料為pandas nan，需轉為python None
+        #     # output_folder = self.config_obj.assets_hedge_fund_data
+        #     # file_name = "hedge_fund_portfolio_filings_" + str(idx+1) + "_" + "-".join(soup.title.string.split()) + ".csv"
+        #     # hedge_fund_data.to_csv(os.path.join(output_folder, file_name), index=False)
 
-            '''
-            確認DB中的資料，並比對差異。
-            '''
-            hedge_fund_data = self.remove_existed_records_by_filing_id(hedge_fund_data, existed_filing_id)
-            if len(hedge_fund_data) != 0:
-                self.insert_records_to_DB(table_name=self.hedge_fund_portfolio_table, data=hedge_fund_data)
-                self.config_obj.logger.info('{} hedge data have been stored from hedge {}.(DB:{})'.format(len(hedge_fund_data), name, self.hedge_fund_portfolio_table))
-            else:
-                self.config_obj.logger.info('No hedge data have been stored from hedge {}.'.format(name))
-                pass
+        #     '''
+        #     確認DB中的資料，並比對差異。
+        #     '''
+        #     hedge_fund_data = self.remove_existed_records_by_filing_id(hedge_fund_data, existed_filing_id)
+        #     if len(hedge_fund_data) != 0:
+        #         self.insert_records_to_DB(table_name=self.hedge_fund_portfolio_table, data=hedge_fund_data)
+        #         self.config_obj.logger.info('{} hedge data have been stored from hedge {}.(DB:{})'.format(len(hedge_fund_data), name, self.hedge_fund_portfolio_table))
+        #     else:
+        #         self.config_obj.logger.info('No hedge data have been stored from hedge {}.'.format(name))
+        #         pass
 
                 
-            count = 0
-            for (quarter, form_type, filing_id), quarterly_link in holdings_urls.items():
+        #     count = 0
+        #     for (quarter, form_type, filing_id), quarterly_link in holdings_urls.items():
                 
-                count += 1  
-                network_source = quarterly_link.split('-')[0].split('/')[-1]
-                network_source = "https://13f.info/data/13f/"  + network_source
+        #         count += 1  
+        #         network_source = quarterly_link.split('-')[0].split('/')[-1]
+        #         network_source = "https://13f.info/data/13f/"  + network_source
 
-                headers = {
-                    'Accept': 'application/json, text/javascript, */*; q=0.01',
-                    'Referer': quarterly_link,
-                    'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
-                    'Sec-Ch-Ua-Mobile': '?0',
-                    'Sec-Ch-Ua-Platform': '"Windows"',
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
+        #         headers = {
+        #             'Accept': 'application/json, text/javascript, */*; q=0.01',
+        #             'Referer': quarterly_link,
+        #             'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+        #             'Sec-Ch-Ua-Mobile': '?0',
+        #             'Sec-Ch-Ua-Platform': '"Windows"',
+        #             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        #             'X-Requested-With': 'XMLHttpRequest'
+        #         }
 
-                holdings_response = requests.get(network_source, headers=headers)
+        #         holdings_response = requests.get(network_source, headers=headers)
                 
-                if holdings_response.status_code == 200:
-                    # time.sleep(10)
-                    data = holdings_response.json()
+        #         if holdings_response.status_code == 200:
+        #             # time.sleep(10)
+        #             data = holdings_response.json()
                     
-                else:
-                    self.config_obj.logger.error("基金{} 資料{}-{}連線狀態非200，無法獲取數據。".format(name, str(quarter), str(form_type)))
+        #         else:
+        #             self.config_obj.logger.error("基金{} 資料{}-{}連線狀態非200，無法獲取數據。".format(name, str(quarter), str(form_type)))
 
-                holdings_data = data['data']
-                holdings_data = pd.DataFrame(holdings_data, columns = ['SYM','ISSUER NAME','CL','CUSIP','VALUE ($000)','%','SHARES','PRINCIPAL','OPTION TYPE',])
-                holdings_data = holdings_data.replace(np.nan, None) # 部分資料為pandas nan，需轉為python None
-                holdings_data['HEDGE FUND'] = name
-                holdings_data['QUARTER'] = quarter
-                holdings_data['FORM TYPE'] = form_type
-                holdings_data['FILING_ID'] = filing_id
+        #         holdings_data = data['data']
+        #         holdings_data = pd.DataFrame(holdings_data, columns = ['SYM','ISSUER NAME','CL','CUSIP','VALUE ($000)','%','SHARES','PRINCIPAL','OPTION TYPE',])
+        #         holdings_data = holdings_data.replace(np.nan, None) # 部分資料為pandas nan，需轉為python None
+        #         holdings_data['HEDGE FUND'] = name
+        #         holdings_data['QUARTER'] = quarter
+        #         holdings_data['FORM TYPE'] = form_type
+        #         holdings_data['FILING_ID'] = filing_id
 
-                # output_folder = os.path.join(self.config_obj.assets_holdings_data, name)
-                # if not os.path.exists(output_folder):
-                #     os.makedirs(output_folder)
-                # file_name = "holdings_data_" + "-".join(str(quarter).split()) + "_" + form_type + "_" + str(count) + ".csv"
-                # holdings_data.to_csv(os.path.join(output_folder, file_name), index=False)
+        #         # output_folder = os.path.join(self.config_obj.assets_holdings_data, name)
+        #         # if not os.path.exists(output_folder):
+        #         #     os.makedirs(output_folder)
+        #         # file_name = "holdings_data_" + "-".join(str(quarter).split()) + "_" + form_type + "_" + str(count) + ".csv"
+        #         # holdings_data.to_csv(os.path.join(output_folder, file_name), index=False)
 
-                holdings_data = self.remove_existed_records_by_filing_id(holdings_data, holdings_existed_filing_id)
-                if len(holdings_data) != 0:
-                    self.insert_records_to_DB(table_name=self.holdings_data_table, data=holdings_data)
-                    print('{} holdings data have been stored.'.format(len(holdings_data)))
-                    self.config_obj.logger.info('{} holdings data have been stored from hedge {}.(DB:{})'.format(len(holdings_data), name, self.holdings_data_table))
-                else:
-                    self.config_obj.logger.info('No holdings data have been stored from hedge {}.'.format(name))
-                    pass
+        #         holdings_data = self.remove_existed_records_by_filing_id(holdings_data, holdings_existed_filing_id)
+        #         if len(holdings_data) != 0:
+        #             self.insert_records_to_DB(table_name=self.holdings_data_table, data=holdings_data)
+        #             print('{} holdings data have been stored.'.format(len(holdings_data)))
+        #             self.config_obj.logger.info('{} holdings data have been stored from hedge {}.(DB:{})'.format(len(holdings_data), name, self.holdings_data_table))
+        #         else:
+        #             self.config_obj.logger.info('No holdings data have been stored from hedge {}.'.format(name))
+        #             pass
 
-            time.sleep(10)
+        #     time.sleep(10)
     
     def sql_execute(self, query):
 
@@ -169,6 +172,37 @@ class Crawler(object):
         cursor.close()
         conn.close()
         return data
+    
+    def get_all_13F_manager_urls(self, ):
+
+        all_13F_manager_urls = {}
+        managers_url = ['https://13f.info/managers/'+chr(i) for i in range(97, 123)]
+        managers_url.append('https://13f.info/managers/0')
+
+        for each_url in managers_url:
+
+            headers = {
+                'user-agent': 'Mozilla/5.0'
+            }
+
+                
+
+            response = requests.get(each_url, headers = headers)
+            soup = BeautifulSoup(response.text, "html.parser")
+
+            table = soup.find('table')
+
+ 
+            for row in table.find_all('tr')[1:]:
+                '''
+                get manager表格資料
+                '''
+
+                cells = row.find_all('td')
+                quarterly_link = "https://13f.info" + row.find('a')['href']
+                
+                all_13F_manager_urls[cells[0].text.strip()] = quarterly_link
+        print(all_13F_manager_urls)
     
     def create_query_get_13F_filing_id_in_DB(self, table_name):
             

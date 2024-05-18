@@ -9,7 +9,7 @@ class Configuration(object):
             cls._instance = super(Configuration, cls).__new__(cls)
             cls._instance.initialize_logger()
 
-            cls.LOCAL_FLAG = False
+            cls.LOCAL_FLAG = True
             '''
             Crawler
             '''
@@ -53,10 +53,11 @@ class Configuration(object):
                 'Brave Warrior Advisors':'https://13f.info/manager/0001553733-brave-warrior-advisors-llc',
             }
 
-            cls.all_13F_manager_urls = {
+            cls.popular_13F_manager_urls = {
                 'Abdiel Capital Advisors':'https://13f.info/manager/0001578684-abdiel-capital-advisors-lp',
                 'AKRE CAPITAL MANAGEMENT':'https://13f.info/manager/0001112520-akre-capital-management-llc',
                 'Altimeter Capital Management':'https://13f.info/manager/0001541617-altimeter-capital-management-lp',
+                'APPALOOSA':'https://13f.info/manager/0001656456-appaloosa-lp',
                 'AQR CAPITAL MANAGEMENT':'https://13f.info/manager/0001167557-aqr-capital-management-llc',
                 'ARK Investment Management':'https://13f.info/manager/0001697748-ark-investment-management-llc',
                 'Atreides Management':'https://13f.info/manager/0001777813-atreides-management-lp',

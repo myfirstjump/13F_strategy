@@ -48,11 +48,11 @@ def main_flow():
     main_obj = StockStrategies()
 
     '''13F官網資料爬蟲 & 補充'''
-    # main_obj.data_crawl()
+    main_obj.data_crawl()
     # main_obj.data_update()
 
     '''13F投資策略回測'''
-    main_obj.strategy_13F_investing()
+    # main_obj.strategy_13F_investing()
 
     '''Dash篩選'''
     # data_path = os.path.join(main_obj.config_obj.backtest_summary, '2024-01-28_summary_table.csv')
