@@ -248,3 +248,288 @@
 2024-05-12 05:21:31,721 WARNING 資料庫數據Insert:TABLE[US_DB].[dbo].[CUSTOMIZED_HEDGE_FUND_PORTFOLIO] 筆數41
 2024-05-12 05:28:36,832 WARNING 建置自定義基金數據 I3C3_reinvest_0512
 2024-05-12 05:29:57,880 WARNING 建置自定義基金數據 I3C3_reinvest_0512
+2024-05-25 16:33:34,503 WARNING Web_crawler_13F，預計爬取共10574支基金資料
+2024-05-25 16:33:36,204 WARNING 基金：a16z Perennial Management, L.P. 連線網址：https://13f.info/manager/0002009275-a16z-perennial-management-l-p
+2024-05-25 16:33:36,228 WARNING 基金：AAFMAA Wealth Management & Trust LLC 連線網址：https://13f.info/manager/0001846160-aafmaa-wealth-management-trust-llc
+2024-05-25 16:33:36,249 WARNING 基金：Aaron Wealth Advisors LLC 連線網址：https://13f.info/manager/0001812198-aaron-wealth-advisors-llc
+2024-05-25 16:33:36,321 WARNING 基金：AA Financial Advisors, LLC 連線網址：https://13f.info/manager/0002016899-aa-financial-advisors-llc
+2024-05-25 16:33:36,340 WARNING 基金：AAF Wealth Management, LLC 連線網址：https://13f.info/manager/0001726609-aaf-wealth-management-llc
+2024-05-25 16:33:36,359 WARNING 基金：Abacus Wealth Partners, LLC 連線網址：https://13f.info/manager/0001978011-abacus-wealth-partners-llc
+2024-05-25 16:33:36,428 WARNING 基金：Abacus Planning Group, Inc. 連線網址：https://13f.info/manager/0001602730-abacus-planning-group-inc
+2024-05-25 16:33:36,442 WARNING 基金：ABANCO INVESTORS LTD., LLC 連線網址：https://13f.info/manager/0000922437-abanco-investors-ltd-llc
+2024-05-25 16:33:36,469 WARNING 基金：Abbrea Capital, LLC 連線網址：https://13f.info/manager/0001697646-abbrea-capital-llc
+2024-05-25 16:33:36,514 WARNING 基金：Abbot Financial Management, Inc. 連線網址：https://13f.info/manager/0001714341-abbot-financial-management-inc
+2024-05-25 16:33:39,642 INFO Completed fetching data for fund a16z Perennial Management, L.P.
+2024-05-25 16:33:39,697 INFO Completed fetching data for fund ABANCO INVESTORS LTD., LLC
+2024-05-25 16:33:39,831 INFO Completed fetching data for fund AA Financial Advisors, LLC
+2024-05-25 16:33:41,255 WARNING 基金：AB CarVal Investors, LP 連線網址：https://13f.info/manager/0001425040-ab-carval-investors-lp
+2024-05-25 16:33:41,368 WARNING 基金：Abdiel Capital Advisors, LP 連線網址：https://13f.info/manager/0001578684-abdiel-capital-advisors-lp
+2024-05-25 16:33:41,409 WARNING 基金：ABEILLE ASSET MANAGEMENT SA 連線網址：https://13f.info/manager/0001145937-abeille-asset-management-sa
+2024-05-25 16:33:48,394 INFO Completed fetching data for fund ABEILLE ASSET MANAGEMENT SA
+2024-05-25 16:33:50,044 WARNING 基金：Abel Hall, LLC 連線網址：https://13f.info/manager/0002013339-abel-hall-llc
+2024-05-25 16:33:53,385 INFO Completed fetching data for fund Abel Hall, LLC
+2024-05-25 16:33:54,947 WARNING 基金：ABERDEEN ASSET MANAGEMENT PLC/UK 連線網址：https://13f.info/manager/0001080434-aberdeen-asset-management-plc-uk
+2024-05-25 16:33:55,237 INFO Completed fetching data for fund AAF Wealth Management, LLC
+2024-05-25 16:33:56,348 INFO Completed fetching data for fund AAFMAA Wealth Management & Trust LLC
+2024-05-25 16:33:56,621 INFO Completed fetching data for fund Abacus Wealth Partners, LLC
+2024-05-25 16:33:56,798 WARNING 基金：Aberdeen Wealth Management LLC 連線網址：https://13f.info/manager/0001802654-aberdeen-wealth-management-llc
+2024-05-25 16:33:57,537 WARNING 基金：ABG Innovation Capital Partners III GP Ltd 連線網址：https://13f.info/manager/0001845297-abg-innovation-capital-partners-iii-gp-ltd
+2024-05-25 16:33:57,941 WARNING 基金：ABG-WTT Global Life Science Capital Partners GP Ltd 連線網址：https://13f.info/manager/0001832108-abg-wtt-global-life-science-capital-partners-gp-ltd
+2024-05-25 16:33:59,825 INFO Completed fetching data for fund Aaron Wealth Advisors LLC
+2024-05-25 16:34:01,152 WARNING 基金：Abich Financial Wealth Management LLC 連線網址：https://13f.info/manager/0002011645-abich-financial-wealth-management-llc
+2024-05-25 16:34:02,441 INFO Completed fetching data for fund Abich Financial Wealth Management LLC
+2024-05-25 16:34:03,654 WARNING 基金：Abingworth LLP 連線網址：https://13f.info/manager/0001397144-abingworth-llp
+2024-05-25 16:34:15,944 INFO Completed fetching data for fund ABG-WTT Global Life Science Capital Partners GP Ltd
+2024-05-25 16:34:15,952 INFO Completed fetching data for fund ABG Innovation Capital Partners III GP Ltd
+2024-05-25 16:34:17,217 WARNING 基金：ABLES, IANNONE, MOORE & ASSOCIATES, INC. 連線網址：https://13f.info/manager/0002013713-ables-iannone-moore-associates-inc
+2024-05-25 16:34:17,300 WARNING 基金：ABLE Financial Group, LLC 連線網址：https://13f.info/manager/0001977500-able-financial-group-llc
+2024-05-25 16:34:17,480 INFO Completed fetching data for fund Abbot Financial Management, Inc.
+2024-05-25 16:34:18,043 INFO Completed fetching data for fund Abacus Planning Group, Inc.
+2024-05-25 16:34:18,916 WARNING 基金：Able Wealth Management LLC 連線網址：https://13f.info/manager/0002011908-able-wealth-management-llc
+2024-05-25 16:34:19,386 WARNING 基金：ABNER HERRMAN & BROCK LLC 連線網址：https://13f.info/manager/0001038661-abner-herrman-brock-llc
+2024-05-25 16:34:19,674 INFO Completed fetching data for fund ABLES, IANNONE, MOORE & ASSOCIATES, INC.
+2024-05-25 16:34:20,740 INFO Completed fetching data for fund Able Wealth Management LLC
+2024-05-25 16:34:21,114 WARNING 基金：ABRAMS BISON INVESTMENTS, LLC 連線網址：https://13f.info/manager/0001317588-abrams-bison-investments-llc
+2024-05-25 16:34:22,275 WARNING 基金：ABRAMS CAPITAL MANAGEMENT, L.P. 連線網址：https://13f.info/manager/0001358706-abrams-capital-management-l-p
+2024-05-25 16:34:22,441 INFO Completed fetching data for fund Aberdeen Wealth Management LLC
+2024-05-25 16:34:23,955 WARNING 基金：abrdn plc 連線網址：https://13f.info/manager/0001716774-abrdn-plc
+2024-05-25 16:34:24,177 INFO Completed fetching data for fund ABLE Financial Group, LLC
+2024-05-25 16:34:24,840 INFO Completed fetching data for fund Abbrea Capital, LLC
+2024-05-25 16:34:25,676 WARNING 基金：ABS Capital Partners V Trust 連線網址：https://13f.info/manager/0001666625-abs-capital-partners-v-trust
+2024-05-25 16:34:25,704 INFO Completed fetching data for fund Abdiel Capital Advisors, LP
+2024-05-25 16:34:26,085 WARNING 基金：ABS Direct Equity Fund LLC 連線網址：https://13f.info/manager/0001729347-abs-direct-equity-fund-llc
+2024-05-25 16:34:26,586 INFO Completed fetching data for fund ABERDEEN ASSET MANAGEMENT PLC/UK
+2024-05-25 16:34:27,145 ERROR Fund ABS Capital Partners V Trust generated an exception: (515, b"Cannot insert the value NULL into column 'Percentile', table 'US_DB.dbo.HOLDINGS_DATA'; column does not allow nulls. INSERT fails.DB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+2024-05-25 16:34:27,253 WARNING 基金：ABSHER WEALTH MANAGEMENT, LLC 連線網址：https://13f.info/manager/0001802534-absher-wealth-management-llc
+2024-05-25 16:34:27,805 WARNING 基金：ABSOLUTE CAPITAL MANAGEMENT, LLC 連線網址：https://13f.info/manager/0001817648-absolute-capital-management-llc
+2024-05-25 16:34:28,011 INFO Completed fetching data for fund AB CarVal Investors, LP
+2024-05-25 16:34:28,447 WARNING 基金：Absolute Gestao de Investimentos Ltda. 連線網址：https://13f.info/manager/0001622610-absolute-gestao-de-investimentos-ltda
+2024-05-25 16:34:28,684 INFO Completed fetching data for fund ABS Direct Equity Fund LLC
+2024-05-25 16:34:29,390 WARNING 基金：ABSOLUTE INVESTMENT ADVISERS, LLC 連線網址：https://13f.info/manager/0001316187-absolute-investment-advisers-llc
+2024-05-25 16:34:30,078 WARNING 基金：Absolute Return Capital, LLC 連線網址：https://13f.info/manager/0001527824-absolute-return-capital-llc
+2024-05-25 16:34:30,995 INFO Completed fetching data for fund Absolute Gestao de Investimentos Ltda.
+2024-05-25 16:34:31,362 ERROR Fund Absolute Return Capital, LLC generated an exception: (515, b"Cannot insert the value NULL into column 'Percentile', table 'US_DB.dbo.HOLDINGS_DATA'; column does not allow nulls. INSERT fails.DB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+2024-05-25 16:34:32,100 WARNING 基金：Absoluto Partners Gestao de Recursos Ltda 連線網址：https://13f.info/manager/0001847566-absoluto-partners-gestao-de-recursos-ltda
+2024-05-25 16:34:32,826 WARNING 基金：Abu Dhabi Investment Council 連線網址：https://13f.info/manager/0001634776-abu-dhabi-investment-council
+2024-05-25 16:34:34,222 ERROR Fund Abu Dhabi Investment Council generated an exception: (515, b"Cannot insert the value NULL into column 'Percentile', table 'US_DB.dbo.HOLDINGS_DATA'; column does not allow nulls. INSERT fails.DB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+2024-05-25 16:34:35,648 WARNING 基金：Abundance Wealth Counselors 連線網址：https://13f.info/manager/0001767080-abundance-wealth-counselors
+2024-05-25 16:34:43,946 INFO Completed fetching data for fund ABSOLUTE INVESTMENT ADVISERS, LLC
+2024-05-25 16:34:44,460 INFO Completed fetching data for fund ABSOLUTE CAPITAL MANAGEMENT, LLC
+2024-05-25 16:34:45,533 WARNING 基金：Acacia Research Corp 連線網址：https://13f.info/manager/0000934549-acacia-research-corp
+2024-05-25 16:34:46,321 WARNING 基金：ACADEMY CAPITAL MANAGEMENT INC/TX 連線網址：https://13f.info/manager/0001031972-academy-capital-management-inc-tx
+2024-05-25 16:34:51,369 INFO Completed fetching data for fund Acacia Research Corp
+2024-05-25 16:34:52,159 INFO Completed fetching data for fund Abingworth LLP
+2024-05-25 16:34:52,695 INFO Completed fetching data for fund ABSHER WEALTH MANAGEMENT, LLC
+2024-05-25 16:34:52,796 WARNING 基金：ACADIAN ASSET MANAGEMENT LLC 連線網址：https://13f.info/manager/0000916542-acadian-asset-management-llc
+2024-05-25 16:34:53,759 WARNING 基金：Acadia Trust NA 連線網址：https://13f.info/manager/0000872078-acadia-trust-na
+2024-05-25 16:34:54,128 WARNING 基金：ACAS, LLC 連線網址：https://13f.info/manager/0001859505-acas-llc
+2024-05-25 16:34:54,245 INFO Completed fetching data for fund Absoluto Partners Gestao de Recursos Ltda
+2024-05-25 16:34:55,716 WARNING 基金：Accel Growth Fund IV Associates L.L.C. 連線網址：https://13f.info/manager/0001665744-accel-growth-fund-iv-associates-l-l-c
+2024-05-25 16:35:09,184 INFO Completed fetching data for fund Abundance Wealth Counselors
+2024-05-25 16:35:10,423 WARNING 基金：Accel Growth Fund V Associates L.L.C. 連線網址：https://13f.info/manager/0001767987-accel-growth-fund-v-associates-l-l-c
+2024-05-25 16:35:10,567 INFO Completed fetching data for fund ACAS, LLC
+2024-05-25 16:35:10,921 INFO Completed fetching data for fund Acadia Trust NA
+2024-05-25 16:35:12,265 WARNING 基金：Accel Leaders Fund Associates L.L.C. 連線網址：https://13f.info/manager/0001665742-accel-leaders-fund-associates-l-l-c
+2024-05-25 16:35:12,835 WARNING 基金：Accel Leaders Fund II Associates L.L.C. 連線網址：https://13f.info/manager/0001768017-accel-leaders-fund-ii-associates-l-l-c
+2024-05-25 16:35:13,438 INFO Completed fetching data for fund Accel Leaders Fund Associates L.L.C.
+2024-05-25 16:35:15,023 WARNING 基金：Accel London III Associates L.P. 連線網址：https://13f.info/manager/0001495005-accel-london-iii-associates-l-p
+2024-05-25 16:35:16,382 ERROR Fund Accel London III Associates L.P. generated an exception: (515, b"Cannot insert the value NULL into column 'Percentile', table 'US_DB.dbo.HOLDINGS_DATA'; column does not allow nulls. INSERT fails.DB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+2024-05-25 16:35:16,718 INFO Completed fetching data for fund ABRAMS BISON INVESTMENTS, LLC
+2024-05-25 16:35:18,138 WARNING 基金：ACCEL VIII ASSOCIATES LLC 連線網址：https://13f.info/manager/0001248538-accel-viii-associates-llc
+2024-05-25 16:35:18,350 INFO Completed fetching data for fund ABRAMS CAPITAL MANAGEMENT, L.P.
+2024-05-25 16:35:18,561 WARNING 基金：Accel Wealth Management 連線網址：https://13f.info/manager/0001838226-accel-wealth-management
+2024-05-25 16:35:18,680 INFO Completed fetching data for fund Accel Leaders Fund II Associates L.L.C.
+2024-05-25 16:35:18,936 ERROR Fund ACCEL VIII ASSOCIATES LLC generated an exception: (515, b"Cannot insert the value NULL into column 'Percentile', table 'US_DB.dbo.HOLDINGS_DATA'; column does not allow nulls. INSERT fails.DB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+2024-05-25 16:35:19,320 WARNING 基金：Accel X Associates L.L.C. 連線網址：https://13f.info/manager/0001494996-accel-x-associates-l-l-c
+2024-05-25 16:35:19,516 INFO Completed fetching data for fund ABNER HERRMAN & BROCK LLC
+2024-05-25 16:35:20,503 WARNING 基金：Accel XI Associates L.L.C. 連線網址：https://13f.info/manager/0001535603-accel-xi-associates-l-l-c
+2024-05-25 16:35:20,645 WARNING 基金：Accent Capital Management, LLC 連線網址：https://13f.info/manager/0002014179-accent-capital-management-llc
+2024-05-25 16:35:20,777 WARNING 基金：Accel XII Associates L.L.C. 連線網址：https://13f.info/manager/0001601530-accel-xii-associates-l-l-c
+2024-05-25 16:35:20,812 ERROR Fund Accel X Associates L.L.C. generated an exception: (515, b"Cannot insert the value NULL into column 'Percentile', table 'US_DB.dbo.HOLDINGS_DATA'; column does not allow nulls. INSERT fails.DB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+2024-05-25 16:35:21,004 INFO Completed fetching data for fund Accel Growth Fund IV Associates L.L.C.
+2024-05-25 16:35:21,726 ERROR Fund Accel XII Associates L.L.C. generated an exception: (515, b"Cannot insert the value NULL into column 'Percentile', table 'US_DB.dbo.HOLDINGS_DATA'; column does not allow nulls. INSERT fails.DB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+2024-05-25 16:35:21,846 ERROR Fund Accel XI Associates L.L.C. generated an exception: (515, b"Cannot insert the value NULL into column 'Percentile', table 'US_DB.dbo.HOLDINGS_DATA'; column does not allow nulls. INSERT fails.DB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+2024-05-25 16:35:22,339 WARNING 基金：ACCESS FINANCIAL SERVICES, INC. 連線網址：https://13f.info/manager/0001699622-access-financial-services-inc
+2024-05-25 16:35:22,496 WARNING 基金：ACCENTURE PLC 連線網址：https://13f.info/manager/0001467373-accenture-plc
+2024-05-25 16:35:23,163 WARNING 基金：Access Investment Management LLC 連線網址：https://13f.info/manager/0002010477-access-investment-management-llc
+2024-05-25 16:35:23,396 WARNING 基金：ACCIDENT COMPENSATION CORP 連線網址：https://13f.info/manager/0001618832-accident-compensation-corp
+2024-05-25 16:35:23,533 ERROR Fund ACCENTURE PLC generated an exception: (515, b"Cannot insert the value NULL into column 'Percentile', table 'US_DB.dbo.HOLDINGS_DATA'; column does not allow nulls. INSERT fails.DB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+2024-05-25 16:35:24,116 INFO Completed fetching data for fund Accent Capital Management, LLC
+2024-05-25 16:35:24,741 INFO Completed fetching data for fund Access Investment Management LLC
+2024-05-25 16:35:25,030 WARNING 基金：ACCIPITER CAPITAL MANAGEMENT, LLC 連線網址：https://13f.info/manager/0001280190-accipiter-capital-management-llc
+2024-05-25 16:35:25,253 WARNING 基金：Accomplice Associates II, LLC 連線網址：https://13f.info/manager/0001898735-accomplice-associates-ii-llc
+2024-05-25 16:35:25,827 WARNING 基金：Accomplice Management, LLC 連線網址：https://13f.info/manager/0001941537-accomplice-management-llc
+2024-05-25 16:35:28,121 INFO Completed fetching data for fund Accomplice Associates II, LLC
+2024-05-25 16:35:28,152 INFO Completed fetching data for fund Accel Growth Fund V Associates L.L.C.
+2024-05-25 16:35:28,301 INFO Completed fetching data for fund Accomplice Management, LLC
+2024-05-25 16:35:29,464 WARNING 基金：ACCOUNT MANAGEMENT LLC 連線網址：https://13f.info/manager/0000769954-account-management-llc
+2024-05-25 16:35:29,594 WARNING 基金：Accordant Advisory Group Inc 連線網址：https://13f.info/manager/0002013499-accordant-advisory-group-inc
+2024-05-25 16:35:29,750 INFO Completed fetching data for fund abrdn plc
+2024-05-25 16:35:30,156 WARNING 基金：Accredited Investors Inc. 連線網址：https://13f.info/manager/0001518364-accredited-investors-inc
+2024-05-25 16:35:31,169 INFO Completed fetching data for fund Accordant Advisory Group Inc
+2024-05-25 16:35:31,327 WARNING 基金：Accretive Wealth Partners, LLC 連線網址：https://13f.info/manager/0001844444-accretive-wealth-partners-llc
+2024-05-25 16:35:33,163 WARNING 基金：ACCURATE INVESTMENT SOLUTIONS, INC. 連線網址：https://13f.info/manager/0001607863-accurate-investment-solutions-inc
+2024-05-25 16:35:34,248 ERROR Fund ACCURATE INVESTMENT SOLUTIONS, INC. generated an exception: (515, b"Cannot insert the value NULL into column 'Percentile', table 'US_DB.dbo.HOLDINGS_DATA'; column does not allow nulls. INSERT fails.DB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+2024-05-25 16:35:35,243 WARNING 基金：Accurate Wealth Management, LLC 連線網址：https://13f.info/manager/0001877728-accurate-wealth-management-llc
+2024-05-25 16:35:43,777 WARNING 基金：Accuvest Global Advisors 連線網址：https://13f.info/manager/0001497637-accuvest-global-advisors
+2024-05-25 16:35:47,396 WARNING 基金：Acertus Capital Management, LLC 連線網址：https://13f.info/manager/0001542662-acertus-capital-management-llc
+2024-05-25 16:35:51,336 WARNING 基金：ACG Wealth 連線網址：https://13f.info/manager/0001569071-acg-wealth
+2024-05-25 16:35:51,979 WARNING 基金：Achmea Investment Management B.V. 連線網址：https://13f.info/manager/0001697765-achmea-investment-management-b-v
+2024-05-25 16:35:52,067 WARNING 基金：Achievement Holdings L.P. 連線網址：https://13f.info/manager/0001626140-achievement-holdings-l-p
+2024-05-25 16:35:53,264 WARNING 基金：ACIMA PRIVATE WEALTH, LLC 連線網址：https://13f.info/manager/0001761961-acima-private-wealth-llc
+2024-05-25 16:35:54,476 WARNING 基金：ACK Asset Management LLC 連線網址：https://13f.info/manager/0001510940-ack-asset-management-llc
+2024-05-25 16:35:56,822 WARNING 基金：Ackerman Capital Advisors, LLC 連線網址：https://13f.info/manager/0001699506-ackerman-capital-advisors-llc
+2024-05-25 16:36:06,298 WARNING 基金：ACME, LLC 連線網址：https://13f.info/manager/0001803200-acme-llc
+2024-05-25 16:36:08,359 WARNING 基金：ACON Equity Management, L.L.C. 連線網址：https://13f.info/manager/0001731031-acon-equity-management-l-l-c
+2024-05-25 16:43:52,160 WARNING Web_crawler_13F，預計爬取共10574支基金資料
+2024-05-25 16:43:54,745 WARNING 基金：AAFMAA Wealth Management & Trust LLC 連線網址：https://13f.info/manager/0001846160-aafmaa-wealth-management-trust-llc
+2024-05-25 16:43:54,901 WARNING 基金：Abacus Planning Group, Inc. 連線網址：https://13f.info/manager/0001602730-abacus-planning-group-inc
+2024-05-25 16:43:54,923 WARNING 基金：ABG-WTT Global Life Science Capital Partners GP Ltd 連線網址：https://13f.info/manager/0001832108-abg-wtt-global-life-science-capital-partners-gp-ltd
+2024-05-25 16:43:54,938 WARNING 基金：ABERDEEN ASSET MANAGEMENT PLC/UK 連線網址：https://13f.info/manager/0001080434-aberdeen-asset-management-plc-uk
+2024-05-25 16:43:54,973 WARNING 基金：Abbot Financial Management, Inc. 連線網址：https://13f.info/manager/0001714341-abbot-financial-management-inc
+2024-05-25 16:43:55,058 WARNING 基金：Abdiel Capital Advisors, LP 連線網址：https://13f.info/manager/0001578684-abdiel-capital-advisors-lp
+2024-05-25 16:43:55,160 WARNING 基金：AA Financial Advisors, LLC 連線網址：https://13f.info/manager/0002016899-aa-financial-advisors-llc
+2024-05-25 16:43:55,183 WARNING 基金：Abel Hall, LLC 連線網址：https://13f.info/manager/0002013339-abel-hall-llc
+2024-05-25 16:43:55,233 WARNING 基金：ABEILLE ASSET MANAGEMENT SA 連線網址：https://13f.info/manager/0001145937-abeille-asset-management-sa
+2024-05-25 16:43:55,258 WARNING 基金：Aaron Wealth Advisors LLC 連線網址：https://13f.info/manager/0001812198-aaron-wealth-advisors-llc
+2024-05-25 16:43:55,281 WARNING 基金：a16z Perennial Management, L.P. 連線網址：https://13f.info/manager/0002009275-a16z-perennial-management-l-p
+2024-05-25 16:43:55,289 WARNING 基金：ABANCO INVESTORS LTD., LLC 連線網址：https://13f.info/manager/0000922437-abanco-investors-ltd-llc
+2024-05-25 16:43:55,317 WARNING 基金：Abacus Wealth Partners, LLC 連線網址：https://13f.info/manager/0001978011-abacus-wealth-partners-llc
+2024-05-25 16:43:55,327 WARNING 基金：Abich Financial Wealth Management LLC 連線網址：https://13f.info/manager/0002011645-abich-financial-wealth-management-llc
+2024-05-25 16:43:55,378 WARNING 基金：Aberdeen Wealth Management LLC 連線網址：https://13f.info/manager/0001802654-aberdeen-wealth-management-llc
+2024-05-25 16:43:55,413 WARNING 基金：ABG Innovation Capital Partners III GP Ltd 連線網址：https://13f.info/manager/0001845297-abg-innovation-capital-partners-iii-gp-ltd
+2024-05-25 16:43:55,444 WARNING 基金：AAF Wealth Management, LLC 連線網址：https://13f.info/manager/0001726609-aaf-wealth-management-llc
+2024-05-25 16:43:55,559 WARNING 基金：AB CarVal Investors, LP 連線網址：https://13f.info/manager/0001425040-ab-carval-investors-lp
+2024-05-25 16:43:55,618 WARNING 基金：Abbrea Capital, LLC 連線網址：https://13f.info/manager/0001697646-abbrea-capital-llc
+2024-05-25 16:43:55,681 WARNING 基金：Abingworth LLP 連線網址：https://13f.info/manager/0001397144-abingworth-llp
+2024-05-25 16:43:58,164 INFO Completed fetching data for fund Abich Financial Wealth Management LLC
+2024-05-25 16:43:59,340 INFO Completed fetching data for fund ABANCO INVESTORS LTD., LLC
+2024-05-25 16:43:59,547 INFO Completed fetching data for fund Abel Hall, LLC
+2024-05-25 16:43:59,655 INFO Completed fetching data for fund AA Financial Advisors, LLC
+2024-05-25 16:44:00,152 INFO Completed fetching data for fund a16z Perennial Management, L.P.
+2024-05-25 16:44:00,803 WARNING 基金：ABLE Financial Group, LLC 連線網址：https://13f.info/manager/0001977500-able-financial-group-llc
+2024-05-25 16:44:01,212 WARNING 基金：ABLES, IANNONE, MOORE & ASSOCIATES, INC. 連線網址：https://13f.info/manager/0002013713-ables-iannone-moore-associates-inc
+2024-05-25 16:44:01,328 WARNING 基金：Able Wealth Management LLC 連線網址：https://13f.info/manager/0002011908-able-wealth-management-llc
+2024-05-25 16:44:01,696 WARNING 基金：ABNER HERRMAN & BROCK LLC 連線網址：https://13f.info/manager/0001038661-abner-herrman-brock-llc
+2024-05-25 16:44:02,879 WARNING 基金：ABRAMS BISON INVESTMENTS, LLC 連線網址：https://13f.info/manager/0001317588-abrams-bison-investments-llc
+2024-05-25 16:44:03,711 INFO Completed fetching data for fund Able Wealth Management LLC
+2024-05-25 16:55:45,721 WARNING Web_crawler_13F，預計爬取共10574支基金資料
+2024-05-25 16:55:46,925 WARNING 基金：AA Financial Advisors, LLC 連線網址：https://13f.info/manager/0002016899-aa-financial-advisors-llc
+2024-05-25 16:55:47,061 WARNING 基金：ABANCO INVESTORS LTD., LLC 連線網址：https://13f.info/manager/0000922437-abanco-investors-ltd-llc
+2024-05-25 16:55:47,168 WARNING 基金：Abbot Financial Management, Inc. 連線網址：https://13f.info/manager/0001714341-abbot-financial-management-inc
+2024-05-25 16:55:47,198 WARNING 基金：Abbrea Capital, LLC 連線網址：https://13f.info/manager/0001697646-abbrea-capital-llc
+2024-05-25 16:55:47,952 WARNING 基金：AAF Wealth Management, LLC 連線網址：https://13f.info/manager/0001726609-aaf-wealth-management-llc
+2024-05-25 16:55:47,973 WARNING 基金：Aaron Wealth Advisors LLC 連線網址：https://13f.info/manager/0001812198-aaron-wealth-advisors-llc
+2024-05-25 16:55:47,982 WARNING 基金：a16z Perennial Management, L.P. 連線網址：https://13f.info/manager/0002009275-a16z-perennial-management-l-p
+2024-05-25 16:55:48,008 WARNING 基金：AAFMAA Wealth Management & Trust LLC 連線網址：https://13f.info/manager/0001846160-aafmaa-wealth-management-trust-llc
+2024-05-25 16:55:48,052 WARNING 基金：Abacus Planning Group, Inc. 連線網址：https://13f.info/manager/0001602730-abacus-planning-group-inc
+2024-05-25 16:55:48,121 WARNING 基金：Abacus Wealth Partners, LLC 連線網址：https://13f.info/manager/0001978011-abacus-wealth-partners-llc
+2024-05-25 16:55:49,810 ERROR Fund AA Financial Advisors, LLC generated an exception: 'Crawler' object has no attribute 'lock'
+2024-05-25 16:55:49,997 ERROR Fund ABANCO INVESTORS LTD., LLC generated an exception: 'Crawler' object has no attribute 'lock'
+2024-05-25 16:55:50,414 ERROR Fund a16z Perennial Management, L.P. generated an exception: 'Crawler' object has no attribute 'lock'
+2024-05-25 16:55:51,881 WARNING 基金：AB CarVal Investors, LP 連線網址：https://13f.info/manager/0001425040-ab-carval-investors-lp
+2024-05-25 16:55:52,131 WARNING 基金：Abdiel Capital Advisors, LP 連線網址：https://13f.info/manager/0001578684-abdiel-capital-advisors-lp
+2024-05-25 16:55:52,152 WARNING 基金：ABEILLE ASSET MANAGEMENT SA 連線網址：https://13f.info/manager/0001145937-abeille-asset-management-sa
+2024-05-25 16:55:58,316 ERROR Fund ABEILLE ASSET MANAGEMENT SA generated an exception: 'Crawler' object has no attribute 'lock'
+2024-05-25 16:56:00,118 WARNING 基金：Abel Hall, LLC 連線網址：https://13f.info/manager/0002013339-abel-hall-llc
+2024-05-25 16:56:02,565 ERROR Fund Abel Hall, LLC generated an exception: 'Crawler' object has no attribute 'lock'
+2024-05-25 16:56:04,344 WARNING 基金：ABERDEEN ASSET MANAGEMENT PLC/UK 連線網址：https://13f.info/manager/0001080434-aberdeen-asset-management-plc-uk
+2024-05-25 16:56:07,781 WARNING 基金：Aberdeen Wealth Management LLC 連線網址：https://13f.info/manager/0001802654-aberdeen-wealth-management-llc
+2024-05-25 16:56:08,664 WARNING 基金：ABG Innovation Capital Partners III GP Ltd 連線網址：https://13f.info/manager/0001845297-abg-innovation-capital-partners-iii-gp-ltd
+2024-05-25 16:56:09,765 WARNING 基金：ABG-WTT Global Life Science Capital Partners GP Ltd 連線網址：https://13f.info/manager/0001832108-abg-wtt-global-life-science-capital-partners-gp-ltd
+2024-05-25 16:59:22,661 WARNING Web_crawler_13F，預計爬取共2685支基金資料
+2024-05-25 16:59:23,781 WARNING 基金：Abacus Planning Group, Inc. 連線網址：https://13f.info/manager/0001602730-abacus-planning-group-inc
+2024-05-25 16:59:23,922 WARNING 基金：Aaron Wealth Advisors LLC 連線網址：https://13f.info/manager/0001812198-aaron-wealth-advisors-llc
+2024-05-25 16:59:23,923 WARNING 基金：a16z Perennial Management, L.P. 連線網址：https://13f.info/manager/0002009275-a16z-perennial-management-l-p
+2024-05-25 16:59:23,957 WARNING 基金：ABANCO INVESTORS LTD., LLC 連線網址：https://13f.info/manager/0000922437-abanco-investors-ltd-llc
+2024-05-25 16:59:23,960 WARNING 基金：AAFMAA Wealth Management & Trust LLC 連線網址：https://13f.info/manager/0001846160-aafmaa-wealth-management-trust-llc
+2024-05-25 16:59:24,788 WARNING 基金：AAF Wealth Management, LLC 連線網址：https://13f.info/manager/0001726609-aaf-wealth-management-llc
+2024-05-25 16:59:24,809 WARNING 基金：Abacus Wealth Partners, LLC 連線網址：https://13f.info/manager/0001978011-abacus-wealth-partners-llc
+2024-05-25 16:59:24,826 WARNING 基金：AA Financial Advisors, LLC 連線網址：https://13f.info/manager/0002016899-aa-financial-advisors-llc
+2024-05-25 16:59:25,073 WARNING 基金：Abbrea Capital, LLC 連線網址：https://13f.info/manager/0001697646-abbrea-capital-llc
+2024-05-25 16:59:25,124 WARNING 基金：Abbot Financial Management, Inc. 連線網址：https://13f.info/manager/0001714341-abbot-financial-management-inc
+2024-05-25 16:59:25,564 INFO Completed fetching data for fund a16z Perennial Management, L.P.. Progress: 1/2685
+2024-05-25 16:59:26,324 INFO Completed fetching data for fund ABANCO INVESTORS LTD., LLC. Progress: 2/2685
+2024-05-25 16:59:27,212 INFO Completed fetching data for fund AA Financial Advisors, LLC. Progress: 3/2685
+2024-05-25 16:59:27,700 WARNING 基金：AB CarVal Investors, LP 連線網址：https://13f.info/manager/0001425040-ab-carval-investors-lp
+2024-05-25 16:59:28,336 WARNING 基金：Abdiel Capital Advisors, LP 連線網址：https://13f.info/manager/0001578684-abdiel-capital-advisors-lp
+2024-05-25 16:59:28,677 WARNING 基金：ABEILLE ASSET MANAGEMENT SA 連線網址：https://13f.info/manager/0001145937-abeille-asset-management-sa
+2024-05-25 16:59:35,811 INFO Completed fetching data for fund ABEILLE ASSET MANAGEMENT SA. Progress: 4/2685
+2024-05-25 16:59:36,377 WARNING 基金：Abel Hall, LLC 連線網址：https://13f.info/manager/0002013339-abel-hall-llc
+2024-05-25 16:59:38,866 INFO Completed fetching data for fund Abel Hall, LLC. Progress: 5/2685
+2024-05-25 16:59:40,158 WARNING 基金：ABERDEEN ASSET MANAGEMENT PLC/UK 連線網址：https://13f.info/manager/0001080434-aberdeen-asset-management-plc-uk
+2024-05-25 16:59:43,397 INFO Completed fetching data for fund Abacus Wealth Partners, LLC. Progress: 6/2685
+2024-05-25 16:59:43,413 INFO Completed fetching data for fund AAFMAA Wealth Management & Trust LLC. Progress: 7/2685
+2024-05-25 16:59:44,161 INFO Completed fetching data for fund AAF Wealth Management, LLC. Progress: 8/2685
+2024-05-25 16:59:44,280 WARNING 基金：ABG Innovation Capital Partners III GP Ltd 連線網址：https://13f.info/manager/0001845297-abg-innovation-capital-partners-iii-gp-ltd
+2024-05-25 16:59:45,305 WARNING 基金：Aberdeen Wealth Management LLC 連線網址：https://13f.info/manager/0001802654-aberdeen-wealth-management-llc
+2024-05-25 16:59:45,906 WARNING 基金：ABG-WTT Global Life Science Capital Partners GP Ltd 連線網址：https://13f.info/manager/0001832108-abg-wtt-global-life-science-capital-partners-gp-ltd
+2024-05-25 16:59:47,379 INFO Completed fetching data for fund Aaron Wealth Advisors LLC. Progress: 9/2685
+2024-05-25 16:59:48,726 WARNING 基金：Abich Financial Wealth Management LLC 連線網址：https://13f.info/manager/0002011645-abich-financial-wealth-management-llc
+2024-05-25 16:59:50,484 INFO Completed fetching data for fund Abich Financial Wealth Management LLC. Progress: 10/2685
+2024-05-25 16:59:51,257 WARNING 基金：Abingworth LLP 連線網址：https://13f.info/manager/0001397144-abingworth-llp
+2024-05-25 17:00:01,634 INFO Completed fetching data for fund Abbot Financial Management, Inc.. Progress: 11/2685
+2024-05-25 17:00:02,433 WARNING 基金：ABLE Financial Group, LLC 連線網址：https://13f.info/manager/0001977500-able-financial-group-llc
+2024-05-25 17:00:03,770 WARNING 基金：ABLES, IANNONE, MOORE & ASSOCIATES, INC. 連線網址：https://13f.info/manager/0002013713-ables-iannone-moore-associates-inc
+2024-05-25 17:00:04,884 WARNING 基金：Able Wealth Management LLC 連線網址：https://13f.info/manager/0002011908-able-wealth-management-llc
+2024-05-25 17:00:06,107 WARNING 基金：ABNER HERRMAN & BROCK LLC 連線網址：https://13f.info/manager/0001038661-abner-herrman-brock-llc
+2024-05-25 17:00:09,880 WARNING 基金：ABRAMS BISON INVESTMENTS, LLC 連線網址：https://13f.info/manager/0001317588-abrams-bison-investments-llc
+2024-05-25 17:00:11,312 WARNING 基金：ABRAMS CAPITAL MANAGEMENT, L.P. 連線網址：https://13f.info/manager/0001358706-abrams-capital-management-l-p
+2024-05-25 17:00:12,159 WARNING 基金：abrdn plc 連線網址：https://13f.info/manager/0001716774-abrdn-plc
+2024-05-25 17:00:12,305 WARNING 基金：ABS Capital Partners V Trust 連線網址：https://13f.info/manager/0001666625-abs-capital-partners-v-trust
+2024-05-25 17:00:16,412 INFO Completed fetching data for fund ABG Innovation Capital Partners III GP Ltd. Progress: 12/2685
+2024-05-25 17:00:16,470 INFO Completed fetching data for fund ABG-WTT Global Life Science Capital Partners GP Ltd. Progress: 13/2685
+2024-05-25 17:00:16,472 INFO Completed fetching data for fund Abacus Planning Group, Inc.. Progress: 14/2685
+2024-05-25 17:00:16,472 INFO Completed fetching data for fund Aberdeen Wealth Management LLC. Progress: 15/2685
+2024-05-25 17:00:16,474 INFO Completed fetching data for fund ABERDEEN ASSET MANAGEMENT PLC/UK. Progress: 16/2685
+2024-05-25 17:00:16,475 INFO Completed fetching data for fund Abdiel Capital Advisors, LP. Progress: 17/2685
+2024-05-25 17:00:16,475 INFO Completed fetching data for fund Abbrea Capital, LLC. Progress: 18/2685
+2024-05-25 17:00:16,476 INFO Completed fetching data for fund AB CarVal Investors, LP. Progress: 19/2685
+2024-05-25 17:00:16,920 WARNING 基金：ABS Direct Equity Fund LLC 連線網址：https://13f.info/manager/0001729347-abs-direct-equity-fund-llc
+2024-05-25 17:00:18,875 INFO Completed fetching data for fund Able Wealth Management LLC. Progress: 20/2685
+2024-05-25 17:00:19,204 INFO Completed fetching data for fund ABLES, IANNONE, MOORE & ASSOCIATES, INC.. Progress: 21/2685
+2024-05-25 17:00:19,417 INFO Completed fetching data for fund ABS Direct Equity Fund LLC. Progress: 22/2685
+2024-05-25 17:00:20,592 WARNING 基金：ABSOLUTE CAPITAL MANAGEMENT, LLC 連線網址：https://13f.info/manager/0001817648-absolute-capital-management-llc
+2024-05-25 17:00:20,736 WARNING 基金：ABSHER WEALTH MANAGEMENT, LLC 連線網址：https://13f.info/manager/0001802534-absher-wealth-management-llc
+2024-05-25 17:00:20,880 WARNING 基金：Absolute Gestao de Investimentos Ltda. 連線網址：https://13f.info/manager/0001622610-absolute-gestao-de-investimentos-ltda
+2024-05-25 17:00:22,868 INFO Completed fetching data for fund ABLE Financial Group, LLC. Progress: 23/2685
+2024-05-25 17:00:23,521 INFO Completed fetching data for fund Absolute Gestao de Investimentos Ltda.. Progress: 24/2685
+2024-05-25 17:00:24,130 INFO Completed fetching data for fund ABS Capital Partners V Trust. Progress: 25/2685
+2024-05-25 17:00:24,306 WARNING 基金：ABSOLUTE INVESTMENT ADVISERS, LLC 連線網址：https://13f.info/manager/0001316187-absolute-investment-advisers-llc
+2024-05-25 17:00:24,663 WARNING 基金：Absolute Return Capital, LLC 連線網址：https://13f.info/manager/0001527824-absolute-return-capital-llc
+2024-05-25 17:00:25,720 WARNING 基金：Absoluto Partners Gestao de Recursos Ltda 連線網址：https://13f.info/manager/0001847566-absoluto-partners-gestao-de-recursos-ltda
+2024-05-25 17:26:23,269 WARNING Web_crawler_13F，預計爬取共1支基金資料
+2024-05-25 17:27:29,595 WARNING Web_crawler_13F，預計爬取共1支基金資料
+2024-05-25 17:27:29,996 WARNING 第1支基金：Alambic Investment Management
+2024-05-25 17:27:29,996 WARNING     連線網址：https://13f.info/manager/0001663368-alambic-investment-management-l-p
+2024-05-25 17:27:29,997 WARNING     連線狀況：200
+2024-05-25 17:27:29,997 WARNING     網頁Title：Alambic Investment Management, L.P. 13F Filings
+2024-05-25 17:27:30,020 INFO 22 hedge data have been stored from hedge Alambic Investment Management.(DB:[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO])
+2024-05-25 17:33:57,731 WARNING Web_crawler_13F，預計爬取共1支基金資料
+2024-05-25 17:33:59,168 WARNING 第1支基金：Alambic Investment Management
+2024-05-25 17:33:59,169 WARNING     連線網址：https://13f.info/manager/0001663368-alambic-investment-management-l-p
+2024-05-25 17:33:59,171 WARNING     連線狀況：200
+2024-05-25 17:33:59,174 WARNING     網頁Title：Alambic Investment Management, L.P. 13F Filings
+2024-05-25 17:33:59,180 INFO No hedge data have been stored from hedge Alambic Investment Management.
+2024-05-25 17:34:00,312 INFO No holdings data have been stored from hedge Alambic Investment Management.
+2024-05-25 17:34:01,459 INFO 1 holdings data have been stored (1 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:02,687 INFO 73 holdings data have been stored (73 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:03,987 INFO 163 holdings data have been stored (163 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:05,609 INFO 187 holdings data have been stored (187 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:07,224 INFO 280 holdings data have been stored (280 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:08,863 INFO 297 holdings data have been stored (297 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:10,547 INFO 293 holdings data have been stored (293 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:12,240 INFO 343 holdings data have been stored (343 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:13,917 INFO 303 holdings data have been stored (303 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:15,581 INFO 274 holdings data have been stored (274 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:17,308 INFO 348 holdings data have been stored (348 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:19,103 INFO 455 holdings data have been stored (455 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:20,948 INFO 447 holdings data have been stored (447 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:22,758 INFO 485 holdings data have been stored (485 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:24,740 INFO 551 holdings data have been stored (551 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:26,928 INFO 625 holdings data have been stored (625 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:28,869 INFO 561 holdings data have been stored (561 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:30,675 INFO 503 holdings data have been stored (503 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:32,563 INFO 530 holdings data have been stored (530 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:34,421 INFO 481 holdings data have been stored (481 should be from hedge Alambic Investment Management).
+2024-05-25 17:34:36,169 INFO 367 holdings data have been stored (367 should be from hedge Alambic Investment Management).

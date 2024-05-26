@@ -17,7 +17,8 @@ class StockStrategies(object):
         self.db_obj = DatabaseManipulation()
 
     def data_crawl(self):
-        self.crawler_obj.web_crawler_13F()
+        # self.crawler_obj.web_crawler_13F()
+        self.crawler_obj.web_crawler_13F_one_thread()
 
     def data_update(self):
         self.db_obj.Update_GICs_to_DB()
@@ -25,20 +26,20 @@ class StockStrategies(object):
     def strategy_13F_investing(self):
         # self.strategy_obj.customize_fund_components(industry_top_selection=3, company_top_selection=3)
         # self.strategy_obj.back_test_flow()
-        # self.strategy_obj.costomized_hedge_build_and_store()
-        self.strategy_obj.customize_fund_components_revised(
-                                reinvest_flag=True,
-                                hedge_funds_range=[
-                                    'Yacktman Asset Management',
-                                    'Scion Asset Management',
-                                    'Altarock Partners',
-                                    'Brave Warrior Advisors',
-                                    'Pershing Square Capital Management',
-                                    'Stilwell Value',
-                                ], 
-                                industry_top_selection=2, 
-                                company_top_selection=2, 
-                                mcap_weighted_flag=True)
+        self.strategy_obj.costomized_hedge_build_and_store()
+        # self.strategy_obj.customize_fund_components_revised(
+        #                         reinvest_flag=True,
+        #                         hedge_funds_range=[
+        #                             'Yacktman Asset Management',
+        #                             'Scion Asset Management',
+        #                             'Altarock Partners',
+        #                             'Brave Warrior Advisors',
+        #                             'Pershing Square Capital Management',
+        #                             'Stilwell Value',
+        #                         ], 
+        #                         industry_top_selection=2, 
+        #                         company_top_selection=2, 
+        #                         mcap_weighted_flag=True)
     
     def dash_server(self, data):
         self.dash_app = DashBuilder(data)
