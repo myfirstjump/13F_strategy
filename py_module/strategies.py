@@ -571,7 +571,7 @@ class Strategy13F(object):
         for idx_q, (quarter, holdings_time, date_13F) in enumerate(zip(quarters_list, date_list, date_13F_list)):
 
             q_customized_table = None
-            holdings_time = self.adjust_holdings_time(holdings_time, self.us_sorted_dates) # 調整為隔日，並且是有開市的日期 (TBD:修訂另一版為當日非隔日)
+            holdings_time = self.adjust_holdings_time(holdings_time, self.us_sorted_dates, next_day=False) # 季末當日，即3/31、6/30、9/30、12/31
             date_13F = self.adjust_holdings_time(date_13F, self.us_sorted_dates, next_day=False)
             sub_fund_list = adjusted_fund_data[adjusted_fund_data['QUARTER']==quarter]['HEDGE_FUND'].values
 
@@ -629,7 +629,8 @@ class Strategy13F(object):
                         company_select_dict[hedge_fund] = pd.concat([company_select_dict[hedge_fund], company_result_data], ignore_index=True)
 
                 hedge_num = len(sub_fund_list) #本季有幾間hedge
-                customized_holdings = self.calculate_customized_shares(company_result_data, enter_cost, hedge_num, mcap_weighted_flag)
+                company_result_data_copy = company_result_data.copy()
+                customized_holdings = self.calculate_customized_shares(company_result_data_copy, enter_cost, hedge_num, mcap_weighted_flag)
 
                 if q_customized_table is None:
                     q_customized_table = customized_holdings
@@ -1554,7 +1555,9 @@ class Strategy13F(object):
         return customized_holdings
 
     def arrange_customized_table(self, customized_table):
-
+        '''
+        各基金可能有投資相同的公司股票，故此步驟是要合併這些records。
+        '''
         total_shares_to_buy = customized_table.groupby(['QUARTER', 'SYM'], as_index=False)['shares_to_buy'].sum()
         
         # 將 total_shares_to_buy 與原始 DataFrame 合併，以保留 SYM、QUARTER、date、price 欄位

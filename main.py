@@ -1,7 +1,7 @@
 from py_module.config import Configuration
 from py_module.crawler import Crawler
 from py_module.strategies import Strategy13F
-from py_module.dashboard import DashBuilder
+from dashboard import DashBuilder
 from py_module.database_CRUD import DatabaseManipulation
 
 import os
