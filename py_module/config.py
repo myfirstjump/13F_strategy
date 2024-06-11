@@ -11,6 +11,20 @@ class Configuration(object):
 
             cls.LOCAL_FLAG = True
             '''
+            Database
+            '''
+            cls.hedge_fund_portfolio_table = '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]'
+            cls.holdings_data_table = '[US_DB].[dbo].[HOLDINGS_DATA]'
+            # cls.hedge_fund_portfolio_table = '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO_FILTERED]'
+            # cls.holdings_data_table = '[US_DB].[dbo].[HOLDINGS_DATA_FILTERED]'
+            cls.us_stock_info_table = '[US_DB].[dbo].[USStockInfo]'
+            cls.us_stock_price_table = '[US_DB].[dbo].[USStockPrice]'
+            cls.us_stock_gics_table = '[US_DB].[dbo].[Company_GICS]'
+            cls.tw_stock_price_table = '[STOCK_SKILL_DB].[dbo].[TW_STOCK_PRICE_Daily]'
+            cls.customized_fund_portfolio_table = '[US_DB].[dbo].[CUSTOMIZED_HEDGE_FUND_PORTFOLIO]'
+            cls.customized_holdings_data_table = '[US_DB].[dbo].[CUSTOMIZED_HOLDINGS_DATA]'
+
+            '''
             Crawler
             '''
             cls.working_dir = os.getcwd() #返還main.py檔案資料夾

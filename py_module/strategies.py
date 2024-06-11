@@ -9,23 +9,43 @@ import copy
 import os
 import datetime
 
-from pyxirr import xirr
+# from pyxirr import xirr
 
 class Strategy13F(object):
 
+    # _instance = None
+    # def __new__(cls):
+    #     if cls._instance is None:
+    #         cls._instance = super(Configuration, cls).__new__(cls)
+    #         cls.config_obj = Configuration()
+
+    #         cls.LOCAL_FLAG = True
+
+
+    #         # 找到price data中的date欄位，對日期進行排序，找到最大的日期
+    #         query = self.get_all_price_date(self.config_obj.us_stock_price_table) # 為了取得時間欄位
+    #         all_date_list = self.sql_execute(query)
+    #         all_date_list = pd.DataFrame(all_date_list)['date'].values
+    #         us_sorted_dates = sorted(all_date_list)
+    #         self.us_sorted_dates = pd.to_datetime(us_sorted_dates)
+    #         self.min_date = min(self.us_sorted_dates)
+    #         self.max_date = max(self.us_sorted_dates)
+    #         print('美股歷史價格從{}到{}'.format(self.min_date, self.max_date))
+
+    #         query = self.get_all_price_date(self.config_obj.tw_stock_price_table) # 為了取得時間欄位
+    #         all_date_list = self.sql_execute(query)
+    #         all_date_list = pd.DataFrame(all_date_list)['date'].values
+    #         tws_sorted_dates = sorted(all_date_list)
+    #         self.tws_sorted_dates = pd.to_datetime(tws_sorted_dates)
+    #         self.tws_min_date = min(self.tws_sorted_dates)
+    #         self.tws_max_date = max(self.tws_sorted_dates)
+    #         print('TWS歷史價格從{}到{}'.format(self.tws_min_date, self.tws_max_date))
+
     def __init__(self):
         self.config_obj = Configuration()
-        self.hedge_fund_portfolio_table = '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO_FILTERED]'
-        self.holdings_data_table = '[US_DB].[dbo].[HOLDINGS_DATA_FILTERED]'
-        self.us_stock_info_table = '[US_DB].[dbo].[USStockInfo]'
-        self.us_stock_price_table = '[US_DB].[dbo].[USStockPrice]'
-        self.us_stock_gics_table = '[US_DB].[dbo].[Company_GICS]'
-        self.tw_stock_price_table = '[STOCK_SKILL_DB].[dbo].[TW_STOCK_PRICE_Daily]'
-        self.customized_fund_portfolio_table = '[US_DB].[dbo].[CUSTOMIZED_HEDGE_FUND_PORTFOLIO]'
-        self.customized_holdings_data_table = '[US_DB].[dbo].[CUSTOMIZED_HOLDINGS_DATA]'
 
         # 找到price data中的date欄位，對日期進行排序，找到最大的日期
-        query = self.get_all_price_date(self.us_stock_price_table) # 為了取得時間欄位
+        query = self.get_all_price_date(self.config_obj.us_stock_price_table) # 為了取得時間欄位
         all_date_list = self.sql_execute(query)
         all_date_list = pd.DataFrame(all_date_list)['date'].values
         us_sorted_dates = sorted(all_date_list)
@@ -34,7 +54,7 @@ class Strategy13F(object):
         self.max_date = max(self.us_sorted_dates)
         print('美股歷史價格從{}到{}'.format(self.min_date, self.max_date))
 
-        query = self.get_all_price_date(self.tw_stock_price_table) # 為了取得時間欄位
+        query = self.get_all_price_date(self.config_obj.tw_stock_price_table) # 為了取得時間欄位
         all_date_list = self.sql_execute(query)
         all_date_list = pd.DataFrame(all_date_list)['date'].values
         tws_sorted_dates = sorted(all_date_list)
@@ -60,12 +80,12 @@ class Strategy13F(object):
             'I3C3_ctm_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
             'I3C2_ctm_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
             'I3C1_ctm_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I2C3_ctm_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I2C2_ctm_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I2C1_ctm_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I1C3_ctm_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I1C2_ctm_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I1C1_ctm_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            # 'I2C3_ctm_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            # 'I2C2_ctm_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            # 'I2C1_ctm_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            # 'I1C3_ctm_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            # 'I1C2_ctm_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            # 'I1C1_ctm_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
 
             # 'I3C3_Yacktman_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
             # 'I3C2_Yacktman_reinvest_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
@@ -130,13 +150,13 @@ class Strategy13F(object):
         
             'I3C3_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
             'I3C2_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I3C1_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I2C3_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I2C2_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I2C1_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
-            'I1C3_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
-            'I1C2_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
-            'I1C1_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            # 'I3C1_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 3, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            # 'I2C3_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            # 'I2C2_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            # 'I2C1_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 2, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
+            # 'I1C3_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
+            # 'I1C2_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            # 'I1C1_ctm_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['sharpe_output_filter'], 'industry_top_selection': 1, 'company_top_selection': 1, 'mcap_weighted_flag': True}),
 
             # 'I3C3_Yacktman_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
             # 'I3C2_Yacktman_share_0526': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': ['Yacktman Asset Management'], 'industry_top_selection': 3, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
@@ -222,9 +242,9 @@ class Strategy13F(object):
 
 
         for k_, v_ in holdings_dict.items():
-            table_name, inserted_rows = self.insert_records_to_DB(table_name=self.customized_holdings_data_table, data=v_)
+            table_name, inserted_rows = self.insert_records_to_DB(table_name=self.config_obj.customized_holdings_data_table, data=v_)
             self.config_obj.logger.warning('資料庫數據Insert:TABLE{} 筆數{}'.format(table_name, inserted_rows))
-            table_name, inserted_rows = self.insert_records_to_DB(table_name=self.customized_fund_portfolio_table, data=portfolio_dict[k_])
+            table_name, inserted_rows = self.insert_records_to_DB(table_name=self.config_obj.customized_fund_portfolio_table, data=portfolio_dict[k_])
             self.config_obj.logger.warning('資料庫數據Insert:TABLE{} 筆數{}'.format(table_name, inserted_rows))
 
     def back_test_flow(self):
@@ -281,7 +301,7 @@ class Strategy13F(object):
         base_13F_date_list = []
 
         '''1. Read DB data'''
-        query = self.create_query_data_table(self.hedge_fund_portfolio_table)
+        query = self.create_query_data_table(self.config_obj.hedge_fund_portfolio_table)
         fund_data = self.sql_execute(query)
         fund_data = pd.DataFrame(fund_data)
         hedge_fund_list = fund_data['HEDGE_FUND'].unique()
@@ -537,7 +557,7 @@ class Strategy13F(object):
         customized_table = None
 
         '''Read DB data'''
-        query = self.create_query_data_table(self.hedge_fund_portfolio_table)
+        query = self.create_query_data_table(self.config_obj.hedge_fund_portfolio_table)
         fund_data = self.sql_execute(query)
         fund_data = pd.DataFrame(fund_data)
         fund_data = fund_data[fund_data['HEDGE_FUND'].isin(hedge_funds)]
@@ -719,7 +739,7 @@ class Strategy13F(object):
         customized_table = None
 
         '''Read DB data'''
-        query = self.create_query_data_table(self.hedge_fund_portfolio_table)
+        query = self.create_query_data_table(self.config_obj.hedge_fund_portfolio_table)
         fund_data = self.sql_execute(query)
         fund_data = pd.DataFrame(fund_data)
         fund_data = fund_data[fund_data['HEDGE_FUND'].isin(hedge_funds)]
@@ -933,7 +953,7 @@ class Strategy13F(object):
         '''
         依據fund和quarter篩選holdings資料表的query語句
         '''
-        data_table = self.holdings_data_table
+        data_table = self.config_obj.holdings_data_table
         query = '''SELECT * FROM {} WITH(NOLOCK) 
         WHERE [HEDGE_FUND] = '{}' 
         AND [QUARTER] = '{}' 
@@ -976,18 +996,19 @@ class Strategy13F(object):
 
         # 將兩個資料表合併
         merged_data = holdings_data.merge(previous_holdings, on=['SYM'], how='outer', suffixes=('_current', '_previous'))
-        merged_data['SHARES_current'].fillna(0, inplace=True)
-        merged_data['SHARES_previous'].fillna(0, inplace=True)
+        # merged_data['SHARES_current'].fillna(0, inplace=True)
+        # merged_data['SHARES_previous'].fillna(0, inplace=True)
+        merged_data.fillna({'SHARES_current': 0, 'SHARES_previous': 0}, inplace=True)
         merged_data = merged_data.astype({'SHARES_current': int, 'SHARES_previous': int})
         # 計算持股數量變化
-        merged_data['shares_change'] = merged_data['SHARES_current'] - merged_data['SHARES_previous']
+        merged_data['SHARES_CHANGE'] = merged_data['SHARES_current'] - merged_data['SHARES_previous']
         return merged_data
     def create_query_get_open_price_by_join_holdings_n_price(self, SYMs_tuple, date, fund, quarter, filing_number):
         '''
         依據holdings去查表price，透過stock_id(即holdings表中的SYM) join兩張表格，並加入SHARES資訊至price表。
         '''
-        price_table = self.us_stock_price_table
-        holdings_table = self.holdings_data_table
+        price_table = self.config_obj.us_stock_price_table
+        holdings_table = self.config_obj.holdings_data_table
         query = ''' SELECT DISTINCT tb_price.[date], tb_price.[stock_id], tb_price.[Open], tb_holdings.[SHARES]
             FROM {} tb_price WITH(NOLOCK)
 			INNER JOIN {} tb_holdings WITH(NOLOCK) on tb_price.stock_id = tb_holdings.SYM
@@ -1004,7 +1025,7 @@ class Strategy13F(object):
     
     def create_query_get_open_price_for_customized_fund(self, sym_str, holdings_time):
 
-        price_table = self.us_stock_price_table
+        price_table = self.config_obj.us_stock_price_table
         query = '''
         SELECT [date], [stock_id] SYM, [Open] FROM {} WITH(NOLOCK)
         WHERE [stock_id] IN {}
@@ -1022,7 +1043,7 @@ class Strategy13F(object):
         output:
             query(string)
         '''
-        price_table = self.us_stock_price_table
+        price_table = self.config_obj.us_stock_price_table
         query = ''' SELECT [date], [stock_id] SYM, [Open]
             FROM {} WITH(NOLOCK) WHERE [date] = '{}' AND [stock_id] IN {}
             '''.format(price_table, date, SYMs_tuple)
@@ -1039,7 +1060,7 @@ class Strategy13F(object):
         # 根據持股數量變化分類
         for index, row in scaling_data.iterrows():
             stock_id = row['SYM']
-            shares_change = row['shares_change']
+            shares_change = row['SHARES_CHANGE']
             Open_current = row['Open']
             SHARES_current = row['SHARES_current']
 
@@ -1092,7 +1113,7 @@ class Strategy13F(object):
                 SYM  SHARES_current  SHARES_previous  shares_change
         '''
         merged_data = price_ratio_data.merge(shares_data, on=['SYM'], how='outer')
-        merged_data['scaling'] = merged_data['shares_change'] * merged_data['Open_current']
+        merged_data['scaling'] = merged_data['SHARES_CHANGE'] * merged_data['Open_current']
         merged_data = merged_data.dropna() #TBD: NA部分為SYM在price表中查不到資料者。
         # print(merged_data)
         '''
@@ -1162,11 +1183,11 @@ class Strategy13F(object):
         individual_data = {'date': None, '市值': None, '加碼': None, '減碼': None, 'XIRR': None, '淨投入額': None, '淨投入額占比': None, }
 
         if market == 'tw':
-            price_table = self.tw_stock_price_table
+            price_table = self.config_obj.tw_stock_price_table
         elif market == 'us':
-            price_table = self.us_stock_price_table
+            price_table = self.config_obj.us_stock_price_table
         else:
-            price_table = self.us_stock_price_table
+            price_table = self.config_obj.us_stock_price_table
 
         adjusted_date_list = self.adjust_date_str_for_market(original_date_list, market=market) # 台股與美股開市時間差異
         data_date_str = tuple(adjusted_date_list)
@@ -1338,9 +1359,9 @@ class Strategy13F(object):
 
     def create_query_holdings_with_gics_n_price(self, hedge_fund, quarter, filing_number, holdings_time):
 
-        holdings_table = self.holdings_data_table
-        gics_table = self.us_stock_gics_table
-        price_table = self.us_stock_price_table
+        holdings_table = self.config_obj.holdings_data_table
+        gics_table = self.config_obj.us_stock_gics_table
+        price_table = self.config_obj.us_stock_price_table
         query = '''
         SELECT tb_hedge.[SYM], tb_hedge.[SHARES], tb_hedge.[HEDGE_FUND], tb_hedge.[QUARTER], tb_hedge.[GICS], tb_price.[date] date, tb_price.[Open] price FROM
         (SELECT tb_holdings.[SYM], tb_holdings.[SHARES], tb_holdings.[HEDGE_FUND], tb_holdings.[QUARTER], tb_gics.[GICS_2_digit] GICS
@@ -1715,7 +1736,7 @@ class Strategy13F(object):
             )
             conn.commit()
         
-        elif table_name == self.customized_fund_portfolio_table:
+        elif table_name == self.config_obj.customized_fund_portfolio_table:
             cursor.executemany(
                 """INSERT INTO [US_DB].[dbo].[CUSTOMIZED_HEDGE_FUND_PORTFOLIO]
                 (
@@ -1732,7 +1753,7 @@ class Strategy13F(object):
                 , data_tuple
             )
             conn.commit()
-        elif table_name == self.customized_holdings_data_table:
+        elif table_name == self.config_obj.customized_holdings_data_table:
             cursor.executemany(
                     """INSERT INTO [US_DB].[dbo].[CUSTOMIZED_HOLDINGS_DATA]
                     (

@@ -12,11 +12,6 @@ import datetime
 class DatabaseManipulation(object):
     def __init__(self):
         self.config_obj = Configuration()
-        self.hedge_fund_portfolio_table = '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]'
-        self.holdings_data_table = '[US_DB].[dbo].[HOLDINGS_DATA]'
-        self.us_stock_info_table = '[US_DB].[dbo].[USStockInfo]'
-        self.us_stock_price_table = '[US_DB].[dbo].[USStockPrice]'
-        self.us_stock_gics_table = '[US_DB].[dbo].[Company_GICS]'
     
     def Update_GICs_to_DB(self):
         '''
@@ -54,7 +49,7 @@ class DatabaseManipulation(object):
         print(data['GICS_2_digit'].unique())
 
         # 2.同時Read, Update資料，並將update log存檔
-        query = self.create_query_get_GICs_Tickers_in_DB(self.us_stock_gics_table)
+        query = self.create_query_get_GICs_Tickers_in_DB(self.config_obj.us_stock_gics_table)
         db_data = self.sql_execute(query)
         db_data = pd.DataFrame(db_data)
         # print(db_data)
@@ -84,7 +79,7 @@ class DatabaseManipulation(object):
 
         print("在 data 中但不在 db_data 中的項目:")
         print(data_only)
-        # self.insert_records_to_DB(table_name=self.us_stock_gics_table, data=data_only)
+        # self.insert_records_to_DB(table_name=self.config_obj.us_stock_gics_table, data=data_only)
 
 
 

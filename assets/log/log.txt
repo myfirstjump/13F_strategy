@@ -533,3 +533,268 @@
 2024-05-25 17:34:32,563 INFO 530 holdings data have been stored (530 should be from hedge Alambic Investment Management).
 2024-05-25 17:34:34,421 INFO 481 holdings data have been stored (481 should be from hedge Alambic Investment Management).
 2024-05-25 17:34:36,169 INFO 367 holdings data have been stored (367 should be from hedge Alambic Investment Management).
+2024-06-03 15:48:25,587 WARNING 建置自定義基金數據 I3C3_ctm_reinvest_0526
+2024-06-03 15:50:54,901 WARNING 建置自定義基金數據 I3C3_ctm_reinvest_0526
+2024-06-03 15:56:11,309 WARNING Web_crawler_13F，預計爬取共6支基金資料
+2024-06-03 15:56:13,084 DEBUG 基金：Scion Asset Management 連線網址：https://13f.info/manager/0001649339-scion-asset-management-llc
+2024-06-03 15:56:13,111 WARNING 26 hedge data have been stored (26 should be) from hedge Scion Asset Management.
+2024-06-03 15:56:13,179 DEBUG 基金：Stilwell Value 連線網址：https://13f.info/manager/0001397076-stilwell-value-llc
+2024-06-03 15:56:13,218 DEBUG 基金：Yacktman Asset Management 連線網址：https://13f.info/manager/0000905567-yacktman-asset-management-lp
+2024-06-03 15:56:13,256 DEBUG 基金：Brave Warrior Advisors 連線網址：https://13f.info/manager/0001553733-brave-warrior-advisors-llc
+2024-06-03 15:56:13,294 DEBUG 基金：Pershing Square Capital Management 連線網址：https://13f.info/manager/0001336528-pershing-square-capital-management-l-p
+2024-06-03 15:56:13,327 WARNING 42 hedge data have been stored (42 should be) from hedge Yacktman Asset Management.
+2024-06-03 15:56:13,337 WARNING 37 hedge data have been stored (37 should be) from hedge Stilwell Value.
+2024-06-03 15:56:13,338 WARNING 44 hedge data have been stored (44 should be) from hedge Pershing Square Capital Management.
+2024-06-03 15:56:13,343 WARNING 42 hedge data have been stored (42 should be) from hedge Brave Warrior Advisors.
+2024-06-03 15:56:13,875 DEBUG 基金：Altarock Partners 連線網址：https://13f.info/manager/0001631014-altarock-partners-lp
+2024-06-03 15:56:13,906 WARNING 38 hedge data have been stored (38 should be) from hedge Altarock Partners.
+2024-06-03 15:56:14,121 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:14,227 WARNING 16 holdings data have been stored (16 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:14,642 WARNING 29 holdings data have been stored (29 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:14,690 WARNING 35 holdings data have been stored (35 should be) from hedge Stilwell Value).
+2024-06-03 15:56:14,695 WARNING 73 holdings data have been stored (73 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:14,921 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:15,266 WARNING 8 holdings data have been stored (8 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:15,344 WARNING 25 holdings data have been stored (25 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:15,866 WARNING 30 holdings data have been stored (30 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:15,976 WARNING 34 holdings data have been stored (34 should be) from hedge Stilwell Value).
+2024-06-03 15:56:15,997 WARNING 70 holdings data have been stored (70 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:16,128 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:16,363 WARNING 8 holdings data have been stored (8 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:16,431 WARNING 13 holdings data have been stored (13 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:16,666 WARNING 34 holdings data have been stored (34 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:17,335 WARNING 39 holdings data have been stored (39 should be) from hedge Stilwell Value).
+2024-06-03 15:56:17,355 WARNING 70 holdings data have been stored (70 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:17,509 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:17,682 WARNING 8 holdings data have been stored (8 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:17,747 WARNING 33 holdings data have been stored (33 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:17,820 WARNING 32 holdings data have been stored (32 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:18,541 WARNING 38 holdings data have been stored (38 should be) from hedge Stilwell Value).
+2024-06-03 15:56:18,560 WARNING 67 holdings data have been stored (67 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:18,813 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:18,988 WARNING 8 holdings data have been stored (8 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:19,065 WARNING 21 holdings data have been stored (21 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:19,078 WARNING 28 holdings data have been stored (28 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:19,643 WARNING 40 holdings data have been stored (40 should be) from hedge Stilwell Value).
+2024-06-03 15:56:19,698 WARNING 68 holdings data have been stored (68 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:19,973 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:20,206 WARNING 6 holdings data have been stored (6 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:20,317 WARNING 26 holdings data have been stored (26 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:20,347 WARNING 9 holdings data have been stored (9 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:20,722 WARNING 41 holdings data have been stored (41 should be) from hedge Stilwell Value).
+2024-06-03 15:56:20,807 WARNING 68 holdings data have been stored (68 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:21,023 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:21,113 WARNING 25 holdings data have been stored (25 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:21,330 WARNING 6 holdings data have been stored (6 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:21,492 WARNING 6 holdings data have been stored (6 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:21,846 WARNING 38 holdings data have been stored (38 should be) from hedge Stilwell Value).
+2024-06-03 15:56:21,940 WARNING 67 holdings data have been stored (67 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:22,133 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:22,207 WARNING 23 holdings data have been stored (23 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:22,457 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:22,552 WARNING 1 holdings data have been stored (1 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:22,923 WARNING 39 holdings data have been stored (39 should be) from hedge Stilwell Value).
+2024-06-03 15:56:23,126 WARNING 65 holdings data have been stored (65 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:23,367 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:23,458 WARNING 24 holdings data have been stored (24 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:23,687 WARNING 8 holdings data have been stored (8 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:23,704 WARNING 12 holdings data have been stored (12 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:23,962 WARNING 41 holdings data have been stored (41 should be) from hedge Stilwell Value).
+2024-06-03 15:56:24,166 WARNING 64 holdings data have been stored (64 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:24,302 WARNING 23 holdings data have been stored (23 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:24,466 WARNING 9 holdings data have been stored (9 should be) from hedge Altarock Partners).
+2024-06-03 15:56:24,913 WARNING 1 holdings data have been stored (1 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:24,985 WARNING 6 holdings data have been stored (6 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:25,198 WARNING 37 holdings data have been stored (37 should be) from hedge Stilwell Value).
+2024-06-03 15:56:25,260 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:25,378 WARNING 64 holdings data have been stored (64 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:25,461 WARNING 24 holdings data have been stored (24 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:25,736 WARNING 6 holdings data have been stored (6 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:25,988 WARNING 6 holdings data have been stored (6 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:26,126 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:26,409 WARNING 38 holdings data have been stored (38 should be) from hedge Stilwell Value).
+2024-06-03 15:56:26,513 WARNING 22 holdings data have been stored (22 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:26,614 WARNING 62 holdings data have been stored (62 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:26,691 WARNING 24 holdings data have been stored (24 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:27,133 WARNING 6 holdings data have been stored (6 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:27,387 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:27,584 WARNING 34 holdings data have been stored (34 should be) from hedge Stilwell Value).
+2024-06-03 15:56:27,747 WARNING 31 holdings data have been stored (31 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:27,860 WARNING 64 holdings data have been stored (64 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:27,955 WARNING 24 holdings data have been stored (24 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:28,184 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:28,433 WARNING 7 holdings data have been stored (7 should be) from hedge Altarock Partners).
+2024-06-03 15:56:28,689 WARNING 38 holdings data have been stored (38 should be) from hedge Stilwell Value).
+2024-06-03 15:56:28,971 WARNING 23 holdings data have been stored (23 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:29,125 WARNING 66 holdings data have been stored (66 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:29,202 WARNING 22 holdings data have been stored (22 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:29,358 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:29,567 WARNING 7 holdings data have been stored (7 should be) from hedge Altarock Partners).
+2024-06-03 15:56:29,746 WARNING 37 holdings data have been stored (37 should be) from hedge Stilwell Value).
+2024-06-03 15:56:30,100 WARNING 33 holdings data have been stored (33 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:30,380 WARNING 61 holdings data have been stored (61 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:30,441 WARNING 23 holdings data have been stored (23 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:30,541 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:30,698 WARNING 6 holdings data have been stored (6 should be) from hedge Altarock Partners).
+2024-06-03 15:56:30,808 WARNING 40 holdings data have been stored (40 should be) from hedge Stilwell Value).
+2024-06-03 15:56:31,116 WARNING 29 holdings data have been stored (29 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:31,656 WARNING 6 holdings data have been stored (6 should be) from hedge Altarock Partners).
+2024-06-03 15:56:31,671 WARNING 60 holdings data have been stored (60 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:31,744 WARNING 21 holdings data have been stored (21 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:31,854 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:32,070 WARNING 39 holdings data have been stored (39 should be) from hedge Stilwell Value).
+2024-06-03 15:56:32,207 WARNING 14 holdings data have been stored (14 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:32,924 WARNING 6 holdings data have been stored (6 should be) from hedge Altarock Partners).
+2024-06-03 15:56:33,024 WARNING 60 holdings data have been stored (60 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:33,056 WARNING 22 holdings data have been stored (22 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:33,165 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:33,360 WARNING 39 holdings data have been stored (39 should be) from hedge Stilwell Value).
+2024-06-03 15:56:33,390 WARNING 9 holdings data have been stored (9 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:34,096 WARNING 7 holdings data have been stored (7 should be) from hedge Altarock Partners).
+2024-06-03 15:56:34,261 WARNING 7 holdings data have been stored (7 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:34,391 WARNING 57 holdings data have been stored (57 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:34,421 WARNING 19 holdings data have been stored (19 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:34,474 WARNING 10 holdings data have been stored (10 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:34,658 WARNING 39 holdings data have been stored (39 should be) from hedge Stilwell Value).
+2024-06-03 15:56:35,122 WARNING 6 holdings data have been stored (6 should be) from hedge Altarock Partners).
+2024-06-03 15:56:35,392 WARNING 48 holdings data have been stored (48 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:35,506 WARNING 10 holdings data have been stored (10 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:35,739 WARNING 17 holdings data have been stored (17 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:35,748 WARNING 8 holdings data have been stored (8 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:35,910 WARNING 42 holdings data have been stored (42 should be) from hedge Stilwell Value).
+2024-06-03 15:56:36,142 WARNING 6 holdings data have been stored (6 should be) from hedge Altarock Partners).
+2024-06-03 15:56:36,507 WARNING 48 holdings data have been stored (48 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:36,628 WARNING 14 holdings data have been stored (14 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:36,955 WARNING 19 holdings data have been stored (19 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:36,964 WARNING 1 holdings data have been stored (1 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:37,080 WARNING 40 holdings data have been stored (40 should be) from hedge Stilwell Value).
+2024-06-03 15:56:37,226 WARNING 6 holdings data have been stored (6 should be) from hedge Altarock Partners).
+2024-06-03 15:56:37,651 WARNING 46 holdings data have been stored (46 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:37,760 WARNING 16 holdings data have been stored (16 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:38,169 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:38,203 WARNING 20 holdings data have been stored (20 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:38,331 WARNING 6 holdings data have been stored (6 should be) from hedge Altarock Partners).
+2024-06-03 15:56:38,331 WARNING 41 holdings data have been stored (41 should be) from hedge Stilwell Value).
+2024-06-03 15:56:38,759 WARNING 44 holdings data have been stored (44 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:38,799 WARNING 4 holdings data have been stored (4 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:39,362 WARNING 8 holdings data have been stored (8 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:39,450 WARNING 22 holdings data have been stored (22 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:39,645 WARNING 39 holdings data have been stored (39 should be) from hedge Stilwell Value).
+2024-06-03 15:56:39,660 WARNING 43 holdings data have been stored (43 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:39,669 WARNING 7 holdings data have been stored (7 should be) from hedge Altarock Partners).
+2024-06-03 15:56:39,959 WARNING 6 holdings data have been stored (6 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:40,504 WARNING 8 holdings data have been stored (8 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:40,716 WARNING 18 holdings data have been stored (18 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:40,971 WARNING 43 holdings data have been stored (43 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:41,013 WARNING 7 holdings data have been stored (7 should be) from hedge Altarock Partners).
+2024-06-03 15:56:41,033 WARNING 38 holdings data have been stored (38 should be) from hedge Stilwell Value).
+2024-06-03 15:56:41,082 WARNING 8 holdings data have been stored (8 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:41,552 WARNING 9 holdings data have been stored (9 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:41,817 WARNING 13 holdings data have been stored (13 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:42,049 WARNING 14 holdings data have been stored (14 should be) from hedge Scion Asset Management).
+2024-06-03 15:56:42,053 WARNING Completed fetching data for fund Scion Asset Management. Progress: 1/6
+2024-06-03 15:56:42,327 WARNING 39 holdings data have been stored (39 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:42,360 WARNING 7 holdings data have been stored (7 should be) from hedge Altarock Partners).
+2024-06-03 15:56:42,392 WARNING 37 holdings data have been stored (37 should be) from hedge Stilwell Value).
+2024-06-03 15:56:42,607 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:42,815 WARNING 13 holdings data have been stored (13 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:43,581 WARNING 45 holdings data have been stored (45 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:43,652 WARNING 7 holdings data have been stored (7 should be) from hedge Altarock Partners).
+2024-06-03 15:56:43,689 WARNING 35 holdings data have been stored (35 should be) from hedge Stilwell Value).
+2024-06-03 15:56:43,844 WARNING 8 holdings data have been stored (8 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:43,915 WARNING 15 holdings data have been stored (15 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:44,538 WARNING 7 holdings data have been stored (7 should be) from hedge Altarock Partners).
+2024-06-03 15:56:44,757 WARNING 44 holdings data have been stored (44 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:44,997 WARNING 37 holdings data have been stored (37 should be) from hedge Stilwell Value).
+2024-06-03 15:56:45,063 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:45,117 WARNING 14 holdings data have been stored (14 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:45,202 WARNING 7 holdings data have been stored (7 should be) from hedge Altarock Partners).
+2024-06-03 15:56:45,817 WARNING 46 holdings data have been stored (46 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:45,890 WARNING 35 holdings data have been stored (35 should be) from hedge Stilwell Value).
+2024-06-03 15:56:46,321 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:46,358 WARNING 17 holdings data have been stored (17 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:46,419 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:46,954 WARNING 44 holdings data have been stored (44 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:47,006 WARNING 39 holdings data have been stored (39 should be) from hedge Stilwell Value).
+2024-06-03 15:56:47,229 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:47,558 WARNING 18 holdings data have been stored (18 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:47,790 WARNING 6 holdings data have been stored (6 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:48,097 WARNING 42 holdings data have been stored (42 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:48,181 WARNING 42 holdings data have been stored (42 should be) from hedge Stilwell Value).
+2024-06-03 15:56:48,336 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:48,581 WARNING 20 holdings data have been stored (20 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:48,800 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:49,206 WARNING 44 holdings data have been stored (44 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:49,325 WARNING 37 holdings data have been stored (37 should be) from hedge Stilwell Value).
+2024-06-03 15:56:49,413 WARNING 9 holdings data have been stored (9 should be) from hedge Altarock Partners).
+2024-06-03 15:56:49,651 WARNING 18 holdings data have been stored (18 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:49,833 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:50,366 WARNING 46 holdings data have been stored (46 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:50,539 WARNING 46 holdings data have been stored (46 should be) from hedge Stilwell Value).
+2024-06-03 15:56:50,622 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:50,795 WARNING 17 holdings data have been stored (17 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:50,903 WARNING 8 holdings data have been stored (8 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:51,474 WARNING 45 holdings data have been stored (45 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:51,777 WARNING 43 holdings data have been stored (43 should be) from hedge Stilwell Value).
+2024-06-03 15:56:51,874 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:51,980 WARNING 14 holdings data have been stored (14 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:52,030 WARNING 9 holdings data have been stored (9 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:52,521 WARNING 45 holdings data have been stored (45 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:52,921 WARNING 50 holdings data have been stored (50 should be) from hedge Stilwell Value).
+2024-06-03 15:56:53,081 WARNING 8 holdings data have been stored (8 should be) from hedge Altarock Partners).
+2024-06-03 15:56:53,147 WARNING 15 holdings data have been stored (15 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:53,189 WARNING 9 holdings data have been stored (9 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:53,551 WARNING 46 holdings data have been stored (46 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:54,042 WARNING 9 holdings data have been stored (9 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:54,052 WARNING 49 holdings data have been stored (49 should be) from hedge Stilwell Value).
+2024-06-03 15:56:54,318 WARNING 7 holdings data have been stored (7 should be) from hedge Altarock Partners).
+2024-06-03 15:56:54,383 WARNING 16 holdings data have been stored (16 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:54,621 WARNING 47 holdings data have been stored (47 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:55,183 WARNING 8 holdings data have been stored (8 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:55,266 WARNING 53 holdings data have been stored (53 should be) from hedge Stilwell Value).
+2024-06-03 15:56:55,472 WARNING 6 holdings data have been stored (6 should be) from hedge Altarock Partners).
+2024-06-03 15:56:55,514 WARNING 17 holdings data have been stored (17 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:55,712 WARNING 47 holdings data have been stored (47 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:56,240 WARNING 8 holdings data have been stored (8 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:56,316 WARNING 6 holdings data have been stored (6 should be) from hedge Altarock Partners).
+2024-06-03 15:56:56,320 WARNING Completed fetching data for fund Altarock Partners. Progress: 2/6
+2024-06-03 15:56:56,425 WARNING 51 holdings data have been stored (51 should be) from hedge Stilwell Value).
+2024-06-03 15:56:56,698 WARNING 15 holdings data have been stored (15 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:56,881 WARNING 50 holdings data have been stored (50 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:56,890 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:57,365 WARNING 14 holdings data have been stored (14 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:57,505 WARNING 52 holdings data have been stored (52 should be) from hedge Stilwell Value).
+2024-06-03 15:56:57,509 WARNING Completed fetching data for fund Stilwell Value. Progress: 3/6
+2024-06-03 15:56:57,977 WARNING 8 holdings data have been stored (8 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:57,981 WARNING 51 holdings data have been stored (51 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:58,358 WARNING 12 holdings data have been stored (12 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:58,993 WARNING 13 holdings data have been stored (13 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:56:59,045 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:56:59,105 WARNING 51 holdings data have been stored (51 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:56:59,894 WARNING 47 holdings data have been stored (47 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:57:00,142 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:57:00,173 WARNING 12 holdings data have been stored (12 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:57:00,919 WARNING 47 holdings data have been stored (47 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:57:01,275 WARNING 6 holdings data have been stored (6 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:57:01,307 WARNING 14 holdings data have been stored (14 should be) from hedge Brave Warrior Advisors).
+2024-06-03 15:57:01,310 WARNING Completed fetching data for fund Brave Warrior Advisors. Progress: 4/6
+2024-06-03 15:57:02,231 WARNING 51 holdings data have been stored (51 should be) from hedge Yacktman Asset Management).
+2024-06-03 15:57:02,235 WARNING Completed fetching data for fund Yacktman Asset Management. Progress: 5/6
+2024-06-03 15:57:02,246 WARNING 9 holdings data have been stored (9 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:57:03,242 WARNING 7 holdings data have been stored (7 should be) from hedge Pershing Square Capital Management).
+2024-06-03 15:57:03,247 WARNING Completed fetching data for fund Pershing Square Capital Management. Progress: 6/6
+2024-06-03 15:59:20,948 WARNING 建置自定義基金數據 I3C3_ctm_reinvest_0526
+2024-06-03 15:59:42,317 WARNING 建置自定義基金數據 I3C2_ctm_reinvest_0526
+2024-06-03 16:00:24,155 WARNING 建置自定義基金數據 I3C1_ctm_reinvest_0526
+2024-06-03 16:00:40,596 WARNING 建置自定義基金數據 I3C3_ctm_share_0526
+2024-06-03 16:00:57,095 WARNING 建置自定義基金數據 I3C2_ctm_share_0526
+2024-06-03 16:01:13,507 WARNING 資料庫數據Insert:TABLE[US_DB].[dbo].[CUSTOMIZED_HOLDINGS_DATA] 筆數1080
+2024-06-03 16:01:13,547 WARNING 資料庫數據Insert:TABLE[US_DB].[dbo].[CUSTOMIZED_HEDGE_FUND_PORTFOLIO] 筆數42
+2024-06-03 16:01:13,782 WARNING 資料庫數據Insert:TABLE[US_DB].[dbo].[CUSTOMIZED_HOLDINGS_DATA] 筆數834
+2024-06-03 16:01:13,805 WARNING 資料庫數據Insert:TABLE[US_DB].[dbo].[CUSTOMIZED_HEDGE_FUND_PORTFOLIO] 筆數42
+2024-06-03 16:01:13,968 WARNING 資料庫數據Insert:TABLE[US_DB].[dbo].[CUSTOMIZED_HOLDINGS_DATA] 筆數579
+2024-06-03 16:01:13,992 WARNING 資料庫數據Insert:TABLE[US_DB].[dbo].[CUSTOMIZED_HEDGE_FUND_PORTFOLIO] 筆數42
+2024-06-03 16:01:14,299 WARNING 資料庫數據Insert:TABLE[US_DB].[dbo].[CUSTOMIZED_HOLDINGS_DATA] 筆數1080
+2024-06-03 16:01:14,323 WARNING 資料庫數據Insert:TABLE[US_DB].[dbo].[CUSTOMIZED_HEDGE_FUND_PORTFOLIO] 筆數42
+2024-06-03 16:01:14,564 WARNING 資料庫數據Insert:TABLE[US_DB].[dbo].[CUSTOMIZED_HOLDINGS_DATA] 筆數834
+2024-06-03 16:01:14,587 WARNING 資料庫數據Insert:TABLE[US_DB].[dbo].[CUSTOMIZED_HEDGE_FUND_PORTFOLIO] 筆數42

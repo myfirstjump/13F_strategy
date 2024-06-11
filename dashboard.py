@@ -1,6 +1,7 @@
 import os
 
 from py_module.config import Configuration
+from py_module.strategies import Strategy13F
 import dash
 from dash import html
 from dash import dcc
@@ -18,9 +19,11 @@ import json
 import time
 import datetime
 from datetime import timedelta
+import numpy as np
 
 from pages import (
     self_style,
+    query_sentence,
 )
 
 from flask import Flask
@@ -32,41 +35,21 @@ app.config.suppress_callback_exceptions = True
 app.title = '13F Report Order Strategy'
 
 
-arrow_img = 'assets/arrow_img.png'
-clear_img = 'assets/all_clear_unclicked.png'
-start_img = 'assets/start_unclicked.png'
+# arrow_img = 'assets/arrow_img.png'
+# clear_img = 'assets/all_clear_unclicked.png'
+# start_img = 'assets/start_unclicked.png'
 
 config_obj = Configuration()
-hedge_fund_portfolio_table = '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]'
-holdings_data_table = '[US_DB].[dbo].[HOLDINGS_DATA]'
-us_stock_info_table = '[US_DB].[dbo].[USStockInfo]'
-us_stock_price_table = '[US_DB].[dbo].[USStockPrice]'
-us_stock_gics_table = '[US_DB].[dbo].[Company_GICS]'
-tw_stock_price_table = '[STOCK_SKILL_DB].[dbo].[TW_STOCK_PRICE_Daily]'
-customized_fund_portfolio_table = '[US_DB].[dbo].[CUSTOMIZED_HEDGE_FUND_PORTFOLIO]'
-customized_holdings_data_table = '[US_DB].[dbo].[CUSTOMIZED_HOLDINGS_DATA]'
+# strategy_obj = Strategy13F()
 
-targets_hedge = [
-    'I3C3_ctm_reinvest_0526',
-    'I3C2_ctm_reinvest_0526',
-    'I3C1_ctm_reinvest_0526',
-    'I2C3_ctm_reinvest_0526',
-    'I2C2_ctm_reinvest_0526',
-    'I2C1_ctm_reinvest_0526',
-    'I1C3_ctm_reinvest_0526',
-    'I1C2_ctm_reinvest_0526',
-    'I1C1_ctm_reinvest_0526',
-    'I3C3_ctm_share_0526',
-    'I3C2_ctm_share_0526',
-    'I3C1_ctm_share_0526',
-    'I2C3_ctm_share_0526',
-    'I2C2_ctm_share_0526',
-    'I2C1_ctm_share_0526',
-    'I1C3_ctm_share_0526',
-    'I1C2_ctm_share_0526',
-    'I1C1_ctm_share_0526',
-]
 
+def create_query_get_all_hedge_name(table):
+
+    query = '''
+    SELECT DISTINCT [HEDGE_FUND]
+    FROM {}
+    '''.format(table)
+    return query
 
 def get_all_price_date(price_table):
 
@@ -76,15 +59,16 @@ def get_all_price_date(price_table):
     '''.format(price_table)
     return query
 
-def get_holdings_data(table_name, hedge_fund, quarter):
+def create_query_get_all_quarter(table):
 
     query = '''
-    SELECT *
+    SELECT DISTINCT [QUARTER], [DATE_FILED]
     FROM {}
-    WHERE [HEDGE_FUND] = '{}'
-    AND [QUARTER] = '{}'
-    '''.format(table_name, hedge_fund, quarter)
+    WHERE [HEDGE_FUND] LIKE '%reinvest%'
+    '''.format(table)
     return query
+
+
 
 def sql_execute(query):
 
@@ -102,227 +86,266 @@ def sql_execute(query):
     conn.close()
     return data
 
-def generate_table(stock_data, max_rows=5000):
-    return dash_table.DataTable(
-                    columns = [{"name": i, "id": i} for i in stock_data.columns],
-                    data=stock_data.to_dict('records'),
-                    fixed_rows={'headers': True}, #固定表頭
-                     
-                    #style_header : header, style_data : data, style_cell : cells & header一起調整
-                    style_header={
-                        'backgroundColor': 'grey',
-                        'fontWeight': 'bold',
-                    }, 
-                    style_data={}, 
-                    style_cell={'fontSize': '20px', 'height': 'auto', 'whiteSpace': 'normal'}, 
-                    style_table={'overflowX': 'auto', 'minWidth': '100%'},
-                    # style_as_list_view=True, #移除column分隔線
-                    # fill_width = False,
-                    style_cell_conditional=[
-                        {'if': {'column_id': 'Remark'},
-                        'width': '15%'},
-                        {'if': {'column_id': '產業別'},
-                        'width': '20%'},
-                    ],
-                    filter_action='native',
-                    sort_action='native',
-                )
+query = create_query_get_all_hedge_name(config_obj.customized_holdings_data_table)
+targets_hedge = sql_execute(query)
+targets_hedge = pd.DataFrame(targets_hedge)['HEDGE_FUND'].values
 
-
-
-
-query = get_holdings_data(holdings_data_table, 'Abingworth LLP', 'Q3 2019') # 為了取得時間欄位
-hedge_data = sql_execute(query)
-hedge_data = pd.DataFrame(hedge_data)
-hedge_data = hedge_data[['SYM', 'SHARES']]
-
-query = get_all_price_date(us_stock_price_table) # 為了取得時間欄位
+query = get_all_price_date(config_obj.us_stock_price_table) # 為了取得時間欄位
 all_date_list = sql_execute(query)
 all_date_list = pd.DataFrame(all_date_list)['date'].values
 us_sorted_dates = sorted(all_date_list)
 us_sorted_dates = pd.to_datetime(us_sorted_dates)
 min_date = min(us_sorted_dates)
 max_date = max(us_sorted_dates)
+print('美股歷史價格從{}到{}'.format(min_date, max_date))
 
+
+query = create_query_get_all_quarter(config_obj.customized_fund_portfolio_table)
+quarters_list = sql_execute(query)
+quarters_list = pd.DataFrame(quarters_list)
+# print(quarters_list)
+quarters_list = quarters_list.sort_values(by=['DATE_FILED'], ascending=False)
+quarters_list = quarters_list['QUARTER'].values
+quarters_list = list(quarters_list)
 
 app.layout = html.Div([
     html.Div([
                 html.H1('13F報告下單策略', style=self_style.header_text_style),
-                dcc.Store(
-                    id='stored_data',
-                    storage_type='session',
-                ),
+                # dcc.Store(
+                #     id='stored_data',
+                #     storage_type='session',
+                # ),
         ],style=self_style.header_div_style), # header-div
     
     html.Div([
+            html.Div([
                 html.Div(['範圍選擇'], style=self_style.frame_text_style),
                 html.Div([
                         dcc.Dropdown(
-                            id={'type':'dd',
-                                'index': '0101'},
+                            id='hedge-picker',
                             options=targets_hedge,
-                            value=['I3C3_ctm_reinvest_0526'],
-                            placeholder='基金選擇',
+                            value=targets_hedge[0],
+                            placeholder=targets_hedge[0],
                             style=self_style.large_dropdown_style,
-                            clearable=True),
+                            clearable=False),
                     ], style=self_style.dp_div_style),
                 html.Div([
-                        dcc.DatePickerSingle(
-                            id='date-picker',
-                            min_date_allowed=min_date,
-                            max_date_allowed=max_date,
-                            date=max_date,
-                            placeholder='日期選擇',
-                            display_format='YYYY年 第Q季',
-                        ),
+                        dcc.Dropdown(
+                            id='quarter-picker',
+                            options=quarters_list[:-1],
+                            value=quarters_list[0],
+                            placeholder=quarters_list[0], 
+                            style=self_style.large_dropdown_style,
+                            clearable=False),
                     ], style=self_style.dp_div_style),
+            ]),
+            html.Div([
+                html.Div(['購買金額'], style=self_style.frame_text_style),
+                html.Div([
+                        dcc.Input(required = True,
+                            id='enter-cost',
+                            type='number',
+                            min=0,
+                            max=999999999,
+                            value=1000000,
+                            placeholder='1000000',
+                            style=self_style.large_input_style),
+                    ], style=self_style.dp_div_style),
+            ])
     ],style=self_style.header_div_style), # header-div
 
 
     html.Div([
                 html.Div(['下單建議'], style=self_style.frame_text_style),
                 html.Div([
-                        html.Div(['原持股比例'], style=self_style.frame_text_style),
-                        html.Div(generate_table(hedge_data), style=self_style.result_content),
-                    ], style=self_style.dp_div_style),
+                        html.Div(['原持股數量'], style=self_style.frame_text_style),
+                        html.Div(
+                            children=[], 
+                            id='original-stocks-list',
+                            style=self_style.result_content),
+                    ], style=self_style.content_div_style),
                 html.Div([
-                        html.Div(['本次建議持股比例'], style=self_style.frame_text_style),
-                        html.Div(generate_table(hedge_data), style=self_style.result_content),
-                    ], style=self_style.dp_div_style),
+                        html.Div(['本次建議持股數量'], style=self_style.frame_text_style),
+                        html.Div(
+                            children=[], 
+                            id='recommand-stocks-list',
+                            style=self_style.result_content),
+                    ], style=self_style.content_div_style),
                 html.Div([
                         html.Div(['變化量'], style=self_style.frame_text_style),
-                        html.Div(generate_table(hedge_data), style=self_style.result_content),
+                        html.Div(
+                            children=[],
+                            id='stock-shares-differences',
+                            style=self_style.result_content),
 
 
-                    ], style=self_style.dp_div_style),
+                    ], style=self_style.content_div_style),
     ],style=self_style.header_div_style), # header-div
     
 ], style=self_style.top_div_style) # canvas-div
 
+'''
+Callback 1: 查詢建議買入額
+
+'''
+@app.callback(
+    Output('original-stocks-list', 'children'),
+    Output('recommand-stocks-list', 'children'),
+    Output('stock-shares-differences', 'children'),
+    Input('hedge-picker', 'value'),
+    Input('quarter-picker', 'value'),
+    Input('enter-cost', 'value'),
+    # Input('confirm-btn', 'n_clicks'),
+)
+def reaction(hedge_str, quarter_str, enter_cost):
+
+    idx = quarters_list.index(quarter_str)
+    ori_idx = idx+1
+    ori_quarter_str = quarters_list[ori_idx]
+
+    ori_invest_time = get_invest_time(ori_quarter_str)
+    invest_time = get_invest_time(quarter_str)
+    print('13F報告:{}, 投資時間{}'.format(quarter_str, invest_time))
+    print('前1期:{}, 投資時間{}'.format(ori_quarter_str, ori_invest_time))
+
+    query = create_query_get_holdings_data(config_obj.customized_holdings_data_table, config_obj.us_stock_price_table, hedge_str, ori_quarter_str, ori_invest_time)
+    ori_data = get_holdings_data(query)
+    ori_data = adjust_shares_by_enter_cost(ori_data, enter_cost)
+
+    query = create_query_get_holdings_data(config_obj.customized_holdings_data_table, config_obj.us_stock_price_table, hedge_str, quarter_str, invest_time)
+    current_data = get_holdings_data(query)
+    current_data = adjust_shares_by_enter_cost(current_data, enter_cost)
+
+    shares_difference_table = shares_difference_between_quarters(ori_data, current_data)
+
+    # ori_data_limited = ori_data.head(10)
+    # current_data_limited = current_data.head(10)
+    # shares_difference_table_limited = shares_difference_table.head(10)
+
+    # return generate_table(ori_data_limited), generate_table(current_data_limited), generate_table(shares_difference_table_limited)
+    return generate_table(ori_data), generate_table(current_data), generate_table(shares_difference_table)
+
+def adjust_holdings_time(holdings_time, sorted_dates, next_day=True):
+    '''
+    function:
+        在輸入時間點為13F報告公布時間時，該日不一定有開市，所以依據時間調整。
+    input:
+        -. holdings_time(string):  該季資料之報告日期
+        -. sorted_dates(pd.Series(pd.datetime)):  price data所有日期，即有開市日期
+    '''
+    index = sorted_dates.searchsorted(holdings_time) # 找到日期在排序後的列表中的位置
+    adjust_date  = sorted_dates[index] if index < len(sorted_dates) else sorted_dates[-1] # 如果日期正好在列表中，返回該日期；否則返回下一個最接近的日期
+    # print('原始日期:', holdings_time)
+    # print('index: ', index)
+    # print('修正日期:', adjust_date)
+    # print(sorted_dates[index-1], sorted_dates[index], sorted_dates[index+1], )
+    '''依照實際情況，13F報告公布後隔天買入，故應使用index+1日(sorted_dates[index+1])；而若本來就沒有開市，則使用下個開市日(adjust_date)'''
+    if next_day:
+        if holdings_time != adjust_date:
+            result_date = adjust_date
+        else:
+            result_date = sorted_dates[index+1]
+    else:
+        result_date = adjust_date
+    # print('使用日期:', result_date)
+    return result_date    
+
+def get_invest_time(quarter):
+    year = int(quarter.split()[1])
+    if 'Q1' in quarter:
+        invest_time =  datetime.datetime(year, 5, 15)
+    elif 'Q2' in quarter:
+        invest_time =  datetime.datetime(year, 8, 14)
+    elif 'Q3' in quarter:
+        invest_time =  datetime.datetime(year, 11, 14)
+    elif 'Q4' in quarter:
+        invest_time =  datetime.datetime(year+1, 2, 14)
     
-#     html.Div([
-#         dcc.Tabs([
-#             dcc.Tab(label='股票篩選', children=[
-#                 # 工具1: 篩選股票
-#                 html.Div([
+    return adjust_holdings_time(invest_time, us_sorted_dates, next_day=True)
 
-#                     html.Div([
-#                         html.Div([ # menu-1
-#                             html.Button(
-#                                 ["基本資訊　＞",],
-#                                 id='01-btn',
-#                                 n_clicks=0,
-#                                 title='展開基本資訊選項',
-#                                 style=self_style.menu_btn,
-#                             ),                        
-#                         ],  
-#                         style=self_style.link_div_style),
-#                         # html.Br(),
-#                         html.Div([ # menu-2
-#                             html.Button(
-#                                 ["股價條件　＞"],
-#                                 id='02-btn',
-#                                 title='展開股價條件選項',
-#                                 className='menu-btn'
-#                             ),                        
-#                         ],
-#                         style=self_style.link_div_style),
-#                         # html.Br(),
-#                         html.Div([ # menu-3
-#                             html.Button(
-#                                 ["成交量值　＞"],
-#                                 id='03-btn',
-#                                 title='展開成交量值選項',
-#                                 className='menu-btn'
-#                             ),                        
-#                         ],
-#                         style=self_style.link_div_style),
-#                         # html.Br(),
-#                         html.Div([ # menu-4
-#                             html.Button(
-#                                 ["法人籌碼　＞"],
-#                                 id='04-btn',
-#                                 title='展開法人籌碼選項',
-#                                 className='menu-btn'
-#                             ),                        
-#                         ],
-#                         style=self_style.link_div_style),
-#                         # html.Br(),
-#                         html.Div([ # menu-5
-#                             html.Button(
-#                                 ["信用交易　＞"],
-#                                 id='05-btn',
-#                                 title='展開信用交易選項',
-#                                 className='menu-btn'
-#                             ),                        
-#                         ],
-#                         style=self_style.link_div_style),
-#                         # html.Br(),
-#                         html.Div([ # menu-6
-#                             html.Button(
-#                                 ["公司營收　＞"],
-#                                 id='06-btn',
-#                                 title='展開公司營收選項',
-#                                 className='menu-btn'
-#                             ),                        
-#                         ],                                
-#                         style=self_style.link_div_style),
-#                     ], style=self_style.menu_style), # menu
+def create_query_get_holdings_data(table_customized_holdings, price_table, hedge_fund, quarter, date):
 
-#                     html.Div([
+    query = '''
+    SELECT tb_ch.[SYM], tb_ch.[Percentile], tb_ch.[SHARES], tb_price.[Open]
+    FROM {} tb_ch WITH(NOLOCK)
+	INNER JOIN {} tb_price WITH(NOLOCK) ON tb_ch.[SYM] = tb_price.[stock_id]
+    WHERE tb_ch.[HEDGE_FUND] = '{}'
+    AND tb_ch.[QUARTER] = '{}'
+	AND tb_price.[date] = '{}'
+    '''.format(table_customized_holdings, price_table, hedge_fund, quarter, date)
+    print(query)
+    return query
 
-#                         html.Div([
-#                             html.Div([ # filter-frame
-#                                 html.Div('請由左方加入篩選類別', style=self_style.frame_text_style),
-#                                 html.Div([], id="filter-content"),
-#                             ],style=self_style.filter_frame),
+def get_holdings_data(query):
+    data = sql_execute(query)
+    data = pd.DataFrame(data)
+    data = data[['SYM', 'Percentile','SHARES', 'Open']]
+    data = data.sort_values(by=['SYM'], axis=0)
+    # data['Percentile'] = round(data['Percentile'], 2)
+    
+    data = data.rename(columns={'SYM':'股票', 'Percentile':'佔比%', 'Open':'價格'})
+    data = data.drop(columns=['SHARES'])
 
-#                             html.Div([ # condition-frame
-#                                 html.Div('您的選股條件', style=self_style.frame_text_style),
-#                                 html.Div([],
-#                                     id='dynamic-output-container',
-#                                     style=self_style.dynamic_output_container_style),
-#                                 html.Div([
-#                                     html.Button(['開始選股'],
-#                                         id='selection-btn',
-#                                         style=self_style.selection_btn,
-#                                         className='selection-btn'),
-#                                     html.Button(['全部清除'],
-#                                         id='clear-all-btn',
-#                                         style=self_style.selection_btn,
-#                                         className='clear-btn')
-#                                 ], self_style.selection_btn_div_style),
-#                             ], style=self_style.condition_frame),
-#                         ], style=self_style.cs_l21),
+    return data
 
-#                         html.Div([
-#                             html.Div([
-#                                 html.Div(['篩選結果'], style=self_style.frame_text_style),
-                                
-#                                 dcc.Tabs(id='results-tabs', value='dynamic-selection-result-twse', # value是預設顯示值
-#                                     children=[
-#                                         dcc.Tab(label='台灣證券交易所 TWSE (上市)', id='dynamic-selection-result-twse', value='dynamic-selection-result-twse', style=self_style.result_words, selected_style=self_style.result_words_onclick),
-#                                         dcc.Tab(label='櫃買中心 TPEX (上櫃)', id='dynamic-selection-result-tpex', value='dynamic-selection-result-tpex', style=self_style.result_words, selected_style=self_style.result_words_onclick),
-#                                         dcc.Tab(label='上市 ETF', id='dynamic-selection-result-twse-etf', value='dynamic-selection-result-twse-etf', style=self_style.result_words, selected_style=self_style.result_words_onclick),
-#                                         dcc.Tab(label='上櫃 ETF', id='dynamic-selection-result-tpex-etf', value='dynamic-selection-result-tpex-etf', style=self_style.result_words, selected_style=self_style.result_words_onclick),
-#                                 ]),
-#                                 dcc.Loading(
-#                                     id='result-content-loading',
-#                                     type='default',
-#                                     children=html.Div([], style=self_style.result_content),
-#                                     color='red',
-#                                 ),
-#                             ], style=self_style.result_frame) # Results
-#                         ], style=self_style.cs_l22),
-                            
-#                     ], style=self_style.inner_frame_style), # inner-frame
-#                 ], style=self_style.top_frame_style), # top-frame
-#             ], style=self_style.top_tab, selected_style=self_style.top_tab_onclick),
+def adjust_shares_by_enter_cost(data, enter_cost):
 
-#         ]),
-#     ]),
-# ], style=self_style.top_div_style) # canvas-div
+    data['股數'] = enter_cost * data['佔比%'] / data['價格']
+    data['佔比%'] = round(data['佔比%'] * 100, 2)
+    data = data.astype({'佔比%': str})
+    data['佔比%'] = data['佔比%'] + '%'
+    data['股數'] = np.floor(data['股數'])
+    return data
 
+
+def shares_difference_between_quarters(previous_holdings, holdings_data):
+
+    previous_holdings = previous_holdings[['股票', '股數']]
+    holdings_data = holdings_data[['股票', '股數']]
+
+    # 將兩個資料表合併
+    merged_data = holdings_data.merge(previous_holdings, on=['股票'], how='outer', suffixes=('_current', '_previous'))
+    merged_data.fillna({'股數_current': 0, '股數_previous': 0}, inplace=True)
+    merged_data = merged_data.astype({'股數_current': int, '股數_previous': int})
+    # 計算持股數量變化
+    merged_data['股數變化'] = merged_data['股數_current'] - merged_data['股數_previous']
+    merged_data = merged_data[['股票', '股數變化']]
+    return merged_data
+
+def generate_table(stock_data, max_rows=5000):
+    return dash_table.DataTable(
+        columns=[{"name": i, "id": i} for i in stock_data.columns],
+        data=stock_data.to_dict('records'),
+        fixed_rows={'headers': True},  # 固定表頭
+
+        # style_header : header, style_data : data, style_cell : cells & header一起調整
+        style_header={
+            'backgroundColor': 'grey',
+            'fontWeight': 'bold',
+        },
+        style_data={},
+        style_cell={'fontSize': '20px', 'height': 'auto', 'whiteSpace': 'normal'},
+        style_table={'overflowX': 'auto', 'minWidth': '100%'},
+        
+        # 設置欄位自動調整大小
+        style_cell_conditional=[
+            {'if': {'column_id': c},
+             'minWidth': '50px', 'maxWidth': '100px', 'width': '80px',
+             'textAlign': 'right'}
+            for c in stock_data.columns
+        ],
+        
+        # 設置表頭寬度
+        style_header_conditional=[
+            {'if': {'column_id': c},
+             'minWidth': '50px', 'maxWidth': '100px', 'width': '80px',
+             'textAlign': 'center'}
+            for c in stock_data.columns
+        ],
+
+        filter_action='native',
+        sort_action='native',
+    )
 
 
 
