@@ -158,14 +158,14 @@ app.layout = html.Div([
     html.Div([
                 html.Div(['下單建議'], style=self_style.frame_text_style),
                 html.Div([
-                        html.Div(['原持股數量'], style=self_style.frame_text_style),
+                        html.Div(['原持股數量(上一季)'], id='ori-text',style=self_style.frame_text_style),
                         html.Div(
                             children=[], 
                             id='original-stocks-list',
                             style=self_style.result_content),
                     ], style=self_style.content_div_style),
                 html.Div([
-                        html.Div(['本次建議持股數量'], style=self_style.frame_text_style),
+                        html.Div(['本次建議持股數量(本季)'], id='current-text',style=self_style.frame_text_style),
                         html.Div(
                             children=[], 
                             id='recommand-stocks-list',
@@ -192,6 +192,8 @@ Callback 1: 查詢建議買入額
     Output('original-stocks-list', 'children'),
     Output('recommand-stocks-list', 'children'),
     Output('stock-shares-differences', 'children'),
+    Output('ori-text', 'children'),
+    Output('current-text', 'children'),
     Input('hedge-picker', 'value'),
     Input('quarter-picker', 'value'),
     Input('enter-cost', 'value'),
@@ -200,30 +202,29 @@ Callback 1: 查詢建議買入額
 def reaction(hedge_str, quarter_str, enter_cost):
 
     idx = quarters_list.index(quarter_str)
-    ori_idx = idx+1
+    ori_idx = idx+1 # 季度為DESC排序，所以越後面越舊
     ori_quarter_str = quarters_list[ori_idx]
 
-    ori_invest_time = get_invest_time(ori_quarter_str)
-    invest_time = get_invest_time(quarter_str)
-    print('13F報告:{}, 投資時間{}'.format(quarter_str, invest_time))
-    print('前1期:{}, 投資時間{}'.format(ori_quarter_str, ori_invest_time))
+    ori_invest_time = get_invest_time(ori_quarter_str).strftime('%Y-%m-%d')
+    invest_time = get_invest_time(quarter_str).strftime('%Y-%m-%d')
 
     query = create_query_get_holdings_data(config_obj.customized_holdings_data_table, config_obj.us_stock_price_table, hedge_str, ori_quarter_str, ori_invest_time)
     ori_data = get_holdings_data(query)
     ori_data = adjust_shares_by_enter_cost(ori_data, enter_cost)
+    ori_data = add_sequence_column(ori_data)
 
     query = create_query_get_holdings_data(config_obj.customized_holdings_data_table, config_obj.us_stock_price_table, hedge_str, quarter_str, invest_time)
     current_data = get_holdings_data(query)
     current_data = adjust_shares_by_enter_cost(current_data, enter_cost)
+    current_data = add_sequence_column(current_data)
 
     shares_difference_table = shares_difference_between_quarters(ori_data, current_data)
+    shares_difference_table = add_sequence_column(shares_difference_table)
 
-    # ori_data_limited = ori_data.head(10)
-    # current_data_limited = current_data.head(10)
-    # shares_difference_table_limited = shares_difference_table.head(10)
-
-    # return generate_table(ori_data_limited), generate_table(current_data_limited), generate_table(shares_difference_table_limited)
-    return generate_table(ori_data), generate_table(current_data), generate_table(shares_difference_table)
+    # 
+    ori_text = ['原持股數量(上一季)\n13F報告:{}, 投資時間{}'.format(ori_quarter_str, ori_invest_time)]
+    current_text = ['本次建議持股數量(本季)\n13F報告:{}, 投資時間{}'.format(quarter_str, invest_time)]
+    return generate_table(ori_data), generate_table(current_data), generate_table(shares_difference_table), html.P(ori_text, style={'whiteSpace': 'pre-line'}), html.P(current_text, style={'whiteSpace': 'pre-line'}) #顯示上換行
 
 def adjust_holdings_time(holdings_time, sorted_dates, next_day=True):
     '''
@@ -273,7 +274,6 @@ def create_query_get_holdings_data(table_customized_holdings, price_table, hedge
     AND tb_ch.[QUARTER] = '{}'
 	AND tb_price.[date] = '{}'
     '''.format(table_customized_holdings, price_table, hedge_fund, quarter, date)
-    print(query)
     return query
 
 def get_holdings_data(query):
@@ -287,6 +287,22 @@ def get_holdings_data(query):
     data = data.drop(columns=['SHARES'])
 
     return data
+
+def add_sequence_column(df):
+    """
+    在 DataFrame 中添加一列名为 '項次' 的序列列，从 1 开始递增。
+
+    参数:
+    df (pd.DataFrame): 要处理的 DataFrame。
+
+    返回:
+    pd.DataFrame: 新的包含 '項次' 列的 DataFrame。
+    """
+    df['項次'] = range(1, len(df) + 1)
+    cols = df.columns.tolist()  # 获取列名列表
+    cols = ['項次'] + cols[:-1]
+    df = df[cols]
+    return df
 
 def adjust_shares_by_enter_cost(data, enter_cost):
 
