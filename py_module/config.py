@@ -9,14 +9,14 @@ class Configuration(object):
             cls._instance = super(Configuration, cls).__new__(cls)
             cls._instance.initialize_logger()
 
-            cls.LOCAL_FLAG = True
+            cls.LOCAL_FLAG = False
             '''
             Database
             '''
-            cls.hedge_fund_portfolio_table = '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]'
-            cls.holdings_data_table = '[US_DB].[dbo].[HOLDINGS_DATA]'
-            # cls.hedge_fund_portfolio_table = '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO_FILTERED]'
-            # cls.holdings_data_table = '[US_DB].[dbo].[HOLDINGS_DATA_FILTERED]'
+            # cls.hedge_fund_portfolio_table = '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]'
+            # cls.holdings_data_table = '[US_DB].[dbo].[HOLDINGS_DATA]'
+            cls.hedge_fund_portfolio_table = '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO_FILTERED]'
+            cls.holdings_data_table = '[US_DB].[dbo].[HOLDINGS_DATA_FILTERED]'
             cls.us_stock_info_table = '[US_DB].[dbo].[USStockInfo]'
             cls.us_stock_price_table = '[US_DB].[dbo].[USStockPrice]'
             cls.us_stock_gics_table = '[US_DB].[dbo].[Company_GICS]'
@@ -156,7 +156,7 @@ class Configuration(object):
             '''
             Customized Hedge Components
             '''
-            cls.customize_enter_date = '2019-02-15'
+            cls.customize_enter_date = '2013-05-30'
             # cls.target_hedge_funds = [
             #     'Scion Asset Management',
             #     'Peconic Partners',
@@ -206,7 +206,38 @@ class Configuration(object):
                                     'Brave Warrior Advisors',
                                     'Pershing Square Capital Management',
                                     'Stilwell Value',
-                ]
+                ],
+                'sharpe_v2':[ # 0725依據一萬家13F基金篩選過後的清單
+                                    'Barton Investment Management',
+                                    'AMERICAN FINANCIAL GROUP INC 401(K) RETIREMENT & SAVINGS PLAN',
+                                    # 'Strategic Point Investment Advisors, LLC',
+                                    'BRISTOL JOHN W & CO INC /NY/',
+                                    'ACR Alpine Capital Research, LLC',
+                                    'PEAVINE CAPITAL, LLC',
+                                    'JLB & ASSOCIATES INC',
+                                    'Yacktman Asset Management',
+                                    'BEDRIJFSTAKPENSIOENFONDS VOOR DE MEDIA PNO',
+                                    'Saratoga Research & Investment Management',
+                                    'Cohen Klingenstein LLC',
+                                    'RWWM, Inc.',
+                                    'JENSEN INVESTMENT MANAGEMENT INC',
+                                    'YCG, LLC',
+                                    'H PARTNERS MANAGEMENT, LLC',
+                                    'NEW YORK STATE TEACHERS RETIREMENT SYSTEM',
+                                    'SATURNA CAPITAL CORP',
+                                    'Sanders Capital, LLC',
+                                    'Longview Partners (Guernsey) LTD',
+                                    'WEATHERLY ASSET MANAGEMENT L. P.',
+                                    'PENSIOENFONDS RAIL & OV',
+                                    'Dixon Mitchell Investment Counsel Inc.',
+                                    'Van Berkom & Associates Inc.',
+                                    # 'Main Management LLC',
+                                    'Pacifica Capital Investments, LLC',
+                                    'HARTFORD INVESTMENT MANAGEMENT CO',
+                                    'Burgundy Asset Management Ltd.',
+                                    'FIDUCIARY MANAGEMENT INC /WI/',
+                                    # 'Evensky & Katz LLC'
+                ],
             }
 
             cls.industry_top_selection = 3
