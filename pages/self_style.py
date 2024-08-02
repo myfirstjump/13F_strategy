@@ -99,3 +99,27 @@ large_input_style = {
     'border-radius': '7px',
     'margin': '1%',
 }
+
+top_tab = {
+    'font-size': '28px',
+    'font-weight':'900',
+    'color': '#2399E7',
+    'background-color': '#192340',
+    'border-color': '#192340',
+    'border-top': 'hidden',
+    'border-bottom': 'hidden',
+    'border-radius': '15px 15px 0px 0px',
+}
+
+
+top_tab_onclick = {
+    'font-size': '28px',
+    'font-weight':'900',
+    'color': '#E1EBF9',
+    'background-color': '#33A7ED',
+    'border-color': '#33A7ED',
+    # 'border-right': '#2399E7',
+    'border-top': 'hidden',
+    'border-bottom': 'hidden',
+    'border-radius': '15px 15px 0px 0px',
+}

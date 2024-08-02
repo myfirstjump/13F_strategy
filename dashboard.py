@@ -109,80 +109,81 @@ quarters_list = quarters_list['QUARTER'].values
 quarters_list = list(quarters_list)
 
 app.layout = html.Div([
-    html.Div([
-                html.H1('13F報告下單策略', style=self_style.header_text_style),
-                # dcc.Store(
-                #     id='stored_data',
-                #     storage_type='session',
-                # ),
-        ],style=self_style.header_div_style), # header-div
-    
-    html.Div([
-            html.Div([
-                html.Div(['範圍選擇'], style=self_style.frame_text_style),
                 html.Div([
-                        dcc.Dropdown(
-                            id='hedge-picker',
-                            options=targets_hedge,
-                            value=targets_hedge[0],
-                            placeholder=targets_hedge[0],
-                            style=self_style.large_dropdown_style,
-                            clearable=False),
-                    ], style=self_style.dp_div_style),
-                html.Div([
-                        dcc.Dropdown(
-                            id='quarter-picker',
-                            options=quarters_list[:-1],
-                            value=quarters_list[0],
-                            placeholder=quarters_list[0], 
-                            style=self_style.large_dropdown_style,
-                            clearable=False),
-                    ], style=self_style.dp_div_style),
-            ]),
-            html.Div([
-                html.Div(['購買金額'], style=self_style.frame_text_style),
-                html.Div([
-                        dcc.Input(required = True,
-                            id='enter-cost',
-                            type='number',
-                            min=0,
-                            max=999999999,
-                            value=1000000,
-                            placeholder='1000000',
-                            style=self_style.large_input_style),
-                    ], style=self_style.dp_div_style),
-            ])
-    ],style=self_style.header_div_style), # header-div
+                    html.H1('13F報告下單策略', style=self_style.header_text_style),
+                ],style=self_style.header_div_style), # header-div
+                
+                dcc.Tabs([
+                    dcc.Tab(label='下單建議', children=[
+                        html.Div([
+                            html.Div([
+                                html.Div(['範圍選擇'], style=self_style.frame_text_style),
+                                html.Div([
+                                    dcc.Dropdown(
+                                        id='hedge-picker',
+                                        options=targets_hedge,
+                                        value=targets_hedge[0],
+                                        placeholder=targets_hedge[0],
+                                        style=self_style.large_dropdown_style,
+                                        clearable=False),
+                                    ], style=self_style.dp_div_style),
+                                html.Div([
+                                    dcc.Dropdown(
+                                        id='quarter-picker',
+                                        options=quarters_list[:-1],
+                                        value=quarters_list[0],
+                                        placeholder=quarters_list[0], 
+                                        style=self_style.large_dropdown_style,
+                                        clearable=False),
+                                    ], style=self_style.dp_div_style),
+                            ]),
+                            html.Div([
+                                html.Div(['購買金額'], style=self_style.frame_text_style),
+                                html.Div([
+                                        dcc.Input(required = True,
+                                            id='enter-cost',
+                                            type='number',
+                                            min=0,
+                                            max=999999999,
+                                            value=1000000,
+                                            placeholder='1000000',
+                                            style=self_style.large_input_style),
+                                    ], style=self_style.dp_div_style),
+                            ])
+                        ]),#,style=self_style.header_div_style), # header-div
 
 
-    html.Div([
-                html.Div(['下單建議'], style=self_style.frame_text_style),
-                html.Div([
-                        html.Div(['原持股數量(上一季)'], id='ori-text',style=self_style.frame_text_style),
-                        html.Div(
-                            children=[], 
-                            id='original-stocks-list',
-                            style=self_style.result_content),
-                    ], style=self_style.content_div_style),
-                html.Div([
-                        html.Div(['本次建議持股數量(本季)'], id='current-text',style=self_style.frame_text_style),
-                        html.Div(
-                            children=[], 
-                            id='recommand-stocks-list',
-                            style=self_style.result_content),
-                    ], style=self_style.content_div_style),
-                html.Div([
-                        html.Div(['變化量'], style=self_style.frame_text_style),
-                        html.Div(
-                            children=[],
-                            id='stock-shares-differences',
-                            style=self_style.result_content),
+                        html.Div([
+                                    html.Div(['下單建議'], style=self_style.frame_text_style),
+                                    html.Div([
+                                            html.Div(['原持股數量(上一季)'], id='ori-text',style=self_style.frame_text_style),
+                                            html.Div(
+                                                children=[], 
+                                                id='original-stocks-list',
+                                                style=self_style.result_content),
+                                        ], style=self_style.content_div_style),
+                                    html.Div([
+                                            html.Div(['本次建議持股數量(本季)'], id='current-text',style=self_style.frame_text_style),
+                                            html.Div(
+                                                children=[], 
+                                                id='recommand-stocks-list',
+                                                style=self_style.result_content),
+                                        ], style=self_style.content_div_style),
+                                    html.Div([
+                                            html.Div(['變化量'], style=self_style.frame_text_style),
+                                            html.Div(
+                                                children=[],
+                                                id='stock-shares-differences',
+                                                style=self_style.result_content),
 
 
-                    ], style=self_style.content_div_style),
-    ],style=self_style.header_div_style), # header-div
-    
-], style=self_style.top_div_style) # canvas-div
+                                        ], style=self_style.content_div_style),
+                        ],style=self_style.header_div_style), # header-div
+                        ]),
+                    dcc.Tab(label='爬蟲狀態', children=[
+                    ]),
+                ]),
+            ], style=self_style.top_div_style) # canvas-div
 
 '''
 Callback 1: 查詢建議買入額

@@ -238,11 +238,48 @@ class Configuration(object):
                                     'FIDUCIARY MANAGEMENT INC /WI/',
                                     # 'Evensky & Katz LLC'
                 ],
+                'sharpe_v3':[ # 0728 更新分析標的基金，有些在hgdmj那邊跑得績效較好是因為ETF表現，故應獨立跑組合，確認非ETF個股之績效
+                    'Barton Investment Management',
+                    'AMERICAN FINANCIAL GROUP INC 401(K) RETIREMENT & SAVINGS PLAN',
+                    # 'Strategic Point Investment Advisors, LLC',
+                    'BRISTOL JOHN W & CO INC /NY/',
+                    'ACR Alpine Capital Research, LLC',
+                    'PEAVINE CAPITAL, LLC',
+                    'JLB & ASSOCIATES INC',
+                    'Yacktman Asset Management',
+                    'BEDRIJFSTAKPENSIOENFONDS VOOR DE MEDIA PNO',
+                    'Saratoga Research & Investment Management',
+                    'Cohen Klingenstein LLC',
+                    'RWWM, Inc.',
+                    'JENSEN INVESTMENT MANAGEMENT INC',
+                    'YCG, LLC',
+                    'H PARTNERS MANAGEMENT, LLC',
+                    'NEW YORK STATE TEACHERS RETIREMENT SYSTEM',
+                    'SATURNA CAPITAL CORP',
+                    'Sanders Capital, LLC',
+                    'Longview Partners (Guernsey) LTD',
+                    'WEATHERLY ASSET MANAGEMENT L. P.',
+                    'PENSIOENFONDS RAIL & OV',
+                    'Dixon Mitchell Investment Counsel Inc.',
+                    'Van Berkom & Associates Inc.',
+                    # 'Main Management LLC',
+                    'Pacifica Capital Investments, LLC',
+                    'HARTFORD INVESTMENT MANAGEMENT CO',
+                    'Burgundy Asset Management Ltd.',
+                    'FIDUCIARY MANAGEMENT INC /WI/',
+                    # 'Evensky & Katz LLC',
+                    'Scion Asset Management',
+                    'Altarock Partners',
+                    'Brave Warrior Advisors',
+                    'Pershing Square Capital Management',
+                    'Stilwell Value'
+                ]
             }
 
             cls.industry_top_selection = 3
             cls.company_top_selection = 3
             cls.enter_cost = 1000000
+            cls.upper_price_limit = 1000
 
             cls.gics_dict = {
                 '10': 'Energy',
