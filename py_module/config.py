@@ -13,16 +13,18 @@ class Configuration(object):
             '''
             Database
             '''
-            # cls.hedge_fund_portfolio_table = '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]'
-            # cls.holdings_data_table = '[US_DB].[dbo].[HOLDINGS_DATA]'
-            cls.hedge_fund_portfolio_table = '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO_FILTERED]'
-            cls.holdings_data_table = '[US_DB].[dbo].[HOLDINGS_DATA_FILTERED]'
+            cls.hedge_fund_portfolio_table = '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]'
+            cls.holdings_data_table = '[US_DB].[dbo].[HOLDINGS_DATA]'
+            cls.hedge_fund_portfolio_table_filtered = '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO_FILTERED]'
+            cls.holdings_data_table_filtered = '[US_DB].[dbo].[HOLDINGS_DATA_FILTERED]'
             cls.us_stock_info_table = '[US_DB].[dbo].[USStockInfo]'
             cls.us_stock_price_table = '[US_DB].[dbo].[USStockPrice]'
             cls.us_stock_gics_table = '[US_DB].[dbo].[Company_GICS]'
             cls.tw_stock_price_table = '[STOCK_SKILL_DB].[dbo].[TW_STOCK_PRICE_Daily]'
             cls.customized_fund_portfolio_table = '[US_DB].[dbo].[CUSTOMIZED_HEDGE_FUND_PORTFOLIO]'
             cls.customized_holdings_data_table = '[US_DB].[dbo].[CUSTOMIZED_HOLDINGS_DATA]'
+            cls.customized_individual_fund_portfolio_table = '[US_DB].[dbo].[CUSTOMIZED_INDIVIDUAL_HEDGE_FUND_PORTFOLIO]' # 用來儲存單基金customzied data
+            cls.customized_individual_holdings_data_table = '[US_DB].[dbo].[CUSTOMIZED_INDIVIDUAL_HOLDINGS_DATA]' # 用來儲存單基金customzied data
 
             '''
             Crawler
@@ -65,6 +67,43 @@ class Configuration(object):
                 # 'Dalal Street Holdings':'https://13f.info/manager/0001549575-dalal-street-llc', 
                 'Altarock Partners':'https://13f.info/manager/0001631014-altarock-partners-llc', 
                 'Brave Warrior Advisors':'https://13f.info/manager/0001553733-brave-warrior-advisors-llc',
+            }
+
+            cls.hedge_fund_urls_sharpe_v3 = {
+                    'Barton Investment Management':'https://13f.info/manager/0001387818-barton-investment-management',
+                    'AMERICAN FINANCIAL GROUP INC 401(K) RETIREMENT & SAVINGS PLAN':'https://13f.info/manager/0000943719-american-financial-group-inc-401-k-retirement-savings-plan',
+                    # 'Strategic Point Investment Advisors, LLC',
+                    'BRISTOL JOHN W & CO INC /NY/':'https://13f.info/manager/0000276101-bristol-john-w-co-inc-ny',
+                    'ACR Alpine Capital Research, LLC':'https://13f.info/manager/0001508822-acr-alpine-capital-research-llc',
+                    'PEAVINE CAPITAL, LLC':'https://13f.info/manager/0001594540-peavine-capital-llc',
+                    'JLB & ASSOCIATES INC':'https://13f.info/manager/0001085227-jlb-associates-inc',
+                    'Yacktman Asset Management':'https://13f.info/manager/0000905567-yacktman-asset-management-lp',
+                    'BEDRIJFSTAKPENSIOENFONDS VOOR DE MEDIA PNO':'https://13f.info/manager/0001274196-bedrijfstakpensioenfonds-voor-de-media-pno',
+                    'Saratoga Research & Investment Management':'https://13f.info/manager/0001477872-saratoga-research-investment-management',
+                    'Cohen Klingenstein LLC':'https://13f.info/manager/0001453620-cohen-klingenstein-llc',
+                    'RWWM, Inc.':'https://13f.info/manager/0001507683-rwwm-inc',
+                    'JENSEN INVESTMENT MANAGEMENT INC':'https://13f.info/manager/0001106129-jensen-investment-management-inc',
+                    'YCG, LLC':'https://13f.info/manager/0001584801-ycg-llc',
+                    'H PARTNERS MANAGEMENT, LLC':'https://13f.info/manager/0001364412-h-partners-management-llc',
+                    'NEW YORK STATE TEACHERS RETIREMENT SYSTEM':'https://13f.info/manager/0000314969-new-york-state-teachers-retirement-system',
+                    'SATURNA CAPITAL CORP':'https://13f.info/manager/0001316617-saturna-capital-corp',
+                    'Sanders Capital, LLC':'https://13f.info/manager/0001508097-sanders-capital-llc',
+                    'Longview Partners (Guernsey) LTD':'https://13f.info/manager/0001426092-longview-partners-guernsey-ltd',
+                    'WEATHERLY ASSET MANAGEMENT L. P.':'https://13f.info/manager/0000934745-weatherly-asset-management-l-p',
+                    'PENSIOENFONDS RAIL & OV':'https://13f.info/manager/0001218761-pensioenfonds-rail-ov',
+                    'Dixon Mitchell Investment Counsel Inc.':'https://13f.info/manager/0001993485-dixon-mitchell-investment-counsel-inc',
+                    'Van Berkom & Associates Inc.':'https://13f.info/manager/0001524408-van-berkom-associates-inc',
+                    # 'Main Management LLC',
+                    'Pacifica Capital Investments, LLC':'https://13f.info/manager/0001486713-pacifica-capital-investments-llc',
+                    'HARTFORD INVESTMENT MANAGEMENT CO':'https://13f.info/manager/0000922439-hartford-investment-management-co',
+                    'Burgundy Asset Management Ltd.':'https://13f.info/manager/0001315868-burgundy-asset-management-ltd',
+                    'FIDUCIARY MANAGEMENT INC /WI/':'https://13f.info/manager/0000764532-fiduciary-management-inc-wi',
+                    # 'Evensky & Katz LLC',
+                    'Scion Asset Management':'https://13f.info/manager/0001649339-scion-asset-management-llc',
+                    'Altarock Partners':'https://13f.info/manager/0001631014-altarock-partners-lp',
+                    'Brave Warrior Advisors':'https://13f.info/manager/0001553733-brave-warrior-advisors-llc',
+                    'Pershing Square Capital Management':'https://13f.info/manager/0001336528-pershing-square-capital-management-l-p',
+                    'Stilwell Value':'https://13f.info/manager/0001397076-stilwell-value-llc',
             }
 
             cls.popular_13F_manager_urls = {
@@ -148,6 +187,21 @@ class Configuration(object):
                 'XXEC':'https://13f.info/manager/0001828822-xxec-inc',
                 'YALE UNIVERSITY':'https://13f.info/manager/0000938582-yale-university',
                 'York Capital Management Global Advisors':'https://13f.info/manager/0001480532-york-capital-management-global-advisors-llc',
+            }
+
+            cls.hedge_fund_urls_i1c2_sharpe = {
+                'E. Ohman J:or Asset Management AB':'https://13f.info/manager/0002009396-e-ohman-j-or-asset-management-ab',
+                'JANUS HENDERSON GROUP PLC':'https://13f.info/manager/0001274173-janus-henderson-group-plc',
+                'Cincinnati Specialty Underwriters Insurance CO':'https://13f.info/manager/0001426763-cincinnati-specialty-underwriters-insurance-co',
+                'Standard Investments LLC':'https://13f.info/manager/0001539436-standard-investments-llc',
+                'Tradewinds Capital Management, LLC':'https://13f.info/manager/0001616026-tradewinds-capital-management-llc',
+                'COLDSTREAM CAPITAL MANAGEMENT INC':'https://13f.info/manager/0001082339-coldstream-capital-management-inc',
+                'Evercore Wealth Management, LLC':'https://13f.info/manager/0001482689-evercore-wealth-management-llc',
+                'OAK RIDGE INVESTMENTS LLC':'https://13f.info/manager/0001054554-oak-ridge-investments-llc',
+                'ARMSTRONG HENRY H ASSOCIATES INC':'https://13f.info/manager/0001056827-armstrong-henry-h-associates-inc',
+                'Private Capital Advisors, Inc.':'https://13f.info/manager/0001350780-private-capital-advisors-inc',
+                'FAIRVIEW CAPITAL INVESTMENT MANAGEMENT, LLC':'https://13f.info/manager/0001056549-fairview-capital-investment-management-llc',
+                'ACR Alpine Capital Research, LLC':'https://13f.info/manager/0001508822-acr-alpine-capital-research-llc',
             }
 
             ### 
@@ -273,12 +327,25 @@ class Configuration(object):
                     'Brave Warrior Advisors',
                     'Pershing Square Capital Management',
                     'Stilwell Value'
+                ],
+                'I1C2_sharpe':[
+
+                    'Private Capital Advisors, Inc.',
+                    'Smead Capital Management, Inc.',
+                    'OAK RIDGE INVESTMENTS LLC',
+                    'COLDSTREAM CAPITAL MANAGEMENT INC',
+                    'ACR Alpine Capital Research, LLC',
+                    'Evercore Wealth Management, LLC',
+                    'Tradewinds Capital Management, LLC',
+                    'Standard Investments LLC',
+                    'Cincinnati Specialty Underwriters Insurance CO',
+                    'COLONY GROUP LLC',
                 ]
             }
 
-            cls.industry_top_selection = 3
-            cls.company_top_selection = 3
-            cls.enter_cost = 1000000
+            cls.industry_top_selection = 1
+            cls.company_top_selection = 2
+            cls.enter_cost = 100000
             cls.upper_price_limit = 1000
 
             cls.gics_dict = {

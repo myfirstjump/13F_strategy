@@ -68,6 +68,11 @@ def create_query_get_all_quarter(table):
     '''.format(table)
     return query
 
+def create_query_get_crawler_status(list):
+
+    
+
+    pass
 
 
 def sql_execute(query):
@@ -107,6 +112,8 @@ quarters_list = pd.DataFrame(quarters_list)
 quarters_list = quarters_list.sort_values(by=['DATE_FILED'], ascending=False)
 quarters_list = quarters_list['QUARTER'].values
 quarters_list = list(quarters_list)
+
+query = create_query_get_crawler_status(config_obj.target_hedge_funds_dict['sharpe_v3'])
 
 app.layout = html.Div([
                 html.Div([
@@ -181,6 +188,11 @@ app.layout = html.Div([
                         ],style=self_style.header_div_style), # header-div
                         ]),
                     dcc.Tab(label='爬蟲狀態', children=[
+                        html.Div(
+                            children=[],
+                            id='crawler-status',
+                            style=self_style.content_div_style
+                        )
                     ]),
                 ]),
             ], style=self_style.top_div_style) # canvas-div

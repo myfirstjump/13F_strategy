@@ -180,7 +180,9 @@ class Crawler(object):
             holdings_existed_filing_id = pd.DataFrame(holdings_existed_filing_id)['FILING_ID'].values
 
         # urls = self.get_all_13F_manager_urls()
-        urls = self.config_obj.hedge_fund_urls
+        urls = self.config_obj.hedge_fund_urls_i1c2_sharpe # 依據13F報告跑I1C2表現最佳的基金列表
+        # urls = self.config_obj.hedge_fund_urls
+        # urls = self.config_obj.hedge_fund_urls_sharpe_v3
 
         headers = {
             'user-agent': 'Mozilla/5.0'

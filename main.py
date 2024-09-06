@@ -26,7 +26,10 @@ class StockStrategies(object):
     def strategy_13F_investing(self):
         # self.strategy_obj.customize_fund_components(industry_top_selection=3, company_top_selection=3)
         # self.strategy_obj.back_test_flow()
-        self.strategy_obj.costomized_hedge_build_and_store()
+        # self.strategy_obj.customized_hedge_build_and_store()
+        self.strategy_obj.customized_hedge_build_and_store_multi_threading()
+        # self.strategy_obj.calculate_preferred_index_from_hedge_and_output()
+
         # self.strategy_obj.customize_fund_components_revised(
         #                         reinvest_flag=True,
         #                         share_profit_flag=True,
@@ -41,6 +44,17 @@ class StockStrategies(object):
         #                         industry_top_selection=2, 
         #                         company_top_selection=2, 
         #                         mcap_weighted_flag=True)
+
+        # self.strategy_obj.customize_fund_components_revised(
+        #     reinvest_flag=True,
+        #     share_profit_flag=False,
+        #     hedge_funds_range=[
+        #         'Cincinnati Specialty Underwriters Insurance CO'
+        #     ],
+        #     industry_top_selection=1,
+        #     company_top_selection=3,
+        #     mcap_weighted_flag=True,
+        # )
     
     # def dash_server(self, data):
     #     self.dash_app = DashBuilder(data)
