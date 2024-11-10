@@ -23,14 +23,17 @@ class Crawler(object):
     def web_crawler_13F_one_thread(self): #單線呈
         '''
         '''
-        query = self.create_query_get_13F_filing_id_in_DB(self.config_obj.hedge_fund_portfolio_table)
+        portfolio_table = self.config_obj.hedge_fund_portfolio_table_filtered
+        holdings_table = self.config_obj.holdings_data_table_filtered
+
+        query = self.create_query_get_13F_filing_id_in_DB(portfolio_table)
         existed_filing_id = self.sql_execute(query)
         if len(existed_filing_id) == 0:
             existed_filing_id = []
         else:
             existed_filing_id = pd.DataFrame(existed_filing_id)['FILING_ID'].values
 
-        query = self.create_query_get_13F_filing_id_in_DB(self.config_obj.holdings_data_table)
+        query = self.create_query_get_13F_filing_id_in_DB(holdings_table)
         holdings_existed_filing_id = self.sql_execute(query)
         if len(holdings_existed_filing_id) == 0:
             holdings_existed_filing_id = []
@@ -106,7 +109,7 @@ class Crawler(object):
             '''
             hedge_fund_data = self.remove_existed_records_by_filing_id(hedge_fund_data, existed_filing_id)
             if len(hedge_fund_data) != 0:
-                table_name, inserted_rows = self.insert_records_to_DB(table_name=self.config_obj.hedge_fund_portfolio_table_filtered, data=hedge_fund_data)
+                table_name, inserted_rows = self.insert_records_to_DB(table_name=portfolio_table, data=hedge_fund_data)
                 self.config_obj.logger.info('{} hedge data have been stored ({} should be) from hedge {}.'.format(inserted_rows, len(hedge_fund_data), name))
             else:
                 self.config_obj.logger.info('No hedge data have been stored from hedge {}.'.format(name))
@@ -155,7 +158,7 @@ class Crawler(object):
 
                 holdings_data = self.remove_existed_records_by_filing_id(holdings_data, holdings_existed_filing_id)
                 if len(holdings_data) != 0:
-                    table_name, inserted_rows = self.insert_records_to_DB(table_name=self.config_obj.holdings_data_table_filtered, data=holdings_data)
+                    table_name, inserted_rows = self.insert_records_to_DB(table_name=holdings_table, data=holdings_data)
                     self.config_obj.logger.info('{} holdings data have been stored ({} should be) from hedge {}).'.format(inserted_rows, len(holdings_data), name))
                 else:
                     self.config_obj.logger.info('No holdings data have been stored from hedge {}.'.format(name))
@@ -164,14 +167,19 @@ class Crawler(object):
 
 
     def web_crawler_13F(self):
-        query = self.create_query_get_13F_filing_id_in_DB(self.config_obj.hedge_fund_portfolio_table)
+
+
+        portfolio_table = self.config_obj.hedge_fund_portfolio_table_filtered
+        holdings_table = self.config_obj.holdings_data_table_filtered
+
+        query = self.create_query_get_13F_filing_id_in_DB(portfolio_table)
         existed_filing_id = self.sql_execute(query)
         if len(existed_filing_id) == 0:
             existed_filing_id = []
         else:
             existed_filing_id = pd.DataFrame(existed_filing_id)['FILING_ID'].values
 
-        query = self.create_query_get_13F_filing_id_in_DB(self.config_obj.holdings_data_table)
+        query = self.create_query_get_13F_filing_id_in_DB(holdings_table)
         holdings_existed_filing_id = self.sql_execute(query)
         if len(holdings_existed_filing_id) == 0:
             holdings_existed_filing_id = []
@@ -190,7 +198,7 @@ class Crawler(object):
         self.config_obj.logger.warning("Web_crawler_13F，預計爬取共{}支基金資料".format(self.total_funds))
 
         with ThreadPoolExecutor(max_workers=10) as executor:
-            futures = {executor.submit(self.fetch_fund_data, name, url, headers, existed_filing_id, holdings_existed_filing_id): name for name, url in urls.items()}
+            futures = {executor.submit(self.fetch_fund_data, name, url, headers, existed_filing_id, holdings_existed_filing_id, portfolio_table, holdings_table): name for name, url in urls.items()}
             for future in as_completed(futures):
                 name = futures[future]
                 try:
@@ -201,7 +209,9 @@ class Crawler(object):
                 except Exception as exc:
                     self.config_obj.logger.error('Fund {} generated an exception: {}'.format(name, exc))
 
-    def fetch_fund_data(self, name, url, headers, existed_filing_id, holdings_existed_filing_id):
+    def fetch_fund_data(self, name, url, headers, existed_filing_id, holdings_existed_filing_id, portfolio_table, holdings_table):
+
+
         response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.text, "html.parser")
         self.config_obj.logger.debug("基金：{} 連線網址：{}".format(name, response.url))
@@ -237,15 +247,15 @@ class Crawler(object):
         hedge_fund_data = hedge_fund_data.replace(np.nan, None)
         hedge_fund_data = self.remove_existed_records_by_filing_id(hedge_fund_data, existed_filing_id)
         if len(hedge_fund_data) != 0:
-            table_name, inserted_rows = self.insert_records_to_DB(table_name=self.config_obj.hedge_fund_portfolio_table, data=hedge_fund_data)
+            table_name, inserted_rows = self.insert_records_to_DB(table_name=portfolio_table, data=hedge_fund_data)
             self.config_obj.logger.warning('{} hedge data have been stored ({} should be) from hedge {}.'.format(inserted_rows, len(hedge_fund_data), name))
         else:
             self.config_obj.logger.info('No hedge data have been stored from hedge {}.'.format(name))
 
         for (quarter, form_type, filing_id), quarterly_link in holdings_urls.items():
-            self.fetch_holdings_data(name, quarterly_link, quarter, form_type, filing_id, holdings_existed_filing_id)
+            self.fetch_holdings_data(name, quarterly_link, quarter, form_type, filing_id, holdings_existed_filing_id, holdings_table)
 
-    def fetch_holdings_data(self, name, quarterly_link, quarter, form_type, filing_id, holdings_existed_filing_id):
+    def fetch_holdings_data(self, name, quarterly_link, quarter, form_type, filing_id, holdings_existed_filing_id, holdings_table):
         network_source = quarterly_link.split('-')[0].split('/')[-1]
         network_source = "https://13f.info/data/13f/" + network_source
 
@@ -276,7 +286,7 @@ class Crawler(object):
 
         holdings_data = self.remove_existed_records_by_filing_id(holdings_data, holdings_existed_filing_id)
         if len(holdings_data) != 0:
-            table_name, inserted_rows = self.insert_records_to_DB(table_name=self.config_obj.holdings_data_table, data=holdings_data)
+            table_name, inserted_rows = self.insert_records_to_DB(table_name=holdings_table, data=holdings_data)
             self.config_obj.logger.warning('{} holdings data have been stored ({} should be) from hedge {}).'.format(inserted_rows, len(holdings_data), name))
         else:
             self.config_obj.logger.info('No holdings data have been stored from hedge {}.'.format(name))
@@ -364,11 +374,54 @@ class Crawler(object):
                 , data_tuple
             )
             conn.commit()
+
+        elif table_name == '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO_FILTERED]':
+
+            cursor.executemany(
+                """INSERT INTO [US_DB].[dbo].[HEDGE_FUND_PORTFOLIO_FILTERED]
+                (
+                [QUARTER]
+                ,[HOLDINGS]
+                ,[VALUE]
+                ,[TOP_HOLDINGS]
+                ,[FORM_TYPE]
+                ,[DATE_FILED]
+                ,[FILING_ID]
+                ,[HEDGE_FUND]
+                ) 
+                VALUES (%s,%d,%d,%s,%s,%s,%s,%s)"""
+                , data_tuple
+            )
+            conn.commit()
         
         elif table_name == '[US_DB].[dbo].[HOLDINGS_DATA]':
             
             cursor.executemany(
                     """INSERT INTO [US_DB].[dbo].[HOLDINGS_DATA]
+                    (
+                    [SYM]
+                    ,[ISSUER_NAME]
+                    ,[CL]
+                    ,[CUSIP]
+                    ,[VALUE]
+                    ,[Percentile]
+                    ,[SHARES]
+                    ,[PRINCIPAL]
+                    ,[OPTION_TYPE]
+                    ,[HEDGE_FUND]
+                    ,[QUARTER]
+                    ,[FORM_TYPE]
+                    ,[FILING_ID]
+                    ) 
+                    VALUES(%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s)"""
+                    , data_tuple
+            )
+            conn.commit()
+        
+        elif table_name == '[US_DB].[dbo].[HOLDINGS_DATA_FILTERED]':
+            
+            cursor.executemany(
+                    """INSERT INTO [US_DB].[dbo].[HOLDINGS_DATA_FILTERED]
                     (
                     [SYM]
                     ,[ISSUER_NAME]
