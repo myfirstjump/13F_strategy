@@ -37,10 +37,9 @@ class Crawler(object):
         else:
             holdings_existed_filing_id = pd.DataFrame(holdings_existed_filing_id)['FILING_ID'].values
 
-        urls = self.config_obj.hedge_fund_urls
+        urls = self.config_obj.hedge_fund_urls_i1c2_sharpe
         # urls = self.config_obj.popular_13F_manager_urls
         # urls = self.get_all_13F_manager_urls()
-
         # urls = {'Alambic Investment Management':'https://13f.info/manager/0001663368-alambic-investment-management-l-p'}
 
 
@@ -107,7 +106,7 @@ class Crawler(object):
             '''
             hedge_fund_data = self.remove_existed_records_by_filing_id(hedge_fund_data, existed_filing_id)
             if len(hedge_fund_data) != 0:
-                table_name, inserted_rows = self.insert_records_to_DB(table_name=self.config_obj.hedge_fund_portfolio_table, data=hedge_fund_data)
+                table_name, inserted_rows = self.insert_records_to_DB(table_name=self.config_obj.hedge_fund_portfolio_table_filtered, data=hedge_fund_data)
                 self.config_obj.logger.info('{} hedge data have been stored ({} should be) from hedge {}.'.format(inserted_rows, len(hedge_fund_data), name))
             else:
                 self.config_obj.logger.info('No hedge data have been stored from hedge {}.'.format(name))
@@ -156,7 +155,7 @@ class Crawler(object):
 
                 holdings_data = self.remove_existed_records_by_filing_id(holdings_data, holdings_existed_filing_id)
                 if len(holdings_data) != 0:
-                    table_name, inserted_rows = self.insert_records_to_DB(table_name=self.config_obj.holdings_data_table, data=holdings_data)
+                    table_name, inserted_rows = self.insert_records_to_DB(table_name=self.config_obj.holdings_data_table_filtered, data=holdings_data)
                     self.config_obj.logger.info('{} holdings data have been stored ({} should be) from hedge {}).'.format(inserted_rows, len(holdings_data), name))
                 else:
                     self.config_obj.logger.info('No holdings data have been stored from hedge {}.'.format(name))

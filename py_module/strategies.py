@@ -162,7 +162,9 @@ class Strategy13F(object):
 
         index_table = []
         customized_name_suffix = '_reinvest_0818'
-        funds_list = self.get_all_hedge_funds_name(self.config_obj.customized_individual_fund_portfolio_table)
+        # funds_list = self.get_all_hedge_funds_name(self.config_obj.customized_individual_fund_portfolio_table)
+        funds_list = self.get_all_hedge_funds_name(self.config_obj.customized_fund_portfolio_table)
+        
         # funds_list = [fund.replace(customized_name_suffix, '') for fund in funds_list]
         # funds_list = funds_list[:10]
         # funds_list = ['EDMUNDS WHITE PARTNERS LLC' + customized_name_suffix]
@@ -174,7 +176,8 @@ class Strategy13F(object):
             # 計算各指標
             
 
-            query = self.get_each_fund_portfolio_data(table_name=self.config_obj.customized_individual_fund_portfolio_table, fund_name=each_funds)
+            # query = self.get_each_fund_portfolio_data(table_name=self.config_obj.customized_individual_fund_portfolio_table, fund_name=each_funds)
+            query = self.get_each_fund_portfolio_data(table_name=self.config_obj.customized_fund_portfolio_table, fund_name=each_funds)
             each_portfolio_data = self.sql_execute(query)
             each_portfolio_data = pd.DataFrame(each_portfolio_data)
 
@@ -227,7 +230,7 @@ class Strategy13F(object):
             # print(each_portfolio_data)
 
             index_table.append({
-                'HEDGE_FUND': each_funds.replace(customized_name_suffix, ''),
+                'HEDGE_FUND': each_funds,#.replace(customized_name_suffix, ''),
                 '總季度': len(each_portfolio_data),
                 '主要持倉': mainly_holdings,
                 'I1產業': industry,

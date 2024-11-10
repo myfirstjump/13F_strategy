@@ -190,18 +190,16 @@ class Configuration(object):
             }
 
             cls.hedge_fund_urls_i1c2_sharpe = {
-                'E. Ohman J:or Asset Management AB':'https://13f.info/manager/0002009396-e-ohman-j-or-asset-management-ab',
-                'JANUS HENDERSON GROUP PLC':'https://13f.info/manager/0001274173-janus-henderson-group-plc',
-                'Cincinnati Specialty Underwriters Insurance CO':'https://13f.info/manager/0001426763-cincinnati-specialty-underwriters-insurance-co',
-                'Standard Investments LLC':'https://13f.info/manager/0001539436-standard-investments-llc',
-                'Tradewinds Capital Management, LLC':'https://13f.info/manager/0001616026-tradewinds-capital-management-llc',
-                'COLDSTREAM CAPITAL MANAGEMENT INC':'https://13f.info/manager/0001082339-coldstream-capital-management-inc',
-                'Evercore Wealth Management, LLC':'https://13f.info/manager/0001482689-evercore-wealth-management-llc',
-                'OAK RIDGE INVESTMENTS LLC':'https://13f.info/manager/0001054554-oak-ridge-investments-llc',
-                'ARMSTRONG HENRY H ASSOCIATES INC':'https://13f.info/manager/0001056827-armstrong-henry-h-associates-inc',
                 'Private Capital Advisors, Inc.':'https://13f.info/manager/0001350780-private-capital-advisors-inc',
-                'FAIRVIEW CAPITAL INVESTMENT MANAGEMENT, LLC':'https://13f.info/manager/0001056549-fairview-capital-investment-management-llc',
+                'Smead Capital Management, Inc.':'https://13f.info/manager/0001427008-smead-capital-management-inc',
+                'OAK RIDGE INVESTMENTS LLC':'https://13f.info/manager/0001054554-oak-ridge-investments-llc',
+                'COLDSTREAM CAPITAL MANAGEMENT INC':'https://13f.info/manager/0001082339-coldstream-capital-management-inc',
                 'ACR Alpine Capital Research, LLC':'https://13f.info/manager/0001508822-acr-alpine-capital-research-llc',
+                'Evercore Wealth Management, LLC':'https://13f.info/manager/0001482689-evercore-wealth-management-llc',
+                'Tradewinds Capital Management, LLC':'https://13f.info/manager/0001616026-tradewinds-capital-management-llc',
+                'Standard Investments LLC':'https://13f.info/manager/0001539436-standard-investments-llc',
+                'Cincinnati Specialty Underwriters Insurance CO':'https://13f.info/manager/0001426763-cincinnati-specialty-underwriters-insurance-co',
+                'COLONY GROUP LLC':'https://13f.info/manager/0001080628-colony-group-llc',                   
             }
 
             ### 
