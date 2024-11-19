@@ -1,5 +1,5 @@
 from py_module.config import Configuration
-from py_module.crawler import Crawler
+from py_module.crawler import Crawler, IBApp
 from py_module.strategies import Strategy13F
 # from dashboard import DashBuilder
 from py_module.database_CRUD import DatabaseManipulation
@@ -13,12 +13,14 @@ class StockStrategies(object):
     def __init__(self):
         self.config_obj = Configuration()
         self.crawler_obj = Crawler()
+        self.stock_crawler_obj = IBApp()
         self.strategy_obj = Strategy13F()
         self.db_obj = DatabaseManipulation()
 
     def data_crawl(self):
-        # self.crawler_obj.web_crawler_13F()
-        self.crawler_obj.web_crawler_13F_one_thread()
+        self.crawler_obj.web_crawler_13F()
+        # self.crawler_obj.web_crawler_13F_one_thread()
+        # self.stock_crawler_obj.stock_data_crawler()
 
     def data_update(self):
         self.db_obj.Update_GICs_to_DB()
@@ -26,9 +28,9 @@ class StockStrategies(object):
     def strategy_13F_investing(self):
         # self.strategy_obj.customize_fund_components(industry_top_selection=3, company_top_selection=3)
         # self.strategy_obj.back_test_flow()
-        # self.strategy_obj.customized_hedge_build_and_store()
+        self.strategy_obj.customized_hedge_build_and_store()
         # self.strategy_obj.customized_hedge_build_and_store_multi_threading()
-        self.strategy_obj.calculate_preferred_index_from_hedge_and_output()
+        # self.strategy_obj.calculate_preferred_index_from_hedge_and_output()
 
         # self.strategy_obj.customize_fund_components_revised(
         #                         reinvest_flag=True,
@@ -64,11 +66,11 @@ def main_flow():
     main_obj = StockStrategies()
 
     '''13F官網資料爬蟲 & 補充'''
-    main_obj.data_crawl()
+    # main_obj.data_crawl()
     # main_obj.data_update()
 
     '''13F投資策略回測'''
-    # main_obj.strategy_13F_investing()
+    main_obj.strategy_13F_investing()
 
     '''Dash篩選'''
     # data_path = os.path.join(main_obj.config_obj.backtest_summary, '2024-01-28_summary_table.csv')

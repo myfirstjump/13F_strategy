@@ -4,12 +4,18 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
 import requests
 from bs4 import BeautifulSoup
+from ibapi.client import EClient
+from ibapi.wrapper import EWrapper
+from ibapi.contract import Contract
+
 import os
 import time
 import pymssql
 import pandas as pd
 import numpy as np
 import logging
+from datetime import datetime
+import threading
 
 class Crawler(object):
 
@@ -291,7 +297,6 @@ class Crawler(object):
         else:
             self.config_obj.logger.info('No holdings data have been stored from hedge {}.'.format(name))
     
-    
     def sql_execute(self, query):
 
         if self.config_obj.LOCAL_FLAG:
@@ -456,5 +461,308 @@ class Crawler(object):
                 remove_idx.append(index)
         adjusted_hedge_fund_data = hedge_fund_data.drop(remove_idx, axis=0)
         return adjusted_hedge_fund_data
+    
+
+class IBApp(EWrapper, EClient):
+    def __init__(self):
+        EClient.__init__(self, self)
+        self.config_obj = Configuration()
+        self.data = []  # 存儲歷史數據
+        self.failed_data = []
+        self.current_symbol = None
+
+    def error(self, reqId, errorCode, errorString, advancedOrderRejectJson=""):
+        # print(f"Error: {reqId}, {errorCode}, {errorString}, {advancedOrderRejectJson}")
+        if errorString == '未找到此請求的證券定義':
+            print(f"{self.current_symbol}: {errorString}")
+            
+            self.disconnect()
+            
+    def historicalData(self, reqId, bar):
+        # 回調處理每條數據
+        self.data.append({
+            "date": bar.date,
+            "Open": bar.open,
+            "High": bar.high,
+            "Low": bar.low,
+            "Close": bar.close,
+            "Volume": bar.volume
+        })
+
+    def historicalDataEnd(self, reqId, start, end):
+        # print("Historical Data End")
+        # 當接收完所有數據後，斷開連接
+        self.disconnect()
+
+    def stock_data_crawler(self):
+
+        app = IBApp()
+        
+        # 讀取目標檔案
+        stock_target_file_path = self.config_obj.stock_crawl_file_20241116
+        with open(stock_target_file_path, 'r') as f:
+            data = f.readlines()
+        stock_ids = [line.strip().strip("(),").replace("'", "") for line in data]
+        print(f"{len(stock_ids)} Stock IDs to process...")
+
+        query = self.get_exist_ticker_query(self.config_obj.us_stock_price_table_IBAPI)
+        exist_names = self.sql_execute(query)
+
+        if len(exist_names) == 0:
+            exist_names = []
+        else:
+            exist_names = pd.DataFrame(exist_names)['stock_id'].values
+        print(f"{len(exist_names)} Stock IDs already done...")
+        stock_id_should_crawl = [item for item in stock_ids if item not in exist_names]
+        print(f"{len(stock_id_should_crawl)} Stock IDs need to be crawled...")
+        # stock_id_should_crawl = ['ERAS', 'ERC', 'ERF', 'ERH']
+        # stock_id_should_crawl = stock_id_should_crawl[0:10]
+        for idx, symbol in enumerate(stock_id_should_crawl):
+            print(f"正在處理{symbol} ({idx}/{len(stock_id_should_crawl)})...")
+            
+            self.current_symbol = symbol
+            app.connect("127.0.0.1", 4001, clientId=0)
+
+            # 等待連接
+            time.sleep(1)
+
+            # 設定合約
+            contract = Contract()
+            contract.symbol = symbol  # 替換為您想查詢的股票代碼
+            contract.secType = "STK"
+            contract.exchange = "SMART"
+            contract.currency = "USD"
+
+            # 請求歷史數據
+            # endDateTime: 結束日期
+            # durationStr: 資料範圍 (1 Y 表示 1 年)
+            # barSizeSetting: 資料頻率 ('1 day' 表示每日)
+            # whatToShow: 收盤價 (TRADES 表示交易價格)
+            # useRTH: 僅在常規交易時段 (1 表示是)
+            app.reqHistoricalData(
+                reqId=1,
+                contract=contract,
+                endDateTime='',
+                durationStr='15 Y',
+                barSizeSetting='1 day',
+                whatToShow='TRADES',
+                useRTH=1,
+                formatDate=1,
+                keepUpToDate=False,
+                chartOptions=[]
+            )
+
+            app.run()
+            if app.data:
+                # 保存數據到 DataFrame
+                data_df = pd.DataFrame(app.data)
+                data_df['stock_id'] = symbol
+                data_df['Adj_Close'] = data_df['Close']  # 添加 Adj_Close 欄位
+                data_df = data_df[['date', 'stock_id', 'Adj_Close', 'Close', 'High', 'Low', 'Open', 'Volume']]
+                # print(data_df.head(5))
+                table_name, inserted_rows = self.insert_records_to_DB(table_name=self.config_obj.us_stock_price_table_IBAPI, data=data_df)
+                self.config_obj.logger.warning('{} data has been stored ({} should be) from symbol {}).({}/{})'.format(inserted_rows, len(data_df), symbol, idx, len(stock_id_should_crawl)))
+
+            else:
+                print(f"No data for {symbol}")
+                self.failed_data.append(self.current_symbol)
+            app.data = []
+            app.disconnect()
+        print("Stock not Found:", self.failed_data)
+# class IBApp(EWrapper, EClient):
+#     def __init__(self):
+#         EClient.__init__(self, self)
+#         self.config_obj = Configuration()
+#         self.data = []  # 儲存單次請求的數據
+#         # self.request_completed = threading.Event()  # 用於標記請求完成
+
+#     def historicalData(self, reqId, bar):
+#         # 回調處理每條數據
+#         self.data.append({
+#             "date": bar.date,
+#             "Open": bar.open,
+#             "High": bar.high,
+#             "Low": bar.low,
+#             "Close": bar.close,
+#             "Volume": bar.volume
+#         })
+
+#     def historicalDataEnd(self, reqId, start, end):
+#         # 回調標記請求完成
+#         print(f"Historical Data End for stock ID {reqId}, from {start} to {end}")
+#         # self.request_completed.set()  # 設置事件為完成
+
+#     def stock_data_crawler(self):
+        # 讀取目標檔案
+        # stock_target_file_path = self.config_obj.stock_crawl_file_20241116
+        # with open(stock_target_file_path, 'r') as f:
+        #     data = f.readlines()
+        # stock_ids = [line.strip().strip("(),").replace("'", "") for line in data]
+        # print(f"{len(stock_ids)} Stock IDs to process...")
+
+        # query = self.get_exist_ticker_query(self.config_obj.us_stock_price_table_IBAPI)
+        # exist_names = self.sql_execute(query)
+
+        # if len(exist_names) == 0:
+        #     exist_names = []
+        # else:
+        #     exist_names = pd.DataFrame(exist_names)['stock_id'].values
+        # print(f"{len(exist_names)} Stock IDs already done...")
+        # stock_id_should_crawl = [item for item in stock_ids if item not in exist_names]
+        # print(f"{len(stock_id_should_crawl)} Stock IDs need to be crawled...")
+        # stock_id_should_crawl = ['FET', 'BBLG', 'AAPL']
+
+
+        # # 初始化 IBApp
+        # app = IBApp()
+        # app.connect("127.0.0.1", 4001, clientId=0)
+
+        # # 等待連接
+        # time.sleep(1)
+
+        # # 啟動事件處理線程
+        # api_thread = threading.Thread(target=app.run, daemon=True)
+        # api_thread.start()
+
+        # # 儲存結果的資料結構
+        # all_data = []
+        # failed_tickers = []
+
+        # for idx, symbol in enumerate(stock_id_should_crawl):
+        #     try:
+        #         # 清空數據和狀態
+        #         app.data = []
+        #         app.request_completed.clear()
+
+        #         # 設置合約
+        #         contract = Contract()
+        #         contract.symbol = symbol
+        #         contract.secType = "STK"
+        #         contract.exchange = "SMART"
+        #         contract.currency = "USD"
+
+        #         # 發送請求
+        #         app.reqHistoricalData(
+        #             reqId=idx,  # 每個 ticker 使用唯一的 reqId
+        #             contract=contract,
+        #             endDateTime='',
+        #             durationStr='15 Y',
+        #             barSizeSetting='1 day',
+        #             whatToShow='TRADES',
+        #             useRTH=1,
+        #             formatDate=1,
+        #             keepUpToDate=False,
+        #             chartOptions=[]
+        #         )
+
+        #         # 等待請求完成（超時設為 10 秒）
+        #         if not app.request_completed.wait(timeout=2):
+        #             print(f"Timeout for stock ID {symbol}")
+        #             failed_tickers.append(symbol)
+        #             continue
+
+        #         # 將數據存入 DataFrame 並附加 stock_id
+        #         if app.data:
+        #             data_df = pd.DataFrame(app.data)
+        #             data_df['stock_id'] = symbol
+        #             data_df['Adj_Close'] = data_df['Close']  # 添加 Adj_Close 欄位
+        #             # print(f"Data for {symbol}:")
+        #             print(data_df)
+        #             data_df = data_df[['date', 'stock_id', 'Adj_Close', 'Close', 'High', 'Low', 'Open', 'Volume']]
+        #             # table_name, inserted_rows = self.insert_records_to_DB(table_name=self.config_obj.us_stock_price_table_IBAPI, data=data_df)
+        #             # self.config_obj.logger.warning('{} stock data has been stored ({} should be) from symbol {}).({}/{})'.format(inserted_rows, len(data_df), symbol, idx, len(stock_id_should_crawl)))
+        #             # all_data.append(data_df)
+        #         else:
+        #             print(f"No data fetched for {symbol}")
+        #             failed_tickers.append(symbol)
+
+        #     except Exception as e:
+        #         # 捕捉例外並記錄失敗的 ticker
+        #         print(f"Exception occurred for {symbol}: {e}")
+        #         failed_tickers.append(symbol)
+
+        #     finally:
+        #         # 延遲避免頻繁請求
+        #         time.sleep(5)
+
+        # # 斷開連接並停止應用
+        # app.disconnect()
+        # api_thread.join()
+
+
+
+        # # 將所有數據合併成一個 DataFrame
+        # if all_data:
+        #     # final_data_table = pd.concat(all_data, ignore_index=True)
+        #     print("Final Data Table")
+        #     # print(final_data_table)
+        # else:
+        #     print("No data was successfully fetched.")
+
+        # # 顯示失敗的 ticker
+        # if failed_tickers:
+        #     print("Failed Tickers:")
+        #     print(failed_tickers)
+
+        # return all_data, failed_tickers
+
 
         
+
+    def sql_execute(self, query):
+
+        if self.config_obj.LOCAL_FLAG:
+            conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        else:
+            conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        cursor = conn.cursor(as_dict=True)
+        cursor.execute(query)
+        # data = [row for row in cursor]
+        data = []
+        for row in cursor:
+            data.append(row)
+        cursor.close()
+        conn.close()
+        return data
+
+    def get_exist_ticker_query(self, table_name):
+        query = '''
+        SELECT DISTINCT [stock_id]
+        FROM {}
+        '''.format(table_name)
+        return query
+
+    def insert_records_to_DB(self, table_name, data):
+        
+        if self.config_obj.LOCAL_FLAG:
+            conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        else:
+            conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        
+        cursor = conn.cursor(as_dict=True)
+
+        data_tuple = [tuple(row) for row in data.values]
+        # print(hedge_tuple)
+        if table_name == '[US_DB].[dbo].[USStockPrice_IBApi]':
+
+            cursor.executemany(
+                """INSERT INTO [US_DB].[dbo].[USStockPrice_IBApi]
+                (
+                [date]
+                ,[stock_id]
+                ,[Adj_Close]
+                ,[Close]
+                ,[High]
+                ,[Low]
+                ,[Open]
+                ,[Volume]
+                ) 
+                VALUES (%s,%s,%d,%d,%d,%d,%d,%d)"""
+                , data_tuple
+            )
+            conn.commit()
+        
+        inserted_rows = cursor.rowcount
+        cursor.close()
+        conn.close()
+        return table_name, inserted_rows

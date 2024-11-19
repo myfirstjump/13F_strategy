@@ -64,7 +64,7 @@ def create_query_get_all_quarter(table):
     query = '''
     SELECT DISTINCT [QUARTER], [DATE_FILED]
     FROM {}
-    WHERE [HEDGE_FUND] LIKE '%reinvest%'
+    WHERE [HEDGE_FUND] LIKE '%_%'
     '''.format(table)
     return query
 
@@ -112,6 +112,8 @@ quarters_list = pd.DataFrame(quarters_list)
 quarters_list = quarters_list.sort_values(by=['DATE_FILED'], ascending=False)
 quarters_list = quarters_list['QUARTER'].values
 quarters_list = list(quarters_list)
+
+print("quarters_list:", quarters_list)
 
 query = create_query_get_crawler_status(config_obj.target_hedge_funds_dict['sharpe_v3'])
 
@@ -214,12 +216,13 @@ Callback 1: 查詢建議買入額
 )
 def reaction(hedge_str, quarter_str, enter_cost):
 
-    idx = quarters_list.index(quarter_str)
+    idx = quarters_list.index(quarter_str) #以字串'Q3 2024' 去找['Q3 2024', 'Q2 2024',  ..., 'Q1 2014', 'Q4 2013']中的位置index
     ori_idx = idx+1 # 季度為DESC排序，所以越後面越舊
     ori_quarter_str = quarters_list[ori_idx]
 
-    ori_invest_time = get_invest_time(ori_quarter_str).strftime('%Y-%m-%d')
-    invest_time = get_invest_time(quarter_str).strftime('%Y-%m-%d')
+    ori_invest_time = get_invest_time(ori_quarter_str).strftime('%Y-%m-%d') ##獲得日期 2024-08-15
+    invest_time = get_invest_time(quarter_str).strftime('%Y-%m-%d') ##獲得日期 2024-11-15
+    print("invest_time", invest_time)
 
     query = create_query_get_holdings_data(config_obj.customized_holdings_data_table, config_obj.us_stock_price_table, hedge_str, ori_quarter_str, ori_invest_time)
     ori_data = get_holdings_data(query)
@@ -227,6 +230,7 @@ def reaction(hedge_str, quarter_str, enter_cost):
     ori_data = add_sequence_column(ori_data)
 
     query = create_query_get_holdings_data(config_obj.customized_holdings_data_table, config_obj.us_stock_price_table, hedge_str, quarter_str, invest_time)
+    print('query:', query)
     current_data = get_holdings_data(query)
     current_data = adjust_shares_by_enter_cost(current_data, enter_cost)
     current_data = add_sequence_column(current_data)
@@ -275,7 +279,7 @@ def get_invest_time(quarter):
     elif 'Q4' in quarter:
         invest_time =  datetime.datetime(year+1, 2, 14)
     
-    return adjust_holdings_time(invest_time, us_sorted_dates, next_day=True)
+    return adjust_holdings_time(invest_time, us_sorted_dates, next_day=False)
 
 def create_query_get_holdings_data(table_customized_holdings, price_table, hedge_fund, quarter, date):
 
@@ -323,7 +327,7 @@ def adjust_shares_by_enter_cost(data, enter_cost):
     data['佔比%'] = round(data['佔比%'] * 100, 2)
     data = data.astype({'佔比%': str})
     data['佔比%'] = data['佔比%'] + '%'
-    data['股數'] = np.floor(data['股數'])
+    data['股數'] = round(data['股數'], 2)
     return data
 
 

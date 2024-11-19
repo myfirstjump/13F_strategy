@@ -75,7 +75,7 @@ class Strategy13F(object):
             None
         '''
         
-        customized_name_suffix = '_reinvest_I1C2_0905'
+        customized_name_suffix = '_I1C2_2024Q3'
         # funds_list = self.get_all_hedge_funds_name(self.config_obj.hedge_fund_portfolio_table)
         # funds_list = self.get_all_hedge_funds_larger_than_10_years_name(self.config_obj.hedge_fund_portfolio_table)
         funds_list = self.config_obj.target_hedge_funds_dict['I1C2_sharpe']
@@ -91,13 +91,13 @@ class Strategy13F(object):
 
         for split_count, each_fund_list in enumerate(splited_fund_list):
             
-            # 先將hedge_fund_portfolio_table_filtered、holdings_data_table_filtered兩個TABLE資料清空
-            self.funds_data_delete_from_table(self.config_obj.hedge_fund_portfolio_table_filtered)
-            self.funds_data_delete_from_table(self.config_obj.holdings_data_table_filtered)
+            # # 先將hedge_fund_portfolio_table_filtered、holdings_data_table_filtered兩個TABLE資料清空
+            # self.funds_data_delete_from_table(self.config_obj.hedge_fund_portfolio_table_filtered)
+            # self.funds_data_delete_from_table(self.config_obj.holdings_data_table_filtered)
             
-            # 將本輪資料從hedge_fund_portfolio_table、holdings_data_table複製進filtered TABLES。
-            self.funds_data_copy_and_insert_into_table(self.config_obj.hedge_fund_portfolio_table, self.config_obj.hedge_fund_portfolio_table_filtered, each_fund_list)
-            self.funds_data_copy_and_insert_into_table(self.config_obj.holdings_data_table, self.config_obj.holdings_data_table_filtered, each_fund_list)
+            # # 將本輪資料從hedge_fund_portfolio_table、holdings_data_table複製進filtered TABLES。
+            # self.funds_data_copy_and_insert_into_table(self.config_obj.hedge_fund_portfolio_table, self.config_obj.hedge_fund_portfolio_table_filtered, each_fund_list)
+            # self.funds_data_copy_and_insert_into_table(self.config_obj.holdings_data_table, self.config_obj.holdings_data_table_filtered, each_fund_list)
             
             sub_amount = len(each_fund_list)
             completed_amount = 0
@@ -253,14 +253,17 @@ class Strategy13F(object):
     def customized_hedge_build_and_store(self, customized_name_string=None, reinvest_flag=None, share_profit_flag=None, hedge_funds_range_list=None, industry_top_selection=None, company_top_selection=None, mcap_weighted_flag=None):
         
         customized_fund_list = {
-            customized_name_string: (self.customize_fund_components_revised, 
-                                     {'reinvest_flag':reinvest_flag, 
-                                      'share_profit_flag':share_profit_flag, 
-                                      'hedge_funds_range': hedge_funds_range_list, 
-                                      'industry_top_selection': industry_top_selection, 
-                                      'company_top_selection': company_top_selection, 
-                                      'mcap_weighted_flag': mcap_weighted_flag
-                                      }),
+            # customized_name_string: (self.customize_fund_components_revised, 
+            #                          {'reinvest_flag':reinvest_flag, 
+            #                           'share_profit_flag':share_profit_flag, 
+            #                           'hedge_funds_range': hedge_funds_range_list, 
+            #                           'industry_top_selection': industry_top_selection, 
+            #                           'company_top_selection': company_top_selection, 
+            #                           'mcap_weighted_flag': mcap_weighted_flag
+            #                           }),
+
+            'I1C2_sharpe_2024Q3' : (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['I1C2_sharpe'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+
             # 'I1C2_reinvest_0905': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['I1C2_sharpe'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
             # 'I1C2_share_0905': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['I1C2_sharpe'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
             # 'I1C3_reinvest_0905': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['I1C2_sharpe'], 'industry_top_selection': 1, 'company_top_selection': 3, 'mcap_weighted_flag': True}),
