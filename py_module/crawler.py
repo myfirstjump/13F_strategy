@@ -16,6 +16,7 @@ import numpy as np
 import logging
 from datetime import datetime
 import threading
+from threading import Timer
 
 class Crawler(object):
 
@@ -468,18 +469,21 @@ class IBApp(EWrapper, EClient):
         EClient.__init__(self, self)
         self.config_obj = Configuration()
         self.data = []  # 存儲歷史數據
-        self.failed_data = []
-        self.current_symbol = None
+        self.failed_data = []  # 記錄未能抓取的股票
+        self.current_symbol = None  # 當前處理的股票代號
+        self.historical_data_received = False  # 用於確認數據是否完成
 
     def error(self, reqId, errorCode, errorString, advancedOrderRejectJson=""):
+        """處理錯誤回調"""
         # print(f"Error: {reqId}, {errorCode}, {errorString}, {advancedOrderRejectJson}")
-        if errorString == '未找到此請求的證券定義':
+        if "未找到此請求的證券定義" in errorString:
             print(f"{self.current_symbol}: {errorString}")
-            
+            self.historical_data_received = True  # 標記完成，避免阻塞
+            self.failed_data.append(self.current_symbol)
             self.disconnect()
-            
+
     def historicalData(self, reqId, bar):
-        # 回調處理每條數據
+        """處理歷史數據回調"""
         self.data.append({
             "date": bar.date,
             "Open": bar.open,
@@ -490,15 +494,20 @@ class IBApp(EWrapper, EClient):
         })
 
     def historicalDataEnd(self, reqId, start, end):
-        # print("Historical Data End")
-        # 當接收完所有數據後，斷開連接
+        """歷史數據完成時的回調"""
+        # print(f"Historical Data End for {self.current_symbol}")
+        self.historical_data_received = True  # 標記數據接收完成
         self.disconnect()
 
-    def stock_data_crawler(self):
+    def check_timeout(self):
+        """處理超時"""
+        if not self.historical_data_received:
+            print(f"Timeout occurred for {self.current_symbol}")
+            self.failed_data.append(self.current_symbol)
+            self.disconnect()
 
-        app = IBApp()
-        
-        # 讀取目標檔案
+    def stock_data_crawler(self):
+        """爬取股票歷史數據"""
         stock_target_file_path = self.config_obj.stock_crawl_file_20241116
         with open(stock_target_file_path, 'r') as f:
             data = f.readlines()
@@ -515,32 +524,29 @@ class IBApp(EWrapper, EClient):
         print(f"{len(exist_names)} Stock IDs already done...")
         stock_id_should_crawl = [item for item in stock_ids if item not in exist_names]
         print(f"{len(stock_id_should_crawl)} Stock IDs need to be crawled...")
-        # stock_id_should_crawl = ['ERAS', 'ERC', 'ERF', 'ERH']
-        # stock_id_should_crawl = stock_id_should_crawl[0:10]
+        
         for idx, symbol in enumerate(stock_id_should_crawl):
-            print(f"正在處理{symbol} ({idx}/{len(stock_id_should_crawl)})...")
+            self.config_obj.logger.warning(f"正在處理 {symbol} ({idx+1}/{len(stock_id_should_crawl)})...")
             
+            # 重置屬性
             self.current_symbol = symbol
-            app.connect("127.0.0.1", 4001, clientId=0)
+            self.data = []
+            self.historical_data_received = False
 
-            # 等待連接
-            time.sleep(1)
+            # 連接 IB Gateway
+            self.connect("127.0.0.1", 4001, clientId=idx)
+            time.sleep(1)  # 等待連接穩定
 
             # 設定合約
             contract = Contract()
-            contract.symbol = symbol  # 替換為您想查詢的股票代碼
+            contract.symbol = symbol
             contract.secType = "STK"
             contract.exchange = "SMART"
             contract.currency = "USD"
 
-            # 請求歷史數據
-            # endDateTime: 結束日期
-            # durationStr: 資料範圍 (1 Y 表示 1 年)
-            # barSizeSetting: 資料頻率 ('1 day' 表示每日)
-            # whatToShow: 收盤價 (TRADES 表示交易價格)
-            # useRTH: 僅在常規交易時段 (1 表示是)
-            app.reqHistoricalData(
-                reqId=1,
+            # 發送歷史數據請求
+            self.reqHistoricalData(
+                reqId=idx,
                 contract=contract,
                 endDateTime='',
                 durationStr='15 Y',
@@ -552,23 +558,39 @@ class IBApp(EWrapper, EClient):
                 chartOptions=[]
             )
 
-            app.run()
-            if app.data:
-                # 保存數據到 DataFrame
-                data_df = pd.DataFrame(app.data)
+            # 啟動超時計時器
+            timeout = Timer(10, self.check_timeout)
+            timeout.start()
+
+            # 運行回調處理
+            self.run()
+
+            # 停止超時計時器
+            timeout.cancel()
+
+            # 處理返回的數據
+            if self.data:
+                data_df = pd.DataFrame(self.data)
                 data_df['stock_id'] = symbol
                 data_df['Adj_Close'] = data_df['Close']  # 添加 Adj_Close 欄位
                 data_df = data_df[['date', 'stock_id', 'Adj_Close', 'Close', 'High', 'Low', 'Open', 'Volume']]
+                # print(f"{symbol} data preview:")
                 # print(data_df.head(5))
                 table_name, inserted_rows = self.insert_records_to_DB(table_name=self.config_obj.us_stock_price_table_IBAPI, data=data_df)
                 self.config_obj.logger.warning('{} data has been stored ({} should be) from symbol {}).({}/{})'.format(inserted_rows, len(data_df), symbol, idx, len(stock_id_should_crawl)))
 
             else:
                 print(f"No data for {symbol}")
-                self.failed_data.append(self.current_symbol)
-            app.data = []
-            app.disconnect()
+
+            # 斷開連接
+            self.disconnect()
+
+            # 控制請求頻率，避免觸發速率限制
+            time.sleep(5)
+
+        # 總結未能抓取的股票
         print("Stock not Found:", self.failed_data)
+
 # class IBApp(EWrapper, EClient):
 #     def __init__(self):
 #         EClient.__init__(self, self)
