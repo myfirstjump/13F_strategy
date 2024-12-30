@@ -15,34 +15,6 @@ import datetime
 
 class Strategy13F(object):
 
-    # _instance = None
-    # def __new__(cls):
-    #     if cls._instance is None:
-    #         cls._instance = super(Configuration, cls).__new__(cls)
-    #         cls.config_obj = Configuration()
-
-    #         cls.LOCAL_FLAG = True
-
-
-    #         # 找到price data中的date欄位，對日期進行排序，找到最大的日期
-    #         query = self.get_all_price_date(self.config_obj.us_stock_price_table) # 為了取得時間欄位
-    #         all_date_list = self.sql_execute(query)
-    #         all_date_list = pd.DataFrame(all_date_list)['date'].values
-    #         us_sorted_dates = sorted(all_date_list)
-    #         self.us_sorted_dates = pd.to_datetime(us_sorted_dates)
-    #         self.min_date = min(self.us_sorted_dates)
-    #         self.max_date = max(self.us_sorted_dates)
-    #         print('美股歷史價格從{}到{}'.format(self.min_date, self.max_date))
-
-    #         query = self.get_all_price_date(self.config_obj.tw_stock_price_table) # 為了取得時間欄位
-    #         all_date_list = self.sql_execute(query)
-    #         all_date_list = pd.DataFrame(all_date_list)['date'].values
-    #         tws_sorted_dates = sorted(all_date_list)
-    #         self.tws_sorted_dates = pd.to_datetime(tws_sorted_dates)
-    #         self.tws_min_date = min(self.tws_sorted_dates)
-    #         self.tws_max_date = max(self.tws_sorted_dates)
-    #         print('TWS歷史價格從{}到{}'.format(self.tws_min_date, self.tws_max_date))
-
     def __init__(self):
         self.config_obj = Configuration()
 

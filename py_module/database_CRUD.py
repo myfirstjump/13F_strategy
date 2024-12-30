@@ -81,6 +81,77 @@ class DatabaseManipulation(object):
         print(data_only)
         # self.insert_records_to_DB(table_name=self.config_obj.us_stock_gics_table, data=data_only)
 
+    def generate_monthly_stock_info(self, source_table, target_table):
+
+        # Step 1: Fetch unique stock IDs from the source table
+        query_stock_ids = f"""
+        SELECT DISTINCT stock_id
+        FROM {source_table}
+        """
+        stock_ids = self.sql_execute(query_stock_ids)
+
+        # Step 2: Iterate over each stock_id and calculate monthly returns, average volume, and max drawdown
+        for idx, stock in enumerate(stock_ids):
+            stock_id = stock['stock_id']
+            self.config_obj.logger.warning(f"計算{stock_id}月資料({idx+1}/{len(stock_ids)})。")
+            
+            # Fetch daily data for the current stock
+            query_daily_data = f"""
+            SELECT [date], [Close], [Open], [Volume]
+            FROM {source_table}
+            WHERE stock_id = '{stock_id}'
+            """
+            daily_data = self.sql_execute(query_daily_data)
+
+            # Convert to DataFrame and process
+            df = pd.DataFrame(daily_data)
+            df['date'] = pd.to_datetime(df['date'])
+            df['month'] = df['date'].dt.to_period('M').astype(str)
+
+            # Calculate max drawdown for each month
+            def calculate_max_drawdown(group):
+                cumulative_max = group['Close'].cummax()
+                drawdowns = (group['Close'] - cumulative_max) / cumulative_max
+                return drawdowns.min()
+
+            # Calculate monthly returns, average volume, and max drawdown using apply
+            def calculate_metrics(group):
+                open_price = group['Open'].iloc[0]
+                if open_price == 0 or pd.isna(open_price):
+                    monthly_return = None
+                else:
+                    monthly_return = (group['Close'].iloc[-1] - open_price) / open_price
+
+                avg_volume = group['Volume'].mean() if not pd.isna(group['Volume']).all() else None
+                max_drawdown = calculate_max_drawdown(group) if not group['Close'].isnull().all() else None
+
+                return pd.Series({
+                    'monthly_return': monthly_return,
+                    'avg_volume': avg_volume,
+                    'max_drawdown': max_drawdown
+                })
+
+            monthly_data = df.groupby('month').apply(calculate_metrics).reset_index()
+
+            # Add stock_id and market columns
+            monthly_data['stock_id'] = stock_id
+            monthly_data['market'] = 'US' if 'USStockPrice' in source_table else 'TW'
+            monthly_data = monthly_data[['month', 'stock_id', 'monthly_return', 'avg_volume', 'max_drawdown', 'market']]
+
+            # Replace invalid values (e.g., inf) with None for SQL compatibility
+            monthly_data.replace([float('inf'), float('-inf')], None, inplace=True)
+
+            # Drop rows with NaN values
+            monthly_data.dropna(inplace=True)
+
+            # Step 3: Insert the processed data into the target table
+            table_name, inserted_rows = self.insert_records_to_DB(target_table, monthly_data)
+            self.config_obj.logger.warning(f"完成資料匯入(實際筆數{inserted_rows}/全部{len(monthly_data)})。")
+
+        return f"Monthly data for all stocks saved to {target_table}"
+
+
+
 
 
     def sql_execute(self, query):
@@ -116,50 +187,7 @@ class DatabaseManipulation(object):
 
         data_tuple = [tuple(row) for row in data.values]
         # print(hedge_tuple)
-        if table_name == '[US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]':
-
-            cursor.executemany(
-                """INSERT INTO [US_DB].[dbo].[HEDGE_FUND_PORTFOLIO]
-                (
-                [QUARTER]
-                ,[HOLDINGS]
-                ,[VALUE]
-                ,[TOP_HOLDINGS]
-                ,[FORM_TYPE]
-                ,[DATE_FILED]
-                ,[FILING_ID]
-                ,[HEDGE_FUND]
-                ) 
-                VALUES (%s,%d,%d,%s,%s,%s,%s,%s)"""
-                , data_tuple
-            )
-            conn.commit()
-        
-        elif table_name == '[US_DB].[dbo].[HOLDINGS_DATA]':
-            
-            cursor.executemany(
-                    """INSERT INTO [US_DB].[dbo].[HOLDINGS_DATA]
-                    (
-                    [SYM]
-                    ,[ISSUER_NAME]
-                    ,[CL]
-                    ,[CUSIP]
-                    ,[VALUE]
-                    ,[Percentile]
-                    ,[SHARES]
-                    ,[PRINCIPAL]
-                    ,[OPTION_TYPE]
-                    ,[HEDGE_FUND]
-                    ,[QUARTER]
-                    ,[FORM_TYPE]
-                    ,[FILING_ID]
-                    ) 
-                    VALUES(%s,%s,%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s)"""
-                    , data_tuple
-            )
-            conn.commit()
-
-        elif table_name == '[US_DB].[dbo].[Company_GICS]':
+        if table_name == '[US_DB].[dbo].[Company_GICS]':
             cursor.executemany(
                     """INSERT INTO {}
                     (
@@ -175,5 +203,24 @@ class DatabaseManipulation(object):
             )
             conn.commit()
 
+        elif table_name == '[SEASONAL_STAT_DB].[dbo].[MONTHLY_INFO]':
+            cursor.executemany(
+                    """INSERT INTO {}
+                    (
+                    [month]
+                    ,[stock_id]
+                    ,[monthly_return]
+                    ,[avg_volume]
+                    ,[max_drawdown]
+                    ,[market]
+                    ) 
+                    VALUES(%s,%s,%d,%d,%d,%s)""".format(table_name)
+                    , data_tuple
+            )
+            conn.commit()
+
+        inserted_rows = cursor.rowcount
         cursor.close()
         conn.close()
+
+        return table_name, inserted_rows

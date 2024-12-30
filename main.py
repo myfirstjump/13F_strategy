@@ -23,7 +23,11 @@ class StockStrategies(object):
         # self.stock_crawler_obj.stock_data_crawler()
 
     def data_update(self):
-        self.db_obj.Update_GICs_to_DB()
+        # self.db_obj.Update_GICs_to_DB()
+
+        source_table = self.config_obj.us_stock_price_table
+        target_table = self.config_obj.monthly_info
+        self.db_obj.generate_monthly_stock_info(source_table=source_table, target_table=target_table)
 
     def strategy_13F_investing(self):
         # self.strategy_obj.customize_fund_components(industry_top_selection=3, company_top_selection=3)
@@ -67,10 +71,12 @@ def main_flow():
 
     '''13F官網資料爬蟲 & 補充'''
     # main_obj.data_crawl()
-    # main_obj.data_update()
+
+    '''資料表計算操作'''
+    main_obj.data_update()
 
     '''13F投資策略回測'''
-    main_obj.strategy_13F_investing()
+    # main_obj.strategy_13F_investing()
 
     '''Dash篩選'''
     # data_path = os.path.join(main_obj.config_obj.backtest_summary, '2024-01-28_summary_table.csv')
