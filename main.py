@@ -1,6 +1,6 @@
 from py_module.config import Configuration
 from py_module.crawler import Crawler, IBApp
-from py_module.strategies import Strategy13F
+from py_module.strategies import Strategy13F, StrategySeasonal
 # from dashboard import DashBuilder
 from py_module.database_CRUD import DatabaseManipulation
 
@@ -15,6 +15,7 @@ class StockStrategies(object):
         self.crawler_obj = Crawler()
         self.stock_crawler_obj = IBApp()
         self.strategy_obj = Strategy13F()
+        self.seasonal_strategy_obj = StrategySeasonal()
         self.db_obj = DatabaseManipulation()
 
     def data_crawl(self):
@@ -26,6 +27,7 @@ class StockStrategies(object):
         # self.db_obj.Update_GICs_to_DB()
 
         source_table = self.config_obj.us_stock_price_table
+        source_table = self.config_obj.tw_stock_price_table
         target_table = self.config_obj.monthly_info
         self.db_obj.generate_monthly_stock_info(source_table=source_table, target_table=target_table)
 
@@ -62,6 +64,10 @@ class StockStrategies(object):
         #     mcap_weighted_flag=True,
         # )
     
+    def strategy_seasonal_investing(self):
+        target_table = self.config_obj.monthly_info
+        self.seasonal_strategy_obj.monthly_seasonality_stats(target_table)
+    
     # def dash_server(self, data):
     #     self.dash_app = DashBuilder(data)
 
@@ -73,10 +79,11 @@ def main_flow():
     # main_obj.data_crawl()
 
     '''資料表計算操作'''
-    main_obj.data_update()
+    # main_obj.data_update()
 
     '''13F投資策略回測'''
     # main_obj.strategy_13F_investing()
+    main_obj.strategy_seasonal_investing()
 
     '''Dash篩選'''
     # data_path = os.path.join(main_obj.config_obj.backtest_summary, '2024-01-28_summary_table.csv')

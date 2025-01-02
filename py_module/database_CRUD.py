@@ -90,21 +90,42 @@ class DatabaseManipulation(object):
         """
         stock_ids = self.sql_execute(query_stock_ids)
 
-        # Step 2: Iterate over each stock_id and calculate monthly returns, average volume, and max drawdown
-        for idx, stock in enumerate(stock_ids):
+        # Step 2: Fetch existing stock IDs from the target table to exclude
+        query_existing_ids = f"""
+        SELECT DISTINCT stock_id
+        FROM {target_table}
+        """
+        existing_ids = self.sql_execute(query_existing_ids)
+        existing_ids_set = {row['stock_id'] for row in existing_ids}
+
+        # Filter out stock IDs that already exist in the target table
+        stock_ids_to_process = [stock for stock in stock_ids if stock['stock_id'] not in existing_ids_set]    
+
+        # Step 3: Iterate over each stock_id and calculate monthly returns, average volume, and max drawdown
+        for idx, stock in enumerate(stock_ids_to_process):
             stock_id = stock['stock_id']
-            self.config_obj.logger.warning(f"計算{stock_id}月資料({idx+1}/{len(stock_ids)})。")
+            self.config_obj.logger.warning(f"計算{stock_id}月資料({idx+1}/{len(stock_ids_to_process)})。")
             
             # Fetch daily data for the current stock
-            query_daily_data = f"""
-            SELECT [date], [Close], [Open], [Volume]
-            FROM {source_table}
-            WHERE stock_id = '{stock_id}'
-            """
+            if 'USStockPrice' in source_table:
+                query_daily_data = f"""
+                SELECT [date], [Close], [Open], [Volume]
+                FROM {source_table}
+                WHERE stock_id = '{stock_id}'
+                """
+            elif "TW_STOCK" in source_table:
+                query_daily_data = f"""
+                SELECT [date], [close], [open], [Trading_Volume]
+                FROM {source_table}
+                WHERE stock_id = '{stock_id}'
+                """
             daily_data = self.sql_execute(query_daily_data)
 
             # Convert to DataFrame and process
             df = pd.DataFrame(daily_data)
+            if "TW_STOCK" in source_table:
+                df = df.rename({'close': 'Close', 'open': 'Open', 'Trading_Volume':'Volume' }, axis='columns')
+
             df['date'] = pd.to_datetime(df['date'])
             df['month'] = df['date'].dt.to_period('M').astype(str)
 
@@ -144,14 +165,11 @@ class DatabaseManipulation(object):
             # Drop rows with NaN values
             monthly_data.dropna(inplace=True)
 
-            # Step 3: Insert the processed data into the target table
+            # Step 4: Insert the processed data into the target table
             table_name, inserted_rows = self.insert_records_to_DB(target_table, monthly_data)
             self.config_obj.logger.warning(f"完成資料匯入(實際筆數{inserted_rows}/全部{len(monthly_data)})。")
 
         return f"Monthly data for all stocks saved to {target_table}"
-
-
-
 
 
     def sql_execute(self, query):

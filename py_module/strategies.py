@@ -856,6 +856,8 @@ class Strategy13F(object):
 
         return customized_table_by_stock, customized_table
     
+
+    
     def sql_execute(self, query):
 
         if self.config_obj.LOCAL_FLAG:
@@ -2102,3 +2104,104 @@ class Strategy13F(object):
         WHERE Ticker = '{}'
         '''.format(table_name, SYM)
         return query
+    
+
+class StrategySeasonal(object):
+
+    def __init__(self):
+        self.config_obj = Configuration()
+    
+    def monthly_seasonality_stats(self, source_table) -> pd.DataFrame:
+        """
+        針對 [SEASONAL_STAT_DB].[dbo].[MONTHLY_INFO] 結構的 DataFrame
+        (包含 month, stock_id, monthly_return, max_drawdown 等欄位)，
+        計算每檔股票在 1~12 月份的季節性統計量。
+        
+        回傳值:
+            DataFrame，欄位包括:
+                stock_id        : 股票代號
+                MonthVal        : 月份(1~12)
+                TotalYears      : 資料期間內，該股票在此月份出現的不同年份總數
+                Count           : 該月份在歷史資料中總筆數
+                WinRate         : 勝率(報酬率>0 之次數 / 總次數)
+                AvgReturn       : 平均報酬率
+                StdDevReturn    : 報酬率標準差
+                AvgMaxDrawdown  : 平均最大回撤
+                MaxDrawdown     : 最大回撤
+        """
+        stats_df = None
+
+        query_stock_ids = f"""
+        SELECT DISTINCT stock_id, market
+        FROM {source_table}
+        """
+        stock_info = self.sql_execute(query_stock_ids)
+        
+        for idx, row in enumerate(stock_info):
+            s_id = row['stock_id']
+            s_market = row['market']
+
+            if idx % 500 == 0:
+                self.config_obj.logger.warning(f"計算{s_id}-{s_market}月統計量({idx+1}/{len(stock_info)})。")
+
+            query_stock_monthly_data = f"""
+            SELECT *
+            FROM {source_table}
+            WHERE stock_id = '{s_id}'
+            AND market = '{s_market}'
+            """
+            data = self.sql_execute(query_stock_monthly_data)
+            if not data: ### 處理無資料的狀況
+                continue
+            df = pd.DataFrame(data)
+
+            # STEP 1: 將 'month' 從 'YYYY-MM' 格式解析出年、月
+            # 若 'month' 已是 datetime 型態，可改用 df['month'].dt.year, df['month'].dt.month
+            df['Year'] = df['month'].astype(str).str[:4].astype(int)
+            df['MonthVal'] = df['month'].astype(str).str[5:7].astype(int)
+
+            # STEP 2: 以 stock_id + MonthVal 為群組，進行聚合計算
+            each_stats_df  = df.groupby(['stock_id', 'market', 'MonthVal']).agg(
+                TotalYears=('Year', 'nunique'),
+                # Count=('monthly_return', 'count'),
+                WinRate=('monthly_return', lambda x: (x > 0).sum() / len(x)),
+                AvgReturn=('monthly_return', 'mean'),
+                StdDevReturn=('monthly_return', 'std'),
+                AvgMaxDrawdown=('max_drawdown', 'mean'),
+                MaxDrawdown=('max_drawdown', 'max'),
+            ).reset_index()
+            
+            if stats_df is None:
+                stats_df = each_stats_df 
+            else:
+                stats_df = pd.concat([stats_df, each_stats_df ], ignore_index=True)
+        stats_df = stats_df.rename({'stock_id': '股票代號', 'market':'市場', 'MonthVal': '月份', 'TotalYears':'歷時年數',
+                                    'WinRate': '勝率', 'AvgReturn': '平均報酬率', 'StdDevReturn':'報酬率標準差',
+                                      'AvgMaxDrawdown': '平均最大回撤', 'MaxDrawdown': '最大回撤', }, axis='columns')
+        path = os.path.join(self.config_obj.seasonal_summary, 'seasonal_summary.xlsx')
+        stats_df.to_excel(path, index=False)
+        return stats_df
+    
+    def sql_execute(self, query):
+
+        if self.config_obj.LOCAL_FLAG:
+            conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        else:
+            conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        cursor = conn.cursor(as_dict=True)
+        cursor.execute(query)
+        
+        # 判斷是否是DML操作
+        if query.strip().upper().startswith("DELETE") or query.strip().upper().startswith("INSERT") or query.strip().upper().startswith("UPDATE"):
+            rows_affected = cursor.rowcount
+            conn.commit()  # 確保DML操作被提交
+            cursor.close()
+            conn.close()
+            return rows_affected
+        else:
+            data = []
+            for row in cursor:
+                data.append(row)
+            cursor.close()
+            conn.close()
+        return data

@@ -37,6 +37,8 @@ class Configuration(object):
             cls.backtest_summary = os.path.join(cls.working_dir, "assets\\backtest_summary") if os.name == 'nt' else os.path.join(cls.working_dir, "assets/backtest_summary")
             cls.reference_folder = os.path.join(cls.working_dir, "assets\\reference") if os.name == 'nt' else os.path.join(cls.working_dir, "assets/reference")
             cls.stock_crawl_file_20241116 = os.path.join(cls.working_dir, "assets\\reference\\相關收益_stock_id.txt") if os.name == 'nt' else os.path.join(cls.working_dir, "assets/reference/相關收益_stock_id.txt")
+            cls.seasonal_summary = os.path.join(cls.working_dir, "assets\\seasonal_strategy_summary") if os.name == 'nt' else os.path.join(cls.working_dir, "assets/seasonal_strategy_summary")
+            
 
             cls.hedge_fund_urls = {
                 # 'SIR Capital Management':'https://13f.info/manager/0001434997-sir-capital-management-l-p', 
