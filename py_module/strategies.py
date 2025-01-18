@@ -2168,7 +2168,7 @@ class StrategySeasonal(object):
                 AvgReturn=('monthly_return', 'mean'),
                 StdDevReturn=('monthly_return', 'std'),
                 AvgMaxDrawdown=('max_drawdown', 'mean'),
-                MaxDrawdown=('max_drawdown', 'max'),
+                MaxDrawdown=('max_drawdown', 'min'),
             ).reset_index()
             
             if stats_df is None:

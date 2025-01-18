@@ -100,6 +100,7 @@ class DatabaseManipulation(object):
 
         # Filter out stock IDs that already exist in the target table
         stock_ids_to_process = [stock for stock in stock_ids if stock['stock_id'] not in existing_ids_set]    
+        # stock_ids_to_process = [{'stock_id':'GLBZ'}] ## Test
 
         # Step 3: Iterate over each stock_id and calculate monthly returns, average volume, and max drawdown
         for idx, stock in enumerate(stock_ids_to_process):
@@ -110,19 +111,23 @@ class DatabaseManipulation(object):
             if 'USStockPrice' in source_table:
                 query_daily_data = f"""
                 SELECT [date], [Close], [Open], [Volume]
-                FROM {source_table}
+                FROM {source_table} WITH(NOLOCK)
                 WHERE stock_id = '{stock_id}'
                 """
             elif "TW_STOCK" in source_table:
                 query_daily_data = f"""
                 SELECT [date], [close], [open], [Trading_Volume]
-                FROM {source_table}
+                FROM {source_table} WITH(NOLOCK)
                 WHERE stock_id = '{stock_id}'
                 """
             daily_data = self.sql_execute(query_daily_data)
 
             # Convert to DataFrame and process
             df = pd.DataFrame(daily_data)
+            if len(df) < 2000: ### 2500大約為8年的交易日數量(1年250日左右)，若低於8年則不列入計算。
+                self.config_obj.logger.warning(f"交易年數較低(約{len(df)//250}年)，不進行後續計算。")
+                continue
+
             if "TW_STOCK" in source_table:
                 df = df.rename({'close': 'Close', 'open': 'Open', 'Trading_Volume':'Volume' }, axis='columns')
 
@@ -133,23 +138,34 @@ class DatabaseManipulation(object):
             def calculate_max_drawdown(group):
                 cumulative_max = group['Close'].cummax()
                 drawdowns = (group['Close'] - cumulative_max) / cumulative_max
+                drawdowns = round(drawdowns, 6)
                 return drawdowns.min()
 
             # Calculate monthly returns, average volume, and max drawdown using apply
             def calculate_metrics(group):
+                group = group.sort_values(by='date')
                 open_price = group['Open'].iloc[0]
                 if open_price == 0 or pd.isna(open_price):
                     monthly_return = None
+                    pct_to_low = None
+                    pct_to_high = None
                 else:
                     monthly_return = (group['Close'].iloc[-1] - open_price) / open_price
+                    monthly_return = round(monthly_return, 6)
+                    pct_to_low = (group['Close'].min() - open_price) / open_price
+                    pct_to_low = round(pct_to_low, 6)
+                    pct_to_high = (group['Close'].max() - open_price) / open_price
+                    pct_to_high = round(pct_to_high, 6)
 
-                avg_volume = group['Volume'].mean() if not pd.isna(group['Volume']).all() else None
+                avg_volume = round(group['Volume'].mean()) if not pd.isna(group['Volume']).all() else None
                 max_drawdown = calculate_max_drawdown(group) if not group['Close'].isnull().all() else None
 
                 return pd.Series({
                     'monthly_return': monthly_return,
                     'avg_volume': avg_volume,
-                    'max_drawdown': max_drawdown
+                    'max_drawdown': max_drawdown,
+                    'pct_to_low': pct_to_low,
+                    'pct_to_high': pct_to_high
                 })
 
             monthly_data = df.groupby('month').apply(calculate_metrics).reset_index()
@@ -157,7 +173,7 @@ class DatabaseManipulation(object):
             # Add stock_id and market columns
             monthly_data['stock_id'] = stock_id
             monthly_data['market'] = 'US' if 'USStockPrice' in source_table else 'TW'
-            monthly_data = monthly_data[['month', 'stock_id', 'monthly_return', 'avg_volume', 'max_drawdown', 'market']]
+            monthly_data = monthly_data[['month', 'stock_id', 'monthly_return', 'avg_volume', 'max_drawdown', 'pct_to_low', 'pct_to_high', 'market']]
 
             # Replace invalid values (e.g., inf) with None for SQL compatibility
             monthly_data.replace([float('inf'), float('-inf')], None, inplace=True)
@@ -221,7 +237,7 @@ class DatabaseManipulation(object):
             )
             conn.commit()
 
-        elif table_name == '[SEASONAL_STAT_DB].[dbo].[MONTHLY_INFO]':
+        elif table_name == '[SEASONAL_STAT_DB].[dbo].[MONTHLY_INFO_8COL]':
             cursor.executemany(
                     """INSERT INTO {}
                     (
@@ -230,9 +246,11 @@ class DatabaseManipulation(object):
                     ,[monthly_return]
                     ,[avg_volume]
                     ,[max_drawdown]
+                    ,[pct_to_low]
+                    ,[pct_to_high]
                     ,[market]
                     ) 
-                    VALUES(%s,%s,%d,%d,%d,%s)""".format(table_name)
+                    VALUES(%s,%s,%d,%d,%d,%d,%d,%s)""".format(table_name)
                     , data_tuple
             )
             conn.commit()

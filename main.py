@@ -7,6 +7,7 @@ from py_module.database_CRUD import DatabaseManipulation
 import os
 import pandas as pd
 import logging
+import time
 
 class StockStrategies(object):
 
@@ -27,6 +28,9 @@ class StockStrategies(object):
         # self.db_obj.Update_GICs_to_DB()
 
         source_table = self.config_obj.us_stock_price_table
+        target_table = self.config_obj.monthly_info
+        self.db_obj.generate_monthly_stock_info(source_table=source_table, target_table=target_table)
+
         source_table = self.config_obj.tw_stock_price_table
         target_table = self.config_obj.monthly_info
         self.db_obj.generate_monthly_stock_info(source_table=source_table, target_table=target_table)
@@ -79,7 +83,8 @@ def main_flow():
     # main_obj.data_crawl()
 
     '''資料表計算操作'''
-    # main_obj.data_update()
+    main_obj.data_update()
+    time.sleep(10)
 
     '''13F投資策略回測'''
     # main_obj.strategy_13F_investing()

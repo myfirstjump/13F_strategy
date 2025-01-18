@@ -26,7 +26,7 @@ class Configuration(object):
             cls.customized_individual_fund_portfolio_table = '[US_DB].[dbo].[CUSTOMIZED_INDIVIDUAL_HEDGE_FUND_PORTFOLIO]' # 用來儲存單基金customzied data
             cls.customized_individual_holdings_data_table = '[US_DB].[dbo].[CUSTOMIZED_INDIVIDUAL_HOLDINGS_DATA]' # 用來儲存單基金customzied data
             cls.us_stock_price_table_IBAPI = '[US_DB].[dbo].[USStockPrice_IBApi]'
-            cls.monthly_info = '[SEASONAL_STAT_DB].[dbo].[MONTHLY_INFO]'
+            cls.monthly_info = '[SEASONAL_STAT_DB].[dbo].[MONTHLY_INFO_8COL]'
 
             '''
             Crawler
