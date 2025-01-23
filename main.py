@@ -69,8 +69,11 @@ class StockStrategies(object):
         # )
     
     def strategy_seasonal_investing(self):
-        target_table = self.config_obj.monthly_info
-        self.seasonal_strategy_obj.monthly_seasonality_stats(target_table)
+        # target_table = self.config_obj.monthly_info
+        # self.seasonal_strategy_obj.monthly_seasonality_stats(target_table)
+        path = os.path.join(self.config_obj.seasonal_summary, '2025-01-20_seasonal_summary(filtered).xlsx')
+        seasonal_filtered_df = pd.read_excel(path)
+        self.seasonal_strategy_obj.monthly_seasonaly_strategy_backtest(seasonal_filtered_df)
     
     # def dash_server(self, data):
     #     self.dash_app = DashBuilder(data)
@@ -83,8 +86,8 @@ def main_flow():
     # main_obj.data_crawl()
 
     '''資料表計算操作'''
-    main_obj.data_update()
-    time.sleep(10)
+    # main_obj.data_update()
+    # time.sleep(10)
 
     '''13F投資策略回測'''
     # main_obj.strategy_13F_investing()

@@ -221,7 +221,6 @@ class Strategy13F(object):
         output_path = os.path.join(self.config_obj.backtest_summary, str(datetime.datetime.now()).split()[0] + '_all_hedge_funds_backtest.xlsx')
         df.to_excel(output_path, index=False)
             
-
     def customized_hedge_build_and_store(self, customized_name_string=None, reinvest_flag=None, share_profit_flag=None, hedge_funds_range_list=None, industry_top_selection=None, company_top_selection=None, mcap_weighted_flag=None):
         
         customized_fund_list = {
@@ -856,8 +855,6 @@ class Strategy13F(object):
 
         return customized_table_by_stock, customized_table
     
-
-    
     def sql_execute(self, query):
 
         if self.config_obj.LOCAL_FLAG:
@@ -1029,7 +1026,6 @@ class Strategy13F(object):
 
         df = df.groupby('SYM', as_index=False).agg({'VALUE':'sum', 'Percentile':'sum', 'SHARES':'sum'})
         return df
-    
     def holdings_data_adjust_for_customized_fund(self, df):
         '''
         function:
@@ -1039,7 +1035,6 @@ class Strategy13F(object):
         df = df.drop(['QUARTER', 'date', 'price', 'suggested_invest_amount'], axis=1)
         df['SHARES'] = pd.to_numeric(df['SHARES'], errors='coerce')  # 将SHARES列转换为数值，将无法转换的值设为NaN
         return df
-    
     def shares_difference_between_quarters(self, previous_holdings, holdings_data):
 
         previous_holdings = previous_holdings[['SYM', 'SHARES']]
@@ -1074,7 +1069,6 @@ class Strategy13F(object):
             AND SUBSTRING(tb_holdings.[CUSIP], 7, 2) = '10'
             '''.format(price_table, holdings_table, SYMs_tuple, date, fund, quarter, filing_number)
         return query
-    
     def create_query_get_open_price_for_customized_fund(self, sym_str, holdings_time):
 
         price_table = self.config_obj.us_stock_price_table
@@ -1084,7 +1078,6 @@ class Strategy13F(object):
         AND [date] = '{}'
         '''.format(price_table, sym_str, holdings_time)
         return query
-
     def create_query_get_open_price_by_date_n_sym(self, SYMs_tuple, date):
         '''
         function:
@@ -1100,7 +1093,6 @@ class Strategy13F(object):
             FROM {} WITH(NOLOCK) WHERE [date] = '{}' AND [stock_id] IN {}
             '''.format(price_table, date, SYMs_tuple)
         return query
-
     def calculate_scaling_in_and_out(self, merged_data, price_data):
         ''''''
         scaling_in = {}
@@ -1194,8 +1186,7 @@ class Strategy13F(object):
             shares = row['SHARES']
             Open_current = row['Open']
             market_value = market_value + shares * Open_current
-        return market_value
-    
+        return market_value    
     def calculate_XIRR(self, data, holdings_time, market_value):
         '''
         將data資料加上最新時間/市值兌現，計算XIRR值。
@@ -1210,7 +1201,6 @@ class Strategy13F(object):
         # print(pd.DataFrame.from_dict(x))
         # print("XIRR:", result)
         return result
-
     def summary_statistical_calculates(self, hedge_summary):
         # 新增欄位 A 為 [加碼-減碼]
         hedge_summary['淨投入額'] = hedge_summary['加碼'] - hedge_summary['減碼']
@@ -1218,7 +1208,6 @@ class Strategy13F(object):
         # 新增欄位 為 A/上一個row的市值
         hedge_summary['淨投入額占比'] = hedge_summary['淨投入額'] / hedge_summary['市值'].shift(1)
         return hedge_summary
-   
     def individual_stock_summary(self, original_date_list, market, sym_str):
         '''
         function:
@@ -1264,8 +1253,7 @@ class Strategy13F(object):
             individual_data = {'date': holdings_time, '市值': price, '加碼': 0, '減碼': 0, 'XIRR': xirr, '淨投入額': 0, '淨投入額占比': 0, }
             summary_data.append({'hedge_fund': str(sym_str), **individual_data})
         individual_summary = pd.DataFrame(summary_data)
-        return individual_summary
-    
+        return individual_summary   
     def customized_fund_stock_summary(self, plan_name, customized_fund_data):
         summary_data = []
         previous_holdings = None
@@ -1398,7 +1386,6 @@ class Strategy13F(object):
             adjust_date  = soruce_date[index] if index < len(soruce_date) else soruce_date[-1] # 如果日期正好在列表中，返回該日期；否則返回下一個最接近的日期
             adjusted_data_list.append(str(adjust_date))
         return adjusted_data_list
-
     def create_query_stock_price_data(self, price_table, sym_str, date_str):
         '''
         依據price table查詢股價
@@ -1408,7 +1395,6 @@ class Strategy13F(object):
         FROM {} WHERE stock_id = '{}' AND [date] IN {} 
         '''.format(price_table, sym_str, date_str)
         return query
-
     def create_query_holdings_with_gics_n_price(self, hedge_fund, quarter, filing_number, holdings_time):
 
         # holdings_table = self.config_obj.holdings_data_table
@@ -1434,7 +1420,6 @@ class Strategy13F(object):
         WHERE tb_price.[date] = '{}'
         '''.format(holdings_table, gics_table, hedge_fund, quarter, filing_number, price_table, holdings_time)
         return query
-
     def get_top_gics_from_holdings(self, holdings_data, industry_top_selection):
         '''
         function:
@@ -1455,7 +1440,6 @@ class Strategy13F(object):
         top_gics = df['GICS'][:industry_top_selection].values
         # print(top_gics)
         return top_gics
-
     def group_by_GICs_from_holdings_data(self, holdings_data):
         '''
         FUNCTION:
@@ -1495,8 +1479,7 @@ class Strategy13F(object):
         gics_df['WEIGHTS_diff'] = gics_df['WEIGHTS'].diff()
         gics_df = gics_df[['GICS','INDUSTRY', 'WEIGHTS', 'WEIGHTS_diff','market_price','HEDGE_FUND','QUARTER','date',]]
 
-        return holdings_data, gics_df
-    
+        return holdings_data, gics_df   
     def select_company_from_holdings(self, holdings_data, top_gics, company_top_selection):
         '''
         function:
@@ -1512,8 +1495,7 @@ class Strategy13F(object):
         customized_holdings = customized_holdings.sort_values(by=['GICS', 'market_price'], ascending=False)
         # print(customized_holdings)
         customized_holdings = customized_holdings.groupby('GICS').apply(lambda x: x.nlargest(company_top_selection, 'market_price')).reset_index(drop=True)
-        return customized_holdings
-    
+        return customized_holdings    
     def select_company_from_holdings_adjusted(self, holdings_data, holdings_GICs_data, industry_top_selection, company_top_selection):
         '''
         FUNCTION:
@@ -1646,8 +1628,7 @@ class Strategy13F(object):
         # else:
         #     print('company_result_data', company_result_data)
         #     print('filtered_result_data', filtered_result_data)
-        return processed_data, industry_result_data, company_result_data
-    
+        return processed_data, industry_result_data, company_result_data   
     def calculate_customized_shares(self, data, enter_cost, hedge_num, mcap_weighted_flag=True):
         '''
         FUNCTION:
@@ -1697,7 +1678,6 @@ class Strategy13F(object):
         customized_holdings['shares_origin'] = customized_holdings['shares_to_buy'].copy()
 
         return customized_holdings
-
     def individual_stock_filtering(self, q_customized_table, upper_price_limit):
         '''
         FUNCTION:
@@ -1798,7 +1778,6 @@ class Strategy13F(object):
         merged_df = merged_df.sort_values(by=['date_13F'], ascending=True)
         merged_df = merged_df.rename(columns={'date_13F': 'date', 'price_13F': 'price'})
         return merged_df
-
     def calculate_market_price_growth(self, table): #下一季的投資金額
         
         q_customized_table = table.copy()
@@ -1835,13 +1814,10 @@ class Strategy13F(object):
         market_value = sum(price_data['Open'] * price_data['shares_to_buy'])
         # print(f'季末結算市值日(調整):{holdings_time} {market_value}')
         return market_value
-
     def arragne_output_XIRR_excel_format(self, summary_table):
         summary_table = summary_table[summary_table['date'] == self.max_date]
         summary_table = summary_table.sort_values(by=['XIRR'], ascending=False)
-        return summary_table
-    
-
+        return summary_table   
     def modify_customized_fund_data_to_holdings_data_structures(self, hedge_fund, customized_fund_data):
 
         df = customized_fund_data
@@ -1864,8 +1840,7 @@ class Strategy13F(object):
 
         df = df[['SYM', 'ISSUER_NAME', 'CL', 'CUSIP', 'VALUE', 'Percentile', 'SHARES', 'PRINCIPAL', 'OPTION_TYPE', 'HEDGE_FUND', 'QUARTER', 'FORM_TYPE', 'FILING_ID']]
         df = df.reset_index(drop=True)
-        return df
-    
+        return df   
     def arrage_customized_fund_portfolio_data(self, hedge_fund, holdings_data):
 
         current_date = datetime.datetime.now().date()
@@ -1894,8 +1869,7 @@ class Strategy13F(object):
         df['HEDGE_FUND'] = hedge_fund
         df = df[['QUARTER', 'HOLDINGS', 'VALUE', 'TOP_HOLDINGS', 'FORM_TYPE', 'DATE_FILED', 'FILING_ID', 'HEDGE_FUND']]
         df = df.sort_values(by=['DATE_FILED'], ascending=True).reset_index(drop=True)
-        return df
-    
+        return df   
     def insert_records_to_DB(self, table_name, data):
         
         if self.config_obj.LOCAL_FLAG:
@@ -2033,8 +2007,7 @@ class Strategy13F(object):
         cursor.close()
         conn.close()
 
-        return table_name, inserted_rows
-    
+        return table_name, inserted_rows   
     def get_all_hedge_funds_name(self, table_name):
         # 構建查詢語句
         query = '''
@@ -2044,8 +2017,7 @@ class Strategy13F(object):
         # 執行查詢並返回結果
         result  = self.sql_execute(query)
         hedge_funds = [row['HEDGE_FUND'] for row in result]
-        return hedge_funds
-    
+        return hedge_funds    
     def get_all_hedge_funds_larger_than_10_years_name(self, table_name):
         # 構建查詢語句
         query = '''
@@ -2059,13 +2031,11 @@ class Strategy13F(object):
         result  = self.sql_execute(query)
         hedge_funds = [row['HEDGE_FUND'] for row in result]
         return hedge_funds
-
     def split_list(self, lst, n):
         # 確定每個子列表的大小
         k, m = divmod(len(lst), n)
         # 使用列表生成器將原列表分割成 n 個子列表
-        return [lst[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n)]
-    
+        return [lst[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n)]    
     def funds_data_delete_from_table(self, table_name):
         query = '''
         DELETE FROM {}
@@ -2073,7 +2043,6 @@ class Strategy13F(object):
 
         rows_affected = self.sql_execute(query)
         self.config_obj.logger.warning(f"Deleted {rows_affected} rows from table {table_name}")
-
     def funds_data_copy_and_insert_into_table(self, original_table, filtered_table, target_list):
         # 將 target_list 轉換為 SQL 語句可接受的格式
         formatted_target_list = ', '.join("N'{}'".format(fund.replace("'", "''")) for fund in target_list)
@@ -2088,14 +2057,12 @@ class Strategy13F(object):
 
         rows_affected = self.sql_execute(query)
         self.config_obj.logger.warning(f"Inserted {rows_affected} rows to table {filtered_table}")
-
     def get_each_fund_portfolio_data(self, table_name, fund_name):
         query = '''
         SELECT * FROM {}
         WHERE [HEDGE_FUND] = '{}'
         '''.format(table_name, fund_name)
-        return query
-    
+        return query   
     def get_gics_by_sym(self, table_name, SYM):
         query = '''
         SELECT 
@@ -2104,7 +2071,6 @@ class Strategy13F(object):
         WHERE Ticker = '{}'
         '''.format(table_name, SYM)
         return query
-    
 
 class StrategySeasonal(object):
 
@@ -2128,6 +2094,9 @@ class StrategySeasonal(object):
                 StdDevReturn    : 報酬率標準差
                 AvgMaxDrawdown  : 平均最大回撤
                 MaxDrawdown     : 最大回撤
+                AvgVolume       : 平均交易量
+                AvgPct2Low      : 平均跌幅
+                AvgPct2High     : 平均漲幅
         """
         stats_df = None
 
@@ -2169,6 +2138,9 @@ class StrategySeasonal(object):
                 StdDevReturn=('monthly_return', 'std'),
                 AvgMaxDrawdown=('max_drawdown', 'mean'),
                 MaxDrawdown=('max_drawdown', 'min'),
+                AvgVolume=('avg_volume', 'mean'),
+                AvgPct2Low=('pct_to_low', 'mean'),
+                AvgPct2High=('pct_to_high', 'mean')
             ).reset_index()
             
             if stats_df is None:
@@ -2177,10 +2149,160 @@ class StrategySeasonal(object):
                 stats_df = pd.concat([stats_df, each_stats_df ], ignore_index=True)
         stats_df = stats_df.rename({'stock_id': '股票代號', 'market':'市場', 'MonthVal': '月份', 'TotalYears':'歷時年數',
                                     'WinRate': '勝率', 'AvgReturn': '平均報酬率', 'StdDevReturn':'報酬率標準差',
-                                      'AvgMaxDrawdown': '平均最大回撤', 'MaxDrawdown': '最大回撤', }, axis='columns')
-        path = os.path.join(self.config_obj.seasonal_summary, 'seasonal_summary.xlsx')
+                                      'AvgMaxDrawdown': '平均最大回撤', 'MaxDrawdown': '最大回撤', 
+                                      'AvgVolume': '平均交易量', 'AvgPct2Low':'平均跌幅', 'AvgPct2High':'平均漲幅'}, axis='columns')
+        
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_seasonal_summary.xlsx')
         stats_df.to_excel(path, index=False)
         return stats_df
+    
+    def monthly_seasonaly_strategy_backtest(self, seasonal_filtered_df):
+
+
+        """
+        針對 seasonal_filtered_result 中勝率100%的標的進行策略回測。
+        策略：在指定月份(月初)以 open 價買進，月末以 close 價賣出。
+        本金默認 100000 (可自行設定)，忽略交易成本與匯率問題。
+        """
+        seasonal_filtered_df = seasonal_filtered_df.rename({'股票代號':'stock_id', '市場': 'market', '月份':'month'}, axis='columns')
+
+        # ---------------------------------------------------------
+        #  Step 2: 針對每支股票 + 月份 執行回測
+        # ---------------------------------------------------------
+        result_list = []  # 用來存放每次交易的結果
+
+        for idx, row in seasonal_filtered_df.iterrows():
+            stock_id = row['stock_id']
+            market   = row['market']
+            target_m = int(row['month'])  # 目標月份 (1~12)
+            
+            # -----------------------------------------------------
+            #  Step 2-1: 取出此股票在全部年度的日K資料
+            # -----------------------------------------------------
+            if market == 'TW':
+                sql_price = f"""
+                    SELECT [date], [stock_id],
+                        [open], [close]
+                    FROM {self.config_obj.tw_stock_price_table}
+                    WHERE stock_id = '{stock_id}'
+                    ORDER BY [date] ASC
+                """
+            else:  # market == 'US'
+                sql_price = f"""
+                    SELECT [date], [stock_id],
+                        [Open]  AS [open],
+                        [Close] AS [close]
+                    FROM {self.config_obj.us_stock_price_table}
+                    WHERE stock_id = '{stock_id}'
+                    ORDER BY [date] ASC
+                """
+
+            price_data = self.sql_execute(sql_price)
+            price_df = pd.DataFrame(price_data)
+            price_df['date'] = pd.to_datetime(price_df['date'])
+
+            # -----------------------------------------------------
+            #  Step 2-2: 根據日期做出「年」與「月」的欄位，方便過濾
+            # -----------------------------------------------------
+            price_df['year'] = price_df['date'].dt.year
+            price_df['month'] = price_df['date'].dt.month
+
+            # -----------------------------------------------------
+            #  Step 2-3: 針對每個年度的 target_m(目標月份)做交易
+            #    策略：該月份第一個交易日 用open買進
+            #           該月份最後一個交易日 用close賣出
+            # -----------------------------------------------------
+            # 先篩出目標月份
+            target_month_data = price_df[price_df['month'] == target_m].copy()
+            
+            # 取所有有交易的「年」
+            all_years = sorted(target_month_data['year'].unique())
+            
+            # 初始本金(僅作範例)，可根據需要設定
+            capital = 100000.0
+
+            for y in all_years:
+                yearly_data = target_month_data[target_month_data['year'] == y].copy()
+                
+                if len(yearly_data) == 0:
+                    continue
+
+                # 取得當月第一個交易日、最後一個交易日
+                first_trade_day = yearly_data.iloc[0]
+                last_trade_day  = yearly_data.iloc[-1]
+
+                buy_date = first_trade_day['date']
+                sell_date = last_trade_day['date']
+                buy_price = first_trade_day['open']
+                sell_price = last_trade_day['close']
+                
+                # 若價格有遺漏或0等，需要額外處理(此處略)
+                if pd.isnull(buy_price) or pd.isnull(sell_price):
+                    self.config_obj.logger.warning(f"stock_id {stock_id} 需檢視{y}年度{target_m}月份價格資料。")
+
+                # 假設全倉(全部本金買進)
+                # 計算買進股數 (忽略手續費、稅金、股數限制等)
+                shares = capital // buy_price
+                pnl = (sell_price - buy_price) * shares
+                roi = pnl / capital  # 報酬率
+                capital = capital + pnl
+                
+                result_list.append({
+                    'stock_id': stock_id,
+                    'market': market,
+                    'year': y,
+                    'month': target_m,
+                    'buy_date': buy_date,
+                    'sell_date': sell_date,
+                    'buy_price': buy_price,
+                    'sell_price': sell_price,
+                    'shares': shares,
+                    'pnl': pnl,
+                    'capital': capital,
+                    'roi': roi,
+                })
+
+        # ---------------------------------------------------------
+        # Step 3: 將所有交易的結果整理成 DataFrame 
+        # ---------------------------------------------------------
+        result_df = pd.DataFrame(result_list)
+        result_df = result_df.rename({'stock_id':'股票代號', 'market': '市場', 'year': '年份',
+                    'month': '月份',
+                    'buy_date': '買進日',
+                    'sell_date': '賣出日',
+                    'buy_price': '買進價格',
+                    'sell_price': '賣出價格',
+                    'shares': '股數',
+                    'pnl': '獲利',
+                    'capital': '淨值',
+                    'roi': '年報酬率',}, axis='columns')
+        
+        # 可在此進行加總或績效指標計算
+        # 例如計算整體報酬率 / 平均年化報酬 / 等等
+        # 這裡僅展示整理結果
+        # ---------------------------------------------------------
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_seasonal_strategy1(一次買賣)_backtest.xlsx')
+        result_df.to_excel(path, index=False)        
+        self.config_obj.logger.warning(f"回測完成，輸出至Excel。")
+
+        # ---------------------------------------------------------
+        return result_df
+
+    def monthly_seasonaly_strategy_adjusted_backtest(self, seasonal_filtered_df):
+        """
+        針對 seasonal_filtered_result 中勝率100%的標的進行策略回測。
+        策略：基於基本的策略 月初買入月末賣出的狀況，進行細部調整，利用seasonal_filtered_df的資訊進行額外判讀操作。
+            1. 以['平均跌幅']欄位做初始判斷:
+                1.1. 若['平均跌幅'] < 0，開盤時僅投入50%資金，以月初open價格買入。
+                    1.1.1. 加碼條件: 價格小於等於['平均跌幅']之一半時，將剩餘50%資金投入。
+                1.2. 若['平均跌幅'] >= 0，開盤時投入100%資金，以月初open價格買入。
+            2. 停利條件: 
+                2.1. 若價格 >= ['平均報酬率'] + 0.5*['報酬率標準差']，則賣出一半持股。
+                2.2. 若價格 >= ['平均報酬率'] + 1*['報酬率標準差']，則賣出全部持股。
+                2.3. 其餘持股則月底賣出。
+
+        本金默認 100000 (可自行設定)，忽略交易成本與匯率問題。
+        """
     
     def sql_execute(self, query):
 

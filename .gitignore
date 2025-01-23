@@ -9,6 +9,7 @@ bin-release/
 assets/hedge_fund_data/
 assets/holdings_data/
 assets/backtest_summary/
+assets/seasonal_strategy_summary/
 __pycache__/
 
 # Executables
