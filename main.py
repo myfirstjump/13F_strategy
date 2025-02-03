@@ -73,7 +73,9 @@ class StockStrategies(object):
         # self.seasonal_strategy_obj.monthly_seasonality_stats(target_table)
         path = os.path.join(self.config_obj.seasonal_summary, '2025-01-20_seasonal_summary(filtered).xlsx')
         seasonal_filtered_df = pd.read_excel(path)
-        self.seasonal_strategy_obj.monthly_seasonaly_strategy_backtest(seasonal_filtered_df)
+        # self.seasonal_strategy_obj.monthly_seasonaly_strategy_backtest(seasonal_filtered_df)
+        final_result = self.seasonal_strategy_obj.monthly_seasonaly_strategy_adjusted_backtest(seasonal_filtered_df)
+        print(final_result)
     
     # def dash_server(self, data):
     #     self.dash_app = DashBuilder(data)
