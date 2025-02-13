@@ -69,13 +69,18 @@ class StockStrategies(object):
         # )
     
     def strategy_seasonal_investing(self):
-        # target_table = self.config_obj.monthly_info
-        # self.seasonal_strategy_obj.monthly_seasonality_stats(target_table)
-        path = os.path.join(self.config_obj.seasonal_summary, '2025-01-20_seasonal_summary(filtered).xlsx')
-        seasonal_filtered_df = pd.read_excel(path)
-        # self.seasonal_strategy_obj.monthly_seasonaly_strategy_backtest(seasonal_filtered_df)
-        final_result = self.seasonal_strategy_obj.monthly_seasonaly_strategy_adjusted_backtest(seasonal_filtered_df)
-        print(final_result)
+        ### 製作seasonal_summary資料
+        target_table = self.config_obj.monthly_info
+        self.seasonal_strategy_obj.monthly_seasonality_stats(target_table)
+
+        ### 透過seasonal_summary資料，進行回測
+        # path = os.path.join(self.config_obj.seasonal_summary, '2025-02-14_seasonal_summary(filtered).xlsx')
+        # seasonal_filtered_df = pd.read_excel(path)
+        # # final_result = self.seasonal_strategy_obj.monthly_seasonaly_strategy_backtest(seasonal_filtered_df)
+        # # final_result = self.seasonal_strategy_obj.monthly_seasonaly_strategy_adjusted_backtest(seasonal_filtered_df)
+        # final_result = self.seasonal_strategy_obj.monthly_seasonaly_strategy_dynamic_parameters_backtest(seasonal_filtered_df)
+        
+        # print(final_result)
     
     # def dash_server(self, data):
     #     self.dash_app = DashBuilder(data)
