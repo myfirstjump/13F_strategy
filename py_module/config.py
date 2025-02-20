@@ -343,7 +343,7 @@ class Configuration(object):
                     'Tradewinds Capital Management, LLC',
                     'Standard Investments LLC',
                     'Cincinnati Specialty Underwriters Insurance CO',
-                    'COLONY GROUP LLC',
+                    # 'COLONY GROUP LLC',
                 ]
             }
 

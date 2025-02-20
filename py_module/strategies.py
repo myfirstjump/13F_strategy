@@ -233,7 +233,7 @@ class Strategy13F(object):
             #                           'mcap_weighted_flag': mcap_weighted_flag
             #                           }),
 
-            'I1C2_sharpe_2024Q3' : (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['I1C2_sharpe'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
+            'I1C2_sharpe_2024Q4' : (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['I1C2_sharpe'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
 
             # 'I1C2_reinvest_0905': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':False, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['I1C2_sharpe'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
             # 'I1C2_share_0905': (self.customize_fund_components_revised, {'reinvest_flag':True, 'share_profit_flag':True, 'hedge_funds_range': self.config_obj.target_hedge_funds_dict['I1C2_sharpe'], 'industry_top_selection': 1, 'company_top_selection': 2, 'mcap_weighted_flag': True}),
@@ -2290,34 +2290,16 @@ class StrategySeasonal(object):
         self.config_obj.logger.warning(f"回測完成，輸出至Excel。")
         # ---------------------------------------------------------
         return result_df
-
-    def monthly_seasonaly_strategy_adjusted_backtest(self, seasonal_filtered_df, principal=100000):
+  
+    def monthly_seasonaly_strategy_adjusted_backtest(self, strategy_name, seasonal_filtered_df, 
+        INITIAL_CAP_PERCENT,
+        BUY_IN_RATE,     # 
+        OUT_LV1_STD_RATE,# 
+        OUT_LV2_STD_RATE, # 
+        principal=100000,
+        ):
         """
-        針對 seasonal_filtered_df 中勝率100%的標的進行策略回測。
 
-        策略 (以某月份為例)：
-            1. 月初開盤時買入:
-                1.1 如果 ['平均跌幅'] < 0:
-                    - 僅投入 50% 資金買入
-                    - 若之後價格 <= (買入價格 * (1 + 平均跌幅/2))，則加碼剩餘 50% 資金
-                      (但若已經觸發停利機制，則不再加碼)
-                1.2 如果 ['平均跌幅'] >= 0:
-                    - 一次投入 100% 資金買入
-
-            2. 停利條件 (在當月交易日逐日檢查):
-                2.1 當價格 >= (買入價格 * (1 + 平均報酬率 + 0.5 * 報酬率標準差))，先賣出一半持股
-                2.2 當價格 >= (買入價格 * (1 + 平均報酬率 + 1.0 * 報酬率標準差))，賣出全部持股
-                2.3 若當月結束前尚有持股，月底收盤價全部賣出
-
-        最終輸出欄位:
-          ['股票代號', '市場', '年份', '月份', '買進日', '賣出日',
-           '買進價格', '賣出價格', '股數', '獲利', '淨值', '年報酬率',
-           '分批進場', '低價加碼']
-
-        假設:
-            - 本金預設為 100000 (可自定)
-            - 忽略交易成本與匯率
-            - 可持有「小數股數」以簡化計算
         """
 
         # 僅針對勝率=100%的標的進行回測
@@ -2334,8 +2316,9 @@ class StrategySeasonal(object):
             market = row['市場']
             trade_month = int(row['月份'])
             avg_drop = float(row['平均跌幅'])
-            avg_return = float(row['平均報酬率'])
-            std_return = float(row['報酬率標準差'])
+            std_drop = float(row['跌幅標準差'])
+            avg_up = float(row['平均漲幅'])
+            std_up = float(row['漲幅標準差'])
 
             # 取得該股票日線資料
             if market == 'TW':
@@ -2402,6 +2385,10 @@ class StrategySeasonal(object):
                 open_price = first_row['open']    # 月初買進價
                 close_price = last_row['close']   # 月末收盤價
 
+                ### 進場指標 open_price × (1+(avg_drop+k×std_drop))   k --> BUY_IN_RATE 可以設定為0.3、0.5、0.7
+                enter_index = 1 + avg_drop + BUY_IN_RATE * std_drop
+
+
                 # 設定部位與資金
                 capital = cumulative_capital_map[stock_id]
                 remain_capital = capital  # 當前可用資金
@@ -2413,13 +2400,12 @@ class StrategySeasonal(object):
                 sell_all = False
                 early_sold = False
 
-                # 分批進場：當 avg_drop < 0 即代表會採用兩段進場策略
-                multiple_entry = (avg_drop < 0)
+                # 分批進場：當 進場指標 enter_index < 1 即代表會採用兩段進場策略
+                multiple_entry = (enter_index < 1)
 
                 # 決定第一筆買入股數
                 if multiple_entry:
-                    # 先買 50%
-                    invest_capital = capital * 0.5
+                    invest_capital = capital * INITIAL_CAP_PERCENT ### 分批入場的比例，例如INITIAL_CAP_PERCENT=50%
                     share_holding = invest_capital / open_price
                     total_shares_bought = share_holding
                     remain_capital -= invest_capital
@@ -2430,11 +2416,11 @@ class StrategySeasonal(object):
                     remain_capital = 0.0
 
                 # 計算停利門檻 (以月初買價為基準)
-                stop_profit_lv1 = open_price * (1 + avg_return + 0.5 * std_return)
-                stop_profit_lv2 = open_price * (1 + avg_return + 1.0 * std_return)
+                stop_profit_lv1 = open_price * (1 + avg_up + OUT_LV1_STD_RATE * std_up)
+                stop_profit_lv2 = open_price * (1 + avg_up + OUT_LV2_STD_RATE * std_up)
 
                 # 加碼門檻 (若 avg_drop < 0，即 multiple_entry = True)
-                add_position_price = open_price * (1 + avg_drop/2) if multiple_entry else None
+                add_position_price = open_price * enter_index if multiple_entry else None
 
                 # 紀錄最終賣出日與賣出價格
                 final_sell_date = None
@@ -2443,18 +2429,18 @@ class StrategySeasonal(object):
                 # 低價加碼：是否真的執行加碼
                 did_add = False
 
-                # 逐日檢查停利 / 加碼 (使用最高價/最低價判斷)
+                # 逐日檢查停利 / 加碼
                 for i in range(len(grp)):
                     current_date = grp.iloc[i]['date']
-                    # high_price = grp.iloc[i]['high']
-                    # low_price = grp.iloc[i]['low']
+                    high_price = grp.iloc[i]['high']
+                    low_price = grp.iloc[i]['low']
                     close_price = grp.iloc[i]['close']
 
                     # 若未全數賣出，先檢查加碼 (只加一次)
                     if multiple_entry and (not has_added_position) and (not sell_all):
-                        if close_price <= add_position_price:
+                        if low_price <= add_position_price: # 看最低價是否 < 加碼價
                             # 加碼 50% 的資金
-                            add_shares = remain_capital / close_price
+                            add_shares = remain_capital / add_position_price # 用加碼價去加碼
                             share_holding += add_shares
                             total_shares_bought += add_shares
                             remain_capital = 0.0
@@ -2464,16 +2450,16 @@ class StrategySeasonal(object):
                     # 停利條件
                     if not sell_all:
                         # 2.1 如果價格 >= stop_profit_lv1，且尚未賣一半
-                        if (close_price >= stop_profit_lv1) and (not is_half_sold):
-                            half_shares = share_holding * 0.5
-                            gain = half_shares * close_price
+                        if (high_price >= stop_profit_lv1) and (not is_half_sold):
+                            half_shares = share_holding * 0.5 # 先獲利了結一半
+                            gain = half_shares * stop_profit_lv1
                             remain_capital += gain
                             share_holding -= half_shares
                             is_half_sold = True
 
                         # 2.2 如果價格 >= stop_profit_lv2，直接全數賣出
                         if close_price >= stop_profit_lv2:
-                            gain = share_holding * close_price
+                            gain = share_holding * stop_profit_lv2
                             remain_capital += gain
                             share_holding = 0.0
                             early_sold = True
@@ -2538,271 +2524,11 @@ class StrategySeasonal(object):
         else:
             final_result = pd.DataFrame()
         # ---------------------------------------------------------
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_seasonal_strategy2(策略買賣)_backtest.xlsx')
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_seasonal_strategy_{strategy_name}({INITIAL_CAP_PERCENT}-{BUY_IN_RATE}-{OUT_LV1_STD_RATE}-{OUT_LV2_STD_RATE})_backtest.xlsx')
         final_result.to_excel(path, index=False)        
-        self.config_obj.logger.warning(f"回測完成，輸出至Excel。")
+        self.config_obj.logger.warning(f"{strategy_name}回測完成，輸出至Excel。")
         # ---------------------------------------------------------
-
-
-        return final_result        
-
-    def monthly_seasonaly_strategy_dynamic_parameters_backtest(self, seasonal_filtered_df, principal=100000):
-        """
-        針對 seasonal_filtered_df 中勝率100%的標的進行策略回測。
-
-        策略 (以某月份為例)：
-            1. 月初開盤時買入:
-                1.1 如果 ['平均跌幅'] < 0:
-                    - 僅投入 50% 資金買入
-                    - 若之後價格 <= (買入價格 * (1 + 平均跌幅/2))，則加碼剩餘 50% 資金
-                      (但若已經觸發停利機制，則不再加碼)
-                1.2 如果 ['平均跌幅'] >= 0:
-                    - 一次投入 100% 資金買入
-
-            2. 停利條件 (在當月交易日逐日檢查):
-                2.1 當價格 >= (買入價格 * (1 + 平均報酬率 + 0.5 * 報酬率標準差))，先賣出一半持股
-                2.2 當價格 >= (買入價格 * (1 + 平均報酬率 + 1.0 * 報酬率標準差))，賣出全部持股
-                2.3 若當月結束前尚有持股，月底收盤價全部賣出
-
-        最終輸出欄位:
-          ['股票代號', '市場', '年份', '月份', '買進日', '賣出日',
-           '買進價格', '賣出價格', '股數', '獲利', '淨值', '年報酬率',
-           '分批進場', '低價加碼']
-
-        假設:
-            - 本金預設為 100000 (可自定)
-            - 忽略交易成本與匯率
-            - 可持有「小數股數」以簡化計算
-        """
-        IN_STD_RATE = 0.5
-        OUT_LV1_STD_RATE = 0.5
-        OUT_LV2_STD_RATE = 1.0
-        # 僅針對勝率=100%的標的進行回測
-        filtered_df = seasonal_filtered_df[seasonal_filtered_df['勝率'] == 1].copy()
-        if filtered_df.empty:
-            self.config_obj.logger.warning(f"沒有勝率=100%的標的，無法進行調整後策略回測。")
-            return pd.DataFrame()
-
-        all_records = []  # 用於儲存所有標的的回測紀錄
-        cumulative_capital_map = {} # 用來記錄各股票的「累積資金」，不同股票互不影響
-
-        for idx, row in filtered_df.iterrows():
-            stock_id = row['股票代號']
-            market = row['市場']
-            trade_month = int(row['月份'])
-            avg_drop = float(row['平均跌幅'])
-            std_drop = float(row['平均跌幅'])
-            avg_return = float(row['平均報酬率'])
-            std_return = float(row['報酬率標準差'])
-
-            # 取得該股票日線資料
-            if market == 'TW':
-                sql_price = f"""
-                    SELECT [date], [stock_id],
-                        [open], 
-                        [max] AS [high],
-                        [min] AS [low],
-                        [close]
-                    FROM {self.config_obj.tw_stock_price_table}
-                    WHERE stock_id = '{stock_id}'
-                    ORDER BY [date] ASC
-                """
-            else:  # market == 'US'
-                sql_price = f"""
-                    SELECT [date], [stock_id],
-                        [Open]  AS [open],
-                        [High] as [high],
-                        [Low] AS [low],
-                        [Close] AS [close]
-                    FROM {self.config_obj.us_stock_price_table}
-                    WHERE stock_id = '{stock_id}'
-                    ORDER BY [date] ASC
-                """
-
-            price_data = self.sql_execute(sql_price)
-            df_daily = pd.DataFrame(price_data)
-            df_daily = df_daily[
-                (df_daily['open']  > 0) &
-                (df_daily['high']  > 0) &
-                (df_daily['low']   > 0) &
-                (df_daily['close'] > 0)
-            ].copy()
-
-            if df_daily.empty:
-                continue
-            df_daily['date'] = pd.to_datetime(df_daily['date'])
-            df_daily['year'] = df_daily['date'].dt.year
-            df_daily['month'] = df_daily['date'].dt.month
-
-            # 僅篩出目標月份資料
-            df_month = df_daily[df_daily['month'] == trade_month].copy()
-            if df_month.empty:
-                continue
-
-            # 以年份分組，每一年度該月份做一筆回測
-            yearly_groups = df_month.groupby('year')
-
-            stock_trade_records = []
-            # 年份排序，確保按「由小到大」順序進行累積
-            years_sorted = sorted(yearly_groups.groups.keys())
-
-            for yr in years_sorted:
-                grp = yearly_groups.get_group(yr).sort_values(by='date')
-                if len(grp) < 2:
-                    continue
-
-                if stock_id not in cumulative_capital_map:
-                    cumulative_capital_map[stock_id] = principal
-
-                # 1) 月初 / 月末
-                first_row = grp.iloc[0]
-                last_row = grp.iloc[-1]
-                open_price = first_row['open']    # 月初買進價
-                close_price = last_row['close']   # 月末收盤價
-
-                # 設定部位與資金
-                capital = cumulative_capital_map[stock_id]
-                remain_capital = capital  # 當前可用資金
-
-                share_holding = 0.0         # 當前持有股數
-                total_shares_bought = 0.0   # 用來紀錄"股數"欄位 (總買入股數)
-                is_half_sold = False
-                has_added_position = False
-                sell_all = False
-                early_sold = False
-
-                # 分批進場：當 avg_drop < 0 即代表會採用兩段進場策略
-                multiple_entry = (avg_drop < 0)
-
-                # 決定第一筆買入股數
-                if multiple_entry:
-                    # 先買 50%
-                    invest_capital = capital * 0.5
-                    share_holding = invest_capital / open_price
-                    total_shares_bought = share_holding
-                    remain_capital -= invest_capital
-                else:
-                    # 一次買 100%
-                    share_holding = capital / open_price
-                    total_shares_bought = share_holding
-                    remain_capital = 0.0
-
-                # 計算停利門檻 (以月初買價為基準)
-                stop_profit_lv1 = open_price * (1 + avg_return + 0.5 * std_return)
-                stop_profit_lv2 = open_price * (1 + avg_return + 1.0 * std_return)
-
-                # 加碼門檻 (若 avg_drop < 0，即 multiple_entry = True)
-                add_position_price = open_price * (1 + avg_drop/2) if multiple_entry else None
-
-                # 紀錄最終賣出日與賣出價格
-                final_sell_date = None
-                final_sell_price = None
-                
-                # 低價加碼：是否真的執行加碼
-                did_add = False
-
-                # 逐日檢查停利 / 加碼 (使用最高價/最低價判斷)
-                for i in range(len(grp)):
-                    current_date = grp.iloc[i]['date']
-                    # high_price = grp.iloc[i]['high']
-                    # low_price = grp.iloc[i]['low']
-                    close_price = grp.iloc[i]['close']
-
-                    # 若未全數賣出，先檢查加碼 (只加一次)
-                    if multiple_entry and (not has_added_position) and (not sell_all):
-                        if close_price <= add_position_price:
-                            # 加碼 50% 的資金
-                            add_shares = remain_capital / close_price
-                            share_holding += add_shares
-                            total_shares_bought += add_shares
-                            remain_capital = 0.0
-                            has_added_position = True
-                            did_add = True
-
-                    # 停利條件
-                    if not sell_all:
-                        # 2.1 如果價格 >= stop_profit_lv1，且尚未賣一半
-                        if (close_price >= stop_profit_lv1) and (not is_half_sold):
-                            half_shares = share_holding * 0.5
-                            gain = half_shares * close_price
-                            remain_capital += gain
-                            share_holding -= half_shares
-                            is_half_sold = True
-
-                        # 2.2 如果價格 >= stop_profit_lv2，直接全數賣出
-                        if close_price >= stop_profit_lv2:
-                            gain = share_holding * close_price
-                            remain_capital += gain
-                            share_holding = 0.0
-                            early_sold = True
-                            sell_all = True
-                            final_sell_date = current_date
-                            final_sell_price = close_price
-                            break
-
-                # 2.3 若到月底仍有持股，則以月底收盤價全部賣出
-                if share_holding > 0.0 and (not sell_all):
-                    gain = share_holding * close_price
-                    remain_capital += gain
-                    share_holding = 0.0
-                    final_sell_date = last_row['date']
-                    final_sell_price = close_price
-                elif sell_all:
-                    # 若中途已經賣光，final_sell_date/final_sell_price 可能已在上方設定
-                    pass
-
-                # 若本月完全沒觸發停利(也沒月底賣出)，理論上不會發生，除非沒有交易
-                if final_sell_date is None:
-                    final_sell_date = last_row['date']
-                    final_sell_price = close_price
-
-                # 最終資金、獲利、報酬率
-                final_capital = remain_capital
-                profit = final_capital - capital
-                # 用「(最終 / 初始) - 1」當作"年報酬率"
-                annual_return = profit / capital
-
-                # 將本年度的 final_capital 作為「累積淨值」更新回字典
-                cumulative_capital_map[stock_id] = final_capital
-
-                stock_trade_records.append({
-                    '股票代號': stock_id,
-                    '市場': market,
-                    '年份': yr,
-                    '月份': trade_month,
-                    '買進日': first_row['date'],
-                    '賣出日': final_sell_date,
-                    '買進價格': open_price,
-                    '賣出價格': final_sell_price,
-                    # 以「總買入股數」呈現，方便對照最初買入部位 / 加碼部位總和
-                    '股數': round(total_shares_bought, 0),
-                    '獲利': round(profit, 2),
-                    '累積淨值': round(final_capital, 2),
-                    '年報酬率': annual_return,
-                    '分批進場': '是' if multiple_entry else '否',  
-                    '低價加碼': '是' if did_add else '否',
-                    '提早出場': '是' if is_half_sold else '否',
-                    '提早完全出場': '是' if early_sold else '否',
-                })
-
-            # 結合該股票各年份的回測紀錄
-            if stock_trade_records:
-                results_df = pd.DataFrame(stock_trade_records)
-                all_records.append(results_df)
-
-        # 最終合併
-        if all_records:
-            final_result = pd.concat(all_records, ignore_index=True)
-        else:
-            final_result = pd.DataFrame()
-        # ---------------------------------------------------------
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_seasonal_strategy2(策略買賣)_backtest.xlsx')
-        final_result.to_excel(path, index=False)        
-        self.config_obj.logger.warning(f"回測完成，輸出至Excel。")
-        # ---------------------------------------------------------
-
-
-        return final_result   
+        return final_result     
 
 
     

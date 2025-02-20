@@ -70,16 +70,35 @@ class StockStrategies(object):
     
     def strategy_seasonal_investing(self):
         ### 製作seasonal_summary資料
-        target_table = self.config_obj.monthly_info
-        self.seasonal_strategy_obj.monthly_seasonality_stats(target_table)
+        # target_table = self.config_obj.monthly_info
+        # self.seasonal_strategy_obj.monthly_seasonality_stats(target_table)
 
         ### 透過seasonal_summary資料，進行回測
-        # path = os.path.join(self.config_obj.seasonal_summary, '2025-02-14_seasonal_summary(filtered).xlsx')
-        # seasonal_filtered_df = pd.read_excel(path)
-        # # final_result = self.seasonal_strategy_obj.monthly_seasonaly_strategy_backtest(seasonal_filtered_df)
-        # # final_result = self.seasonal_strategy_obj.monthly_seasonaly_strategy_adjusted_backtest(seasonal_filtered_df)
-        # final_result = self.seasonal_strategy_obj.monthly_seasonaly_strategy_dynamic_parameters_backtest(seasonal_filtered_df)
-        
+        path = os.path.join(self.config_obj.seasonal_summary, '2025-02-14_seasonal_summary(filtered).xlsx')
+        seasonal_filtered_df = pd.read_excel(path)
+        # final_result = self.seasonal_strategy_obj.monthly_seasonaly_strategy_backtest(seasonal_filtered_df)
+        strategies_dict = {
+            '01分進': [0.5,0.5,999,999],
+            '02分進分出1': [0.5,0.5,0.5,999],
+            '03分進分出1': [0.5,0.5,1.0,999],
+            '04分進分出2': [0.5,0.5,0.5,1.0],
+            '05分進分出2': [0.5,0.5,1.0,2.0],
+
+            '06單進': [1.0,999,999,999],
+            '07單進分出1': [1.0,999,0.5,999],
+            '08單進分出1': [1.0,999,1.0,999],
+            '09單進分出2': [1.0,999,0.5,1.0],
+            '10單進分出2': [1.0,999,1.0,2.0],
+        }
+        for idx, (name, param) in enumerate(strategies_dict.items()):
+            self.config_obj.logger.warning(f"策略({name})計算... ({idx+1}/{len(strategies_dict)})")
+            self.seasonal_strategy_obj.monthly_seasonaly_strategy_adjusted_backtest(strategy_name=name, 
+                                                                                    seasonal_filtered_df=seasonal_filtered_df, 
+                                                                                    INITIAL_CAP_PERCENT=param[0],    # 分批投入時，初始投入比例。
+                                                                                    BUY_IN_RATE=param[1],            # 判斷是否分批時，最大跌幅標準差的係數  (↑越容易加碼 ↓越難加碼)
+                                                                                    OUT_LV1_STD_RATE=param[2],       # 提早停利時(一半出場)，最大漲幅標準差的係數 (↑越難停利)
+                                                                                    OUT_LV2_STD_RATE=param[3],       # 提早停利時(全數出場)，最大漲幅標準差的係數 (↑越難停利) 
+                                                                                    principal=100000,)
         # print(final_result)
     
     # def dash_server(self, data):
