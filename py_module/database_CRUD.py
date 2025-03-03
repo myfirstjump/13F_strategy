@@ -99,7 +99,7 @@ class DatabaseManipulation(object):
         existing_ids_set = {row['stock_id'] for row in existing_ids}
 
         # Filter out stock IDs that already exist in the target table
-        stock_ids_to_process = [stock for stock in stock_ids if stock['stock_id'] not in existing_ids_set]    
+        stock_ids_to_process = [stock for stock in stock_ids if stock['stock_id'] not in existing_ids_set]
         # stock_ids_to_process = [{'stock_id':'GLBZ'}] ## Test
 
         # Step 3: Iterate over each stock_id and calculate monthly returns, average volume, and max drawdown
