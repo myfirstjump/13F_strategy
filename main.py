@@ -1,6 +1,6 @@
 from py_module.config import Configuration
 from py_module.crawler import Crawler, IBApp
-from py_module.strategies import Strategy13F, StrategySeasonal
+from py_module.strategies import Strategy13F, StrategySeasonal, StrategyPerformance
 # from dashboard import DashBuilder
 from py_module.database_CRUD import DatabaseManipulation
 
@@ -17,6 +17,7 @@ class StockStrategies(object):
         self.stock_crawler_obj = IBApp()
         self.strategy_obj = Strategy13F()
         self.seasonal_strategy_obj = StrategySeasonal()
+        self.performance = StrategyPerformance()
         self.db_obj = DatabaseManipulation()
 
     def data_crawl(self):
@@ -74,7 +75,7 @@ class StockStrategies(object):
         # self.seasonal_strategy_obj.monthly_seasonality_stats(target_table)
 
         ### 透過seasonal_summary資料，進行回測
-        path = os.path.join(self.config_obj.seasonal_summary, '2025-03-01_seasonal_summary(filtered).xlsx')
+        path = os.path.join(self.config_obj.seasonal_summary, '2025-03-09_seasonal_summary(filtered).xlsx')
         seasonal_filtered_df = pd.read_excel(path)
         # final_result = self.seasonal_strategy_obj.monthly_seasonaly_strategy_backtest(seasonal_filtered_df)
         strategies_dict = {
@@ -99,16 +100,27 @@ class StockStrategies(object):
         #                                                                             OUT_LV1_STD_RATE=param[2],       # 提早停利時(一半出場)，最大漲幅標準差的係數 (↑越難停利)
         #                                                                             OUT_LV2_STD_RATE=param[3],       # 提早停利時(全數出場)，最大漲幅標準差的係數 (↑越難停利) 
         #                                                                             principal=100000,)
-        # print(final_result)
+
 
         # strategy_paths = []
         # for idx, (name, param) in enumerate(strategies_dict.items()):
-        #     path = os.path.join(self.config_obj.seasonal_summary, '2025-02-21' + f'_seasonal_strategy_{name}({param[0]}-{param[1]}-{param[2]}-{param[3]})_backtest.xlsx')
+        #     path = os.path.join(self.config_obj.seasonal_summary, '2025-03-09' + f'_seasonal_strategy_{name}({param[0]}-{param[1]}-{param[2]}-{param[3]})_backtest.xlsx')
         #     strategy_paths.append(path)
         # self.seasonal_strategy_obj.seasonal_strategies_comparison_function(strategy_paths)
 
-        self.seasonal_strategy_obj.monthly_seasonaly_strategy_2025v1(seasonal_filtered_df, strategies_dict)
+        # self.seasonal_strategy_obj.monthly_seasonaly_strategy_2025v1(seasonal_filtered_df, strategies_dict)
+        self.seasonal_strategy_obj.monthly_seasonaly_strategy_each_transaction_record(seasonal_filtered_df, strategies_dict)
     
+    def strategy_performance_output(self):
+
+        path = os.path.join(self.config_obj.seasonal_summary, '2025-03-17_季節性策略回測_逐筆交易紀錄.xlsx')
+        trade_records = pd.read_excel(path)
+
+        self.performance.generate_types_of_performance_output(trade_records, initial_capital=100000)
+
+
+
+
     # def dash_server(self, data):
     #     self.dash_app = DashBuilder(data)
 
@@ -125,7 +137,8 @@ def main_flow():
 
     '''13F投資策略回測'''
     # main_obj.strategy_13F_investing()
-    main_obj.strategy_seasonal_investing()
+    # main_obj.strategy_seasonal_investing()
+    main_obj.strategy_performance_output()
 
     '''Dash篩選'''
     # data_path = os.path.join(main_obj.config_obj.backtest_summary, '2024-01-28_summary_table.csv')

@@ -3,13 +3,16 @@ from py_module.config import Configuration
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
 import pymssql
+import calendar
 import pandas as pd
+import matplotlib.pyplot as plt
 import numpy as np
 import sys
 # np.set_printoptions(threshold=sys.maxsize)
 import copy
 import os
 import datetime
+from datetime import timedelta
 import re
 from collections import defaultdict
 
@@ -2305,7 +2308,7 @@ class StrategySeasonal(object):
         """
 
         # 僅針對勝率=100%的標的進行回測
-        filtered_df = seasonal_filtered_df[seasonal_filtered_df['勝率'] == 1].copy()
+        filtered_df = seasonal_filtered_df[seasonal_filtered_df['勝率'] >= 0.9].copy()
         if filtered_df.empty:
             self.config_obj.logger.warning(f"沒有勝率=100%的標的，無法進行調整後策略回測。")
             return pd.DataFrame()
@@ -2536,20 +2539,20 @@ class StrategySeasonal(object):
         """
         paths: List[str]
             傳入多個回測檔案(Excel)的路徑
-        
+
         回傳一個比較各策略最終累積淨值以及年報酬率勝率的 DataFrame，
         並在 stock_id 後額外輸出對應的月份欄位。
         """
 
-        # 用來存放所有股票、所有策略的資料
-        # 結構: all_data[stock_id]['month'] = 月份
-        #       all_data[stock_id][strategy_name] = {
-        #         'yearly_returns': {year: 年報酬率, ...},
-        #         'final_net': 最後一年累積淨值
+        # 用來存放所有 (stock_id, month) 與其對應的各策略資料
+        # 結構: all_data[(stock_id, month)][strategy_name] = {
+        #           'yearly_returns': {year: 年報酬率, ...},
+        #           'final_net': 最後一年(最大年份)累積淨值
         #       }
-        all_data = defaultdict(lambda: {
-            'month': None
-        })
+        all_data = defaultdict(lambda: defaultdict(lambda: {
+            'yearly_returns': {},
+            'final_net': None
+        }))
 
         # 1. 逐檔讀取並解析
         for path in paths:
@@ -2560,78 +2563,61 @@ class StrategySeasonal(object):
             if match:
                 strategy_name = match.group(1)
             else:
-                strategy_name = filename  # 萬一檔名格式不符，就直接用檔名當策略名
+                strategy_name = filename  # 若檔名格式不符，直接用整個檔名
 
             # 讀取該回測檔案
             df = pd.read_excel(path)
 
-            # 2. 以 groupby('股票代號') 聚合，每一檔股票分別處理
-            for stock_id, group in df.groupby('股票代號'):
+            # 2. 以 groupby(['股票代號','月份']) 聚合
+            #    代表同一檔股票、同一個月份視為一組
+            for (stock_id, month_value), group in df.groupby(['股票代號', '月份']):
 
-                # 確認月份，假設這裡 group 中「月份」欄位都是同一個值
-                # 就取 group['月份'].iloc[0] 作為該股票之月份
-                month_value = group['月份'].iloc[0]
-
-                # 如果該股票還沒存 month，就存進去
-                if all_data[stock_id]['month'] is None:
-                    all_data[stock_id]['month'] = month_value
-                else:
-                    # 如果 all_data 內已經有 month，
-                    # 但新讀到的值不同，需確認是否有衝突
-                    if all_data[stock_id]['month'] != month_value:
-                        print(f"Warning: stock_id={stock_id} 有不同月份資料，"
-                            f"之前={all_data[stock_id]['month']}，現在={month_value}")
-
-                # 確保該股票下有此策略的結構
-                if strategy_name not in all_data[stock_id]:
-                    all_data[stock_id][strategy_name] = {
+                # 確保結構存在
+                if strategy_name not in all_data[(stock_id, month_value)]:
+                    all_data[(stock_id, month_value)][strategy_name] = {
                         'yearly_returns': {},
                         'final_net': None
                     }
 
-                # 找出「最後一年」(年份最大)的那筆資料
+                # 找出「最後一年」(年份最大)那筆資料
                 max_year_idx = group['年份'].idxmax()
                 last_year_row = group.loc[max_year_idx]
-                all_data[stock_id][strategy_name]['final_net'] = last_year_row['累積淨值']
+                all_data[(stock_id, month_value)][strategy_name]['final_net'] = last_year_row['累積淨值']
 
                 # 紀錄每一年的年報酬率
                 for _, row in group.iterrows():
                     year = row['年份']
-                    all_data[stock_id][strategy_name]['yearly_returns'][year] = row['年報酬率']
+                    all_data[(stock_id, month_value)][strategy_name]['yearly_returns'][year] = row['年報酬率']
 
-        # 3. 開始統計每檔股票的「年報酬率勝率」與「最終累積淨值」
-        #   - all_stocks: 所有出現的股票
-        #   - all_strategies: 所有出現的策略
-        all_stocks = sorted(all_data.keys())
+        # 3. 開始統計所有 (stock_id, month) 之下，各策略的「年報酬率勝率」與「最終累積淨值」
+        #   - 先整理所有 (stock_id, month) 
+        #   - 以及所有可能出現過的策略
+        all_keys = sorted(all_data.keys())  # (stock_id, month) 組合
         all_strategies = set()
-        for stock_id in all_stocks:
-            # stock_id 下除 'month' 之外的 key 都是策略名稱
-            for k in all_data[stock_id].keys():
-                if k != 'month':
-                    all_strategies.add(k)
+        for key in all_keys:
+            for s in all_data[key].keys():
+                all_strategies.add(s)
         all_strategies = sorted(all_strategies)
 
         result_rows = []
 
-        for stock_id in all_stocks:
-            # 該股票對應之月份
-            month_value = all_data[stock_id]['month']
+        for (stock_id, month_value) in all_keys:
+            # 該組合對應的所有策略
+            strategy_dict = all_data[(stock_id, month_value)]  # { strategy_name: {...}, ... }
+            stock_strategies = list(strategy_dict.keys())
 
-            # 先擷取所有策略名稱 (排除 'month')
-            stock_strategies = [s for s in all_data[stock_id].keys() if s != 'month']
-
-            # 先把該股票每個策略的「最終累積淨值」抓出來
+            # 先抓各策略的「最終累積淨值」
             final_nets = {
-                s: all_data[stock_id][s]['final_net']
+                s: strategy_dict[s]['final_net']
                 for s in stock_strategies
             }
 
-            # 找出該股票所有出現過的年份(合併各策略)
+            # 找出該 (stock_id, month) 所有出現過的年份(合併各策略)
             all_years = set()
             for s in stock_strategies:
-                all_years.update(all_data[stock_id][s]['yearly_returns'].keys())
+                all_years.update(strategy_dict[s]['yearly_returns'].keys())
 
-            # wins[s] = 該策略在多少年份勝出
+            # wins[s] = 該策略在該 (stock_id, month) 的多少年份勝出
             wins = {s: 0 for s in stock_strategies}
 
             # 逐年找出最高報酬策略
@@ -2639,7 +2625,7 @@ class StrategySeasonal(object):
                 best_strat = None
                 best_ret = None
                 for s in stock_strategies:
-                    ret = all_data[stock_id][s]['yearly_returns'].get(y, None)
+                    ret = strategy_dict[s]['yearly_returns'].get(y, None)
                     if ret is not None:
                         if (best_ret is None) or (ret > best_ret):
                             best_ret = ret
@@ -2649,22 +2635,22 @@ class StrategySeasonal(object):
 
             total_years = len(all_years)
             win_rates = {
-                s: wins[s] / total_years if total_years > 0 else 0
+                s: (wins[s] / total_years) if total_years > 0 else 0
                 for s in stock_strategies
             }
 
-            # 準備建構輸出的資料列
-            # 欄位: [stock_id, month, 策略1累積淨值, 策略2..., ..., 策略1勝率, 策略2..., ...]
+            # 建構一列結果
+            # 欄位: [stock_id, month, ...各策略累積淨值..., ...各策略勝率...]
             row_data = [stock_id, month_value]
 
-            # 依全域策略順序填入 final_net
+            # 依全域(all_strategies)排序填入 final_net
             for s in all_strategies:
                 if s in final_nets:
                     row_data.append(final_nets[s])
                 else:
                     row_data.append(None)
 
-            # 依全域策略順序填入年報酬勝率
+            # 依全域(all_strategies)排序填入勝率
             for s in all_strategies:
                 if s in win_rates:
                     row_data.append(win_rates[s])
@@ -2674,331 +2660,26 @@ class StrategySeasonal(object):
             result_rows.append(row_data)
 
         # 4. 建構欄位名稱
-        # columns = ['stock_id', 'month', 策略1累積淨, 策略2累積淨, ..., 策略1年報酬勝率, ...]
+        # columns = ['stock_id', 'month', {策略1累積淨}, {策略2累積淨}, ..., {策略1年報酬勝率}, {策略2年報酬勝率}, ...]
         columns = ['stock_id', 'month']
         for s in all_strategies:
             columns.append(f'{s}累積淨')
         for s in all_strategies:
             columns.append(f'{s}年報酬勝率')
 
-        # 5. 產生最後的 DataFrame 並回傳
+        # 5. 產生 DataFrame
         result_df = pd.DataFrame(result_rows, columns=columns)
+
         # ---------------------------------------------------------
         path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'strategies_backtest_comparison.xlsx')
         result_df.to_excel(path, index=False)        
         self.config_obj.logger.warning(f"完成比較，輸出至Excel。")
         # ---------------------------------------------------------
 
-
         return result_df
-    
-    def monthly_seasonaly_strategy_2025v1(self, seasonal_filtered_df, strategies_dict, principal=100000):
-        """
-        1) 逐月從 2010-01 跑到 2025-02
-        2) 檢查 seasonal_filtered_df 裡是否有該月份 (月份欄位 == 當前月份) 的標的
-        3) 每個標的根據「建議策略」讀取 strategies_dict 對應的四個參數
-        4) 平均分配資金去做回測 (單月買進->月末或停利點賣出)
-        5) 累計資金繼續到下一個月
-        6) 最後輸出「資產成長績效表」(年度、初始資金、結算資金、Q1、Q2、Q3、Q4、APR)
-        """
-
-        # 建立一個 (year, month) => capital 的紀錄，方便之後統計
-        monthly_capital_map = {}
-        # 第一次進場時的初始資金
-        current_capital = float(principal)
-
-        # 建立一個小函式，用來取得下個月份 (year, month) -> (year, month+1) 但要處理 year overflow
-        def next_month(y, m):
-            if m == 12:
-                return (y+1, 1)
-            else:
-                return (y, m+1)
-
-        start_year, start_month = 2010, 1
-        end_year, end_month     = 2025, 2
-
-        # 逐月迭代
-        y, m = start_year, start_month
-        while True:
-            # 儲存本月初的資金
-            start_of_month_capital = current_capital
-
-            # 找出 seasonal_filtered_df 中「月份 == m」的所有標的
-            cond = (seasonal_filtered_df['月份'] == m)
-            df_this_month = seasonal_filtered_df[cond]
-
-            if not df_this_month.empty:
-                # 有標的，則平均分配資金
-                n_stocks = len(df_this_month)
-                if n_stocks > 0:
-                    alloc_per_stock = current_capital / n_stocks
-
-                    # 先把 current_capital 清零，等待各股票賣出後再合計
-                    current_capital = 0.0
-
-                    # 對每支股票跑回測
-                    for idx, row in df_this_month.iterrows():
-                        stock_id = row['股票代號']
-                        market   = row['市場']
-                        strategy_name = row['建議策略']
-                        stats_params = [row['平均跌幅'], row['跌幅標準差'], row['平均漲幅'], row['漲幅標準差'], ]
-                        # 從 strategies_dict 取得對應參數
-                        if strategy_name not in strategies_dict:
-                            # 如果沒定義該策略，跳過
-                            final_cap = alloc_per_stock
-                        else:
-                            strategy_params = strategies_dict[strategy_name]  # [INIT_CAP%, BUY_IN_RATE, OUT_LV1, OUT_LV2]
-                            final_cap = self._run_monthly_trade_for_one_stock(stock_id,
-                                                                              market,
-                                                                              y,
-                                                                              m,
-                                                                              strategy_params,
-                                                                              stats_params,
-                                                                              alloc_per_stock)
-                        # 每支股票的賣出結果累加回 total
-                        current_capital += final_cap
-
-            # 本月份結束後，記錄最終資金
-            monthly_capital_map[(y,m)] = current_capital
-
-            # 進入下個月份
-            if (y == end_year) and (m == end_month):
-                break
-            y, m = next_month(y,m)
-
-        #----------------------------------------------------------------
-        # 生成「資產成長績效表」
-        # 年度 | 初始資金 | 結算資金 | Q1 | Q2 | Q3 | Q4 | APR
-        # Q1 = 1~3月的區間報酬，Q2=4~6，Q3=7~9，Q4=10~12
-        # APR 則是 (1+Q1)*(1+Q2)*(1+Q3)*(1+Q4)-1 (假設一年跑滿四季)
-        # 注意：2025 只跑到 2 月，故 Q1 只有前兩個月，Q2、Q3、Q4、APR空白
-
-        results = []
-        # 方便取用「月末資金」
-        def cap(year, month):
-            return monthly_capital_map.get((year, month), np.nan)
-
-        for year in range(2010, 2026):
-            # 若該年尚未開始交易 or 超過結束，就不列
-            if (year < start_year) or (year > end_year):
-                continue
-
-            # 取得該年年初的資金 (1月前一個月是前一年12月)
-            if year == start_year:
-                # 第一年(2010)的「年初」就是尚未交易前的 principal
-                year_start_capital = principal
-            else:
-                # 其他年 => 前一年12月為「年末資金」
-                prev_dec_cap = monthly_capital_map.get((year-1, 12), None)
-                if prev_dec_cap is None:
-                    # 若前一年12月沒資料，表示可能當年沒跑完
-                    # 就以該年1月作開頭
-                    prev_dec_cap = monthly_capital_map.get((year, 1), principal)
-                year_start_capital = prev_dec_cap
-
-            # 先假設該年結束資金 (year_end_capital) = year_start_capital
-            # 若該年實際有跑到12月，就更新成 12月的資金
-            # 若是 2025 則只到 2 月
-            if year < end_year:
-                year_end_capital = monthly_capital_map.get((year, 12), year_start_capital)
-            elif year == end_year:
-                # 2025 只到 2 月
-                year_end_capital = monthly_capital_map.get((year, 2), year_start_capital)
-            else:
-                # 不應該進到這行
-                year_end_capital = year_start_capital
-
-            # 計算 Q1 ~ Q4 報酬
-            # Q1 => 1~3 月， Q2 => 4~6 月, Q3 => 7~9 月, Q4 => 10~12 月
-            # 部分年度可能沒跑滿月份 (例如 2025)
-            def q_ret(q_start_month, q_end_month):
-                # 期初 = cap(year, q_start_month-1) (若 q_start_month=1, 則期初=year_start_capital)
-                # 期末 = cap(year, q_end_month)
-                if q_start_month == 1:
-                    capital_start = year_start_capital
-                else:
-                    capital_start = cap(year, q_start_month-1)
-                    # 若 None，則用年初資金
-                    if capital_start is None:
-                        capital_start = year_start_capital
-
-                capital_end = cap(year, q_end_month)
-                if (capital_end is None) or pd.isna(capital_end):
-                    return None  # 表示沒有跑到
-
-                if capital_start <= 0:
-                    return None
-                return (capital_end / capital_start) - 1.0
-
-            q1 = q_ret(1, 3)
-            q2 = q_ret(4, 6)
-            q3 = q_ret(7, 9)
-            q4 = q_ret(10, 12)
-
-            # 計算 APR (若四季都有)
-            if all([x is not None for x in [q1, q2, q3, q4]]):
-                apr = (1+q1)*(1+q2)*(1+q3)*(1+q4) - 1
-            else:
-                # 若不足四季，就不計算
-                apr = None
-
-            row_dict = {
-                '年度': year,
-                '初始資金': round(year_start_capital, 2),
-                '結算資金': round(year_end_capital, 2),
-                'Q1': (f"{q1*100:.2f}%" if q1 is not None else '-'),
-                'Q2': (f"{q2*100:.2f}%" if q2 is not None else '-'),
-                'Q3': (f"{q3*100:.2f}%" if q3 is not None else '-'),
-                'Q4': (f"{q4*100:.2f}%" if q4 is not None else '-'),
-                'APR': (f"{apr*100:.2f}%" if apr is not None else '-')
-            }
-            results.append(row_dict)
-
-            # 若已是 2025 就不用再列之後的年
-            if year == end_year:
-                break
-
-        perf_df = pd.DataFrame(results,
-                               columns=['年度','初始資金','結算資金','Q1','Q2','Q3','Q4','APR'])
-
-        # 你可視需求輸出到 excel
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '資產成長績效表.xlsx')
-        # path = os.path.join(self.config_obj.seasonal_summary, '資產成長績效表.xlsx')
-        perf_df.to_excel(path, index=False)
-
-        return perf_df
-
-    def _run_monthly_trade_for_one_stock(self,
-                                         stock_id,
-                                         market,
-                                         trade_year,
-                                         trade_month,
-                                         strategy_params,
-                                         stats_params,
-                                         capital_alloc):
-        """
-        執行「單檔股票、單月份」的回測邏輯：
-        1. 取得該月份的日線資料
-        2. 根據 strategy_params (四個參數) 做分批進場 / 停利出場
-        3. 月底強制平倉
-        4. 回傳最終資金
-        注意：這裡的資金單位統一以 USD 表示，
-             若 TW 則須將股價除以匯率(例如30)做計算。
-        """
-        INITIAL_CAP_PERCENT, BUY_IN_RATE, OUT_LV1_STD_RATE, OUT_LV2_STD_RATE = strategy_params
-        avg_drop, std_drop, avg_up, std_up = stats_params
-
-        # 讀取該股票全部日線資料
-        df_daily = self._get_daily_price_df(stock_id, market)
-        if df_daily.empty:
-            # 沒資料，資金不變
-            return capital_alloc
-
-        # 轉成月份欄位，以便篩選特定 year-month
-        df_daily['year'] = df_daily['date'].dt.year
-        df_daily['month'] = df_daily['date'].dt.month
-
-        # 只留該年度 & 該月份
-        df_month = df_daily[(df_daily['year'] == trade_year) & (df_daily['month'] == trade_month)].copy()
-        if df_month.empty:
-            # 代表這個月無交易日
-            return capital_alloc
-
-        df_month.sort_values(by='date', inplace=True)
-        first_row = df_month.iloc[0]
-        last_row = df_month.iloc[-1]
-
-        # 如果是台股要做匯率換算 (價格/30 => 轉成 USD)
-        fx_rate = 30 if market=='TW' else 1
-        open_price_usd  = first_row['open']  / fx_rate
-        close_price_usd = last_row['close'] / fx_rate
-
-        # 分批進場指標
-        enter_index = 1 + avg_drop + BUY_IN_RATE * std_drop
-        multiple_entry = (enter_index < 1)
-
-        # 初始化持股、資金
-        capital = capital_alloc
-        remain_capital = capital
-        share_holding  = 0.0
-        total_shares_bought = 0.0
-        is_half_sold   = False
-        has_added_position = False
-        sell_all = False
-        early_sold = False
-
-        # 第一筆買進股數
-        if multiple_entry:
-            invest_capital = capital * INITIAL_CAP_PERCENT
-            if open_price_usd <= 0:
-                # 價格有問題，就直接不交易
-                return capital_alloc
-            share_holding = invest_capital / open_price_usd
-            total_shares_bought = share_holding
-            remain_capital -= invest_capital
-        else:
-            # 一次買滿
-            if open_price_usd <= 0:
-                return capital_alloc
-            share_holding = capital / open_price_usd
-            total_shares_bought = share_holding
-            remain_capital = 0.0
-
-        # 停利門檻(用月初開盤價作基準)
-        stop_profit_lv1 = open_price_usd * (1 + avg_up + OUT_LV1_STD_RATE * std_up)
-        stop_profit_lv2 = open_price_usd * (1 + avg_up + OUT_LV2_STD_RATE * std_up)
-
-        # 加碼門檻
-        add_position_price = open_price_usd * enter_index if multiple_entry else None
-
-        # 逐日檢查
-        for i in range(len(df_month)):
-            row = df_month.iloc[i]
-            current_date = row['date']
-            high_price_usd = row['high'] / fx_rate
-            low_price_usd  = row['low']  / fx_rate
-            close_price_usd= row['close']/ fx_rate
-
-            # (1) 加碼判斷 (只加一次)
-            if multiple_entry and (not has_added_position) and (not sell_all):
-                if low_price_usd <= add_position_price:
-                    # 加碼
-                    if add_position_price > 0:
-                        add_shares = remain_capital / add_position_price
-                        share_holding += add_shares
-                        total_shares_bought += add_shares
-                        remain_capital = 0.0
-                    has_added_position = True
-
-            # (2) 停利判斷
-            if not sell_all:
-                # 2.1 若達到 stop_profit_lv1 且尚未賣一半
-                if (high_price_usd >= stop_profit_lv1) and (not is_half_sold):
-                    half_shares = share_holding * 0.5
-                    # 以 stop_profit_lv1 當作賣出價
-                    remain_capital += half_shares * stop_profit_lv1
-                    share_holding -= half_shares
-                    is_half_sold = True
-
-                # 2.2 如果收盤價 >= stop_profit_lv2，全部賣出
-                if close_price_usd >= stop_profit_lv2:
-                    remain_capital += share_holding * stop_profit_lv2
-                    share_holding = 0
-                    early_sold = True
-                    sell_all   = True
-                    break
-
-        # (3) 月底強制賣出
-        if share_holding > 0 and (not sell_all):
-            remain_capital += share_holding * close_price_usd
-            share_holding = 0
-
-        # 回傳最後資金
-        return remain_capital
-    
     def _get_daily_price_df(self, stock_id, market):
         """
-        拉取單檔股票的所有日線資料，並回傳 DataFrame。
+        讀取該股票全部日線資料，若無或價格有問題，回傳空DF。
         """
         if market == 'TW':
             sql_price = f"""
@@ -3007,7 +2688,7 @@ class StrategySeasonal(object):
                        [max]  AS [high],
                        [min]  AS [low],
                        [close]
-                FROM [STOCK_SKILL_DB].[dbo].[TW_STOCK_PRICE_Daily]
+                FROM {self.config_obj.tw_stock_price_table}
                 WHERE stock_id = '{stock_id}'
                 ORDER BY [date] ASC
             """
@@ -3030,8 +2711,453 @@ class StrategySeasonal(object):
         df['date'] = pd.to_datetime(df['date'])
         # 去除價格<=0的不合理數據
         df = df[(df['open']>0) & (df['high']>0) & (df['low']>0) & (df['close']>0)].copy()
-        return df    
+        return df
+
+    def _record_trade(self, trades_list, stock_id, date, price, direction, trade_shares):
+        """
+        僅保留指定的五個欄位。
+        """
+        trades_list.append({
+            'stock_id': stock_id,
+            'date': date,
+            'price': price,
+            'buy/sell': direction,
+            'shares': trade_shares
+        })
+
+    def monthly_seasonaly_strategy_each_transaction_record(self,
+                                                           seasonal_filtered_df,
+                                                           strategies_dict,
+                                                           principal=100000,
+                                                           start_year=2013,
+                                                           start_month=1,
+                                                           end_year=2025,
+                                                           end_month=2):
+        """
+        單一投組，逐月分配資金給符合月份的標的，再逐日執行買/賣。
+        僅輸出 5 欄位：stock_id, date, price, buy/sell, shares
+
+        說明：
+          - 已排除台股，僅保留美股 => 不再區分 market，不需匯率計算。
+          - DB 查詢只對 us_stock_price_table 做一次性查詢 (stock_id in (...) and date between ...).
+        """
+
+        cash_balance = float(principal)
+        self.config_obj.logger.warning(f"現金異動 {cash_balance}")
+        positions = {}         # stock_id -> shares
+        trades_list = []       # 最終輸出結果
+        stock_budget = {}      # 子資金池: stock_id -> leftover
+        self.positions_extra = {}  # 紀錄停利/加碼等資訊
+
+        def next_month(y, m):
+            return (y+1,1) if m==12 else (y,m+1)
+
+        prev_year = None
+        y, m = start_year, start_month
+
+        while True:
+            if (prev_year is None) or (y != prev_year):
+                self.config_obj.logger.warning(f"=== Starting year {y} ===")
+                prev_year = y
+
+            # 重置 positions_extra
+            self.positions_extra = {}
+            # 1) 找出當月標的 (已無TW，僅US)
+            df_this_month = seasonal_filtered_df[seasonal_filtered_df['月份'] == m].copy()
+            if not df_this_month.empty:
+                # 收集本月所有 US 的 stock_id
+                stock_list = df_this_month['股票代號'].unique().tolist()
+                n_stocks = len(stock_list)
+                
+
+                if n_stocks > 0:
+                    # 2) 先以月份計算日期範圍
+                    days_in_month = calendar.monthrange(y, m)[1]
+                    start_date = f"{y}-{m:02d}-01"
+                    end_date   = f"{y}-{m:02d}-{days_in_month:02d}"
+
+                    # 3) 一次抓取該月所有 stock_id 的美股日線資料
+                    in_clause = ','.join(f"'{sid}'" for sid in stock_list)
+                    query = f"""
+                        SELECT [date],[stock_id],
+                               [Open]  AS [open],
+                               [High]  AS [high],
+                               [Low]   AS [low],
+                               [Close] AS [close]
+                        FROM {self.config_obj.us_stock_price_table}
+                        WHERE stock_id IN ({in_clause})
+                          AND [date] >= '{start_date}'
+                          AND [date] <= '{end_date}'
+                        ORDER BY [date]
+                    """
+                    data_us = self.sql_execute(query)
+                    if data_us:
+                        df_us = pd.DataFrame(data_us)
+                        df_us['date'] = pd.to_datetime(df_us['date'])
+                        # 去除不合理行情
+                        df_us = df_us[
+                            (df_us['open']>0)&
+                            (df_us['high']>0)&
+                            (df_us['low']>0)&
+                            (df_us['close']>0)
+                        ].copy()
+                    else:
+                        df_us = pd.DataFrame()
+
+                    # 4) 再次篩選有資料的 valid_stocks
+                    valid_stocks = []
+                    if not df_us.empty:
+                        for stk in stock_list:
+                            sub = df_us[df_us['stock_id'] == stk]
+                            if not sub.empty:
+                                valid_stocks.append(stk)
+                    # self.config_obj.logger.warning(f"{y}年 {m}月 共{len(valid_stocks)}個標的有交易 ===")
+                    if len(valid_stocks)>0:
+                        # (A) 均分資金 => stock_budget
+                        alloc_per_stock = cash_balance / len(valid_stocks)
+                        total_alloc = alloc_per_stock * len(valid_stocks)
+                        cash_balance -= total_alloc
+                        # self.config_obj.logger.warning(f"現金異動 {cash_balance}")
+                        for sid in valid_stocks:
+                            stock_budget[sid] = alloc_per_stock
+                        # self.config_obj.logger.warning(f"stock_budget {stock_budget}")
+                        # (B) 把 seasonal_filtered_df 的欄位帶進 df_us
+                        #     (如 avg_drop, std_drop, avg_up, std_up, 建議策略)
+                        #     之後可於每筆資料 row2 讀取
+                        df_month_small = df_this_month[['股票代號','平均跌幅','跌幅標準差','平均漲幅','漲幅標準差','建議策略']]
+                        df_month_small.columns = ['stock_id','avg_drop','std_drop','avg_up','std_up','strategy_name']
+                        df_merge = pd.merge(
+                            df_us, 
+                            df_month_small, 
+                            on='stock_id',
+                            how='inner'
+                        )
+                        df_merge.sort_values(by=['date','stock_id'], inplace=True)
+
+                        unique_days = df_merge['date'].unique()
+                        for day in unique_days:
+                            df_day = df_merge[df_merge['date']==day]
+                            for i2, row2 in df_day.iterrows():
+                                stock_id = row2['stock_id']
+                                open_p   = row2['open']
+                                high_p   = row2['high']
+                                low_p    = row2['low']
+                                close_p  = row2['close']
+                                avg_drop = row2['avg_drop']
+                                std_drop = row2['std_drop']
+                                avg_up   = row2['avg_up']
+                                std_up   = row2['std_up']
+                                strategy_name = row2['strategy_name']
+
+                                if strategy_name not in strategies_dict:
+                                    continue
+                                INIT_CAP_PERCENT, BUY_IN_RATE, OUT_LV1_STD_RATE, OUT_LV2_STD_RATE = strategies_dict[strategy_name]
+
+                                enter_index = 1 + avg_drop + BUY_IN_RATE*std_drop
+                                multiple_entry = (enter_index < 1)
+
+                                if stock_id not in self.positions_extra:
+                                    self.positions_extra[stock_id] = {
+                                        'entry_price': None,
+                                        'stop_lv1': None,
+                                        'stop_lv2': None,
+                                        'add_price': None,
+                                        'has_added': False,
+                                        'is_half_sold': False,
+                                        'exited': False
+                                    }
+                                pos_info = self.positions_extra[stock_id]
+                                shares_holding = positions.get(stock_id, 0)
+
+                                # ============= (A) 首次買進 =============
+                                if pos_info['entry_price'] is None and (stock_budget.get(stock_id,0)>0) and (open_p>0):
+                                    if multiple_entry:
+                                        first_invest = stock_budget[stock_id] * INIT_CAP_PERCENT
+                                    else:
+                                        first_invest = stock_budget[stock_id]
+
+                                    if first_invest>0 and open_p>0:
+                                        buy_shares = first_invest / open_p
+                                        positions[stock_id] = shares_holding + buy_shares
+                                        stock_budget[stock_id] -= first_invest
+
+                                        # 停利門檻
+                                        pos_info['entry_price'] = open_p
+                                        pos_info['stop_lv1'] = open_p*(1+avg_up+OUT_LV1_STD_RATE*std_up)
+                                        pos_info['stop_lv2'] = open_p*(1+avg_up+OUT_LV2_STD_RATE*std_up)
+                                        pos_info['add_price'] = open_p*enter_index if multiple_entry else None
+                                        pos_info['has_added'] = False
+                                        pos_info['is_half_sold'] = False
+                                        pos_info['exited'] = False
+
+                                        # self.config_obj.logger.warning(f"pos_info {pos_info}")
+                                        self._record_trade(trades_list, stock_id, day, open_p, 'BUY', buy_shares)
+
+                                # ============= (B) 加碼(只一次) =============
+                                if multiple_entry and (not pos_info['has_added']) and (not pos_info['exited']):
+                                    if pos_info['add_price'] and pos_info['add_price']>0:
+                                        if low_p <= pos_info['add_price'] and stock_budget.get(stock_id,0)>0:
+                                            leftover = stock_budget[stock_id]
+                                            add_shares = leftover / pos_info['add_price']
+                                            positions[stock_id] += add_shares
+                                            stock_budget[stock_id] = 0
+                                            pos_info['has_added'] = True
+                                            
+
+                                            self._record_trade(trades_list, stock_id, day, pos_info['add_price'], 'BUY', add_shares)
+                                            # self.config_obj.logger.warning(f"BUY                現金異動 {cash_balance}")
+
+                                # ============= (C) 停利判斷 =============
+                                if shares_holding>0 and (not pos_info['exited']):
+                                    # 2.1 賣一半
+                                    if pos_info['stop_lv1'] and (not pos_info['is_half_sold']):
+                                        if high_p >= pos_info['stop_lv1']:
+                                            half_shares = positions[stock_id]*0.5
+                                            positions[stock_id] -= half_shares
+                                            gain = half_shares * pos_info['stop_lv1']
+                                            cash_balance += gain
+                                            
+                                            pos_info['is_half_sold']=True
+
+                                            self._record_trade(trades_list, stock_id, day, pos_info['stop_lv1'], 'SELL', -half_shares)
+                                            # self.config_obj.logger.warning(f"SELL停利Lv1        現金異動 {cash_balance}")
+
+                                    # 2.2 全出
+                                    if pos_info['stop_lv2'] and positions[stock_id]>0:
+                                        if close_p >= pos_info['stop_lv2']:
+                                            final_sh = positions[stock_id]
+                                            positions[stock_id] = 0
+                                            gain = final_sh * pos_info['stop_lv2']
+                                            cash_balance += gain
+                                            pos_info['exited'] = True
+
+                                            self._record_trade(trades_list, stock_id, day, pos_info['stop_lv2'], 'SELL', -final_sh)
+                                            # self.config_obj.logger.warning(f"SELL停利Lv2        現金異動 {cash_balance}")
+
+                        # ============= (D) 月末強制平倉 =============
+                        if not df_merge.empty:
+                            last_day = df_merge['date'].max()
+                            df_last = df_merge[df_merge['date'] == last_day]
+                            for i3, row3 in df_last.iterrows():
+                                st_id = row3['stock_id']
+                                c_p   = row3['close']
+                                if positions.get(st_id,0)>0:
+                                    sh = positions[st_id]
+                                    positions[st_id]=0
+                                    gain = sh*c_p
+                                    cash_balance+=gain
+                                    # self.config_obj.logger.warning(f"SELL ALL           現金異動 {cash_balance}")
+
+                                    self._record_trade(trades_list, st_id, last_day, c_p, 'SELL', -sh)
+                                    if st_id in self.positions_extra:
+                                        self.positions_extra[st_id]['exited']=True
+
+                        # (E) 月底退回未用到的子資金
+                        for stk in valid_stocks:
+                            leftover = stock_budget.get(stk,0)
+                            if leftover>0:
+                                cash_balance+=leftover
+                                # self.config_obj.logger.warning(f"現金異動 {cash_balance}")
+                            stock_budget[stk]=0
+            
+            # self.config_obj.logger.warning(f"{y}-{m}")
+            # self.config_obj.logger.warning(f"月末CASH:      {cash_balance}")
+
+            if (y==end_year) and (m==end_month):
+                break
+            y,m=next_month(y,m)
+
+        trades_df = pd.DataFrame(trades_list, columns=['stock_id','date','price','buy/sell','shares'])
+
+        # ---------------------------------------------------------
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_季節性策略回測_逐筆交易紀錄.xlsx')
+        trades_df.to_excel(path, index=False)        
+        self.config_obj.logger.warning(f"回測完成，輸逐筆交易紀錄出至Excel。")
+        # ---------------------------------------------------------
+
+        return trades_df
+
+    def sql_execute(self, query):
+
+        if self.config_obj.LOCAL_FLAG:
+            conn = pymssql.connect(host='localhost', user = 'myfirstjump', password='myfirstjump', database='US_DB')
+        else:
+            conn = pymssql.connect(host='localhost', user = 'stock_search', password='1qazZAQ!', database='STOCK_SKILL_DB')
+        cursor = conn.cursor(as_dict=True)
+        cursor.execute(query)
+        
+        # 判斷是否是DML操作
+        if query.strip().upper().startswith("DELETE") or query.strip().upper().startswith("INSERT") or query.strip().upper().startswith("UPDATE"):
+            rows_affected = cursor.rowcount
+            conn.commit()  # 確保DML操作被提交
+            cursor.close()
+            conn.close()
+            return rows_affected
+        else:
+            data = []
+            for row in cursor:
+                data.append(row)
+            cursor.close()
+            conn.close()
+        return data
+
+class StrategyPerformance(object):
+
+    def __init__(self):
+        self.config_obj = Configuration()
     
+    def generate_types_of_performance_output(self, df_trades, initial_capital):
+
+        '''
+        輸入逐日交易紀錄，並輸出所需的績效圖表。
+        '''
+        df_trades['date'] = pd.to_datetime(df_trades['date'])
+        df_trades.sort_values("date", inplace=True)
+
+        current_cash = initial_capital
+        # 股票持倉 dict (key = stock_id, value = 持股股數)
+        positions = {}
+
+        # 收集每日資產淨值資料
+        records = []  # list of (date, portfolio_value)
+
+        # 找出所有交易日期的範圍
+        start_date = df_trades['date'].min()
+        end_date   = df_trades['date'].max()
+
+        # 產生從 start_date 到 end_date 的所有曆日 (亦可只針對交易所開市日)
+        date_range = pd.date_range(start_date, end_date, freq='D')
+
+        trade_idx = 0  # df_trades 的 row index
+        n_trades = len(df_trades)
+
+        for current_date in date_range:
+            # 先處理當天所有交易 (可能同一天多筆)
+            while trade_idx < n_trades and df_trades.iloc[trade_idx]['date'].date() == current_date.date():
+
+                if trade_idx % 200 == 0:
+                    self.config_obj.logger.warning(f"進度...{current_date}")
+                row = df_trades.iloc[trade_idx]
+                stock_id = row['stock_id']
+                trade_price = row['price']
+                shares = row['shares']
+                side = row['buy/sell']
+
+                # BUY -> 扣現金，增加持股
+                # SELL -> 增現金，減少持股
+                cost = trade_price * shares
+                
+                if side.upper() == "BUY":
+                    current_cash -= cost
+                    positions[stock_id] = positions.get(stock_id, 0.0) + shares
+                else:  # SELL
+                    current_cash += abs(cost)  # shares 可能是負號，故取 abs
+                    positions[stock_id] = positions.get(stock_id, 0.0) - abs(shares)
+                    
+                    # 若賣到持股歸零，可刪除該 stock_id
+                    if abs(positions[stock_id]) < 1e-8:
+                        del positions[stock_id]
+                
+                trade_idx += 1
+
+            # 計算今日 portfolio value
+            # = 剩餘現金 + sum(持股股數 * 當天收盤價)
+            portfolio_value = current_cash
+            
+            for sid, qty in positions.items():
+                # 取得 sid 在 current_date 的收盤價
+                cprice = self.get_close_price(sid, current_date.strftime("%Y-%m-%d"))
+                if cprice is None:
+                    # 可依需求做 forward fill 或略過
+                    cprice = 0.0
+                portfolio_value += qty * cprice
+            
+            records.append((current_date, portfolio_value))
+        #--------------------------------------------------------------
+        # 4. 將每日 NAV 整理為 DataFrame，並計算年度、季度表
+        #--------------------------------------------------------------
+        df_daily_nav = pd.DataFrame(records, columns=["date", "nav"])
+
+        # 幫助後續計算報酬率
+        df_daily_nav['year'] = df_daily_nav['date'].dt.year
+        df_daily_nav['quarter'] = df_daily_nav['date'].dt.quarter
+
+        #（1）年度初始/結束資金
+        #    groupby 年份後，取當年第一天與最後一天 nav
+        grouped_year = df_daily_nav.groupby('year')
+        yearly_data = []
+        for y, grp in grouped_year:
+            grp = grp.sort_values('date')
+            year_start_nav = grp.iloc[0]['nav']
+            year_end_nav   = grp.iloc[-1]['nav']
+            
+            #（2）計算各季報酬(Q1, Q2, Q3, Q4)
+            q_returns = {}
+            for q in [1, 2, 3, 4]:
+                grp_q = grp[grp['quarter']==q]
+                if len(grp_q) > 0:
+                    q_start = year_start_nav  if q == 1 else grp[grp['quarter']<q].iloc[-1]['nav']
+                    q_end   = grp_q.iloc[-1]['nav']
+                    q_return_pct = (q_end - q_start) / q_start * 100
+                    q_returns[q] = q_return_pct
+                else:
+                    q_returns[q] = np.nan  # 該季沒交易日可留空
+            
+            #（3）年度報酬率(不嚴格年化，只是該年度漲幅)
+            apr = (year_end_nav - year_start_nav) / year_start_nav * 100
+
+            yearly_data.append({
+                "year": y,
+                "start_capital": year_start_nav,
+                "end_capital": year_end_nav,
+                "Q1": q_returns[1],
+                "Q2": q_returns[2],
+                "Q3": q_returns[3],
+                "Q4": q_returns[4],
+                "APR": apr
+            })
+
+        df_yearly = pd.DataFrame(yearly_data)
+
+        # ---------------------------------------------------------
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_季節性策略回測_資產成長績效表.xlsx')
+        df_yearly.to_excel(path, index=False)        
+
+        # ---------------------------------------------------------
+
+        plt.figure(figsize=(10,6))
+        plt.plot(df_daily_nav['date'], df_daily_nav['nav'], label='Portfolio NAV')
+        plt.title("資產成長走勢圖")
+        plt.xlabel("Date")
+        plt.ylabel("Portfolio Value ($)")
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+
+        self.config_obj.logger.warning(f"回測完成，輸逐筆交易紀錄出至Excel。")
+
+
+    def get_close_price(self, stock_id, date_str):
+        """
+        根據 stock_id, date_str 從資料庫或快取的 df_us 查詢該日收盤價
+        若該日無交易(休市)或價格 NaN，可自行決定:
+        - 用前一交易日價格填補 (forward fill) 
+        - 或直接返回 None 做進一步處理
+        """
+        query = f"""
+        SELECT [date],[stock_id],[Close] AS [close]
+        FROM {self.config_obj.us_stock_price_table}
+        WHERE stock_id='{stock_id}' AND [date]='{date_str}'
+        """
+        # 假設這裡使用某函式 sql_execute(query) 回傳 list of dict
+        data_us = self.sql_execute(query)
+        
+        if len(data_us) == 0:
+            # 沒查到，視情況做 forward fill 或回傳 None
+            return None
+        
+        return data_us[0]['close']
+
     def sql_execute(self, query):
 
         if self.config_obj.LOCAL_FLAG:
