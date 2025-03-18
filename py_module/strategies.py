@@ -3014,16 +3014,37 @@ class StrategyPerformance(object):
         df_trades['date'] = pd.to_datetime(df_trades['date'])
         df_trades.sort_values("date", inplace=True)
 
+        # 找出所有交易日期的範圍
+        all_symbols = df_trades['stock_id'].unique().tolist()
+        symbol_list_str = ",".join(f"'{s}'" for s in all_symbols)
+        start_date = df_trades['date'].min()
+        end_date   = df_trades['date'].max()
+        start_date_str = start_date.strftime("%Y-%m-%d")
+        end_date_str   = end_date.strftime("%Y-%m-%d")
+
+        query = f"""
+        SELECT [date], [stock_id], [Close] AS [close]
+        FROM {self.config_obj.us_stock_price_table}
+        WHERE [date] >= '{start_date_str}'
+          AND [date] <= '{end_date_str}'
+          AND [stock_id] IN ({symbol_list_str})
+        ORDER BY [date], [stock_id];
+        """
+        data_all = self.sql_execute(query)
+        df_price = pd.DataFrame(data_all)  # columns: date, stock_id, close
+        df_price['date'] = pd.to_datetime(df_price['date'])
+        # 為了查詢方便，可以做 pivot 或 MultiIndex
+        # pivot: row=日期, col=stock_id, value=收盤價
+        df_price_pivot = df_price.pivot(index='date', columns='stock_id', values='close')
+
+        #-----------------------------------
+        # 進行每日 NAV 計算
+        #-----------------------------------
         current_cash = initial_capital
         # 股票持倉 dict (key = stock_id, value = 持股股數)
         positions = {}
-
         # 收集每日資產淨值資料
         records = []  # list of (date, portfolio_value)
-
-        # 找出所有交易日期的範圍
-        start_date = df_trades['date'].min()
-        end_date   = df_trades['date'].max()
 
         # 產生從 start_date 到 end_date 的所有曆日 (亦可只針對交易所開市日)
         date_range = pd.date_range(start_date, end_date, freq='D')
@@ -3041,13 +3062,13 @@ class StrategyPerformance(object):
                 stock_id = row['stock_id']
                 trade_price = row['price']
                 shares = row['shares']
-                side = row['buy/sell']
+                side = row['buy/sell'].upper()
 
                 # BUY -> 扣現金，增加持股
                 # SELL -> 增現金，減少持股
                 cost = trade_price * shares
                 
-                if side.upper() == "BUY":
+                if side == "BUY":
                     current_cash -= cost
                     positions[stock_id] = positions.get(stock_id, 0.0) + shares
                 else:  # SELL
@@ -3063,14 +3084,20 @@ class StrategyPerformance(object):
             # 計算今日 portfolio value
             # = 剩餘現金 + sum(持股股數 * 當天收盤價)
             portfolio_value = current_cash
+
+            try:
+                price_series = df_price_pivot.loc[current_date]
+            except KeyError:
+                price_series = pd.Series(dtype='float64')  # 如果當天沒資料
             
             for sid, qty in positions.items():
                 # 取得 sid 在 current_date 的收盤價
-                cprice = self.get_close_price(sid, current_date.strftime("%Y-%m-%d"))
-                if cprice is None:
-                    # 可依需求做 forward fill 或略過
-                    cprice = 0.0
-                portfolio_value += qty * cprice
+                c_price = price_series.get(sid, np.nan)
+                if pd.isna(c_price):
+                    # 若是 NaN, 可能要改用前一日收盤價(若要 forward fill)
+                    # 這裡簡單視為 0 or 跳過
+                    c_price = 0.0
+                portfolio_value += qty * c_price
             
             records.append((current_date, portfolio_value))
         #--------------------------------------------------------------
