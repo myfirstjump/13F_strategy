@@ -113,10 +113,19 @@ class StockStrategies(object):
     
     def strategy_performance_output(self):
 
-        path = os.path.join(self.config_obj.seasonal_summary, '2025-03-17_季節性策略回測_逐筆交易紀錄.xlsx')
+        strategy_name = '季節性策略'
+        strategy_name = '動能策略'
+        if strategy_name == '季節性策略':
+            path = os.path.join(self.config_obj.seasonal_summary, '2025-03-17_季節性策略回測_逐筆交易紀錄.xlsx')
+            us_price_table = self.config_obj.us_stock_price_table
+            ini_cap = 100000
+        elif strategy_name == '動能策略':
+            path = os.path.join(self.config_obj.seasonal_summary, '2025-03-23_動能策略_逐筆交易紀錄.xlsx') ### Produced by hgdfmjg
+            us_price_table = self.config_obj.us_stock_price_table_IBAPI ### 
+            ini_cap = 100000
+            
         trade_records = pd.read_excel(path)
-
-        self.performance.generate_types_of_performance_output(trade_records, initial_capital=100000)
+        self.performance.generate_types_of_performance_output(strategy_name, trade_records, us_price_table, initial_capital=ini_cap)
 
 
 

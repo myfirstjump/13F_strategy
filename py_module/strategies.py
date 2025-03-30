@@ -3005,8 +3005,16 @@ class StrategyPerformance(object):
 
     def __init__(self):
         self.config_obj = Configuration()
-    
-    def generate_types_of_performance_output(self, df_trades, initial_capital):
+
+
+    def get_all_price_date(self, price_table):
+
+        query = '''
+        SELECT DISTINCT [date]
+        FROM {}
+        '''.format(price_table)
+        return query
+    def generate_types_of_performance_output(self, strategy_name, df_trades, us_price_table, initial_capital):
 
         '''
         輸入逐日交易紀錄，並輸出所需的績效圖表。
@@ -3024,7 +3032,7 @@ class StrategyPerformance(object):
 
         query = f"""
         SELECT [date], [stock_id], [Close] AS [close]
-        FROM {self.config_obj.us_stock_price_table}
+        FROM {us_price_table}
         WHERE [date] >= '{start_date_str}'
           AND [date] <= '{end_date_str}'
           AND [stock_id] IN ({symbol_list_str})
@@ -3036,6 +3044,13 @@ class StrategyPerformance(object):
         # 為了查詢方便，可以做 pivot 或 MultiIndex
         # pivot: row=日期, col=stock_id, value=收盤價
         df_price_pivot = df_price.pivot(index='date', columns='stock_id', values='close')
+        df_price_pivot[df_price_pivot <= 0] = np.nan
+        df_price_pivot.ffill(inplace=True) # 使用forward fill補值，每個股票的缺失值都會被自動填成該股票之前「最近一次」的有效收盤價
+
+        # self.config_obj.logger.warning(f"DF PRICE")
+        # print(df_price)
+        # self.config_obj.logger.warning(f"DF PRICE PIVOT")
+        # print(df_price_pivot)
 
         #-----------------------------------
         # 進行每日 NAV 計算
@@ -3047,7 +3062,24 @@ class StrategyPerformance(object):
         records = []  # list of (date, portfolio_value)
 
         # 產生從 start_date 到 end_date 的所有曆日 (亦可只針對交易所開市日)
-        date_range = pd.date_range(start_date, end_date, freq='D')
+
+        if strategy_name == '動能策略':
+        
+            query = self.get_all_price_date(self.config_obj.us_stock_price_table_IBAPI) # 為了取得時間欄位
+        else:
+            query = self.get_all_price_date(self.config_obj.us_stock_price_table) # 為了取得時間欄位
+        all_date_list = self.sql_execute(query)
+        all_date_list = pd.DataFrame(all_date_list)['date'].values
+        us_sorted_dates = sorted(all_date_list)
+        self.us_sorted_dates = pd.to_datetime(us_sorted_dates)
+        
+        date_range = self.us_sorted_dates   # pd.date_range(start_date, end_date, freq='D') ### 應該使用開市日，不宜使用全部日期。 
+
+        if strategy_name == '動能策略':
+            date_range = date_range[date_range >= '2016-12-29']
+            date_range = date_range[date_range < '2024-11-20']   
+        elif strategy_name == '季節性策略':
+            date_range = date_range[date_range < '2025-03-01']  
 
         trade_idx = 0  # df_trades 的 row index
         n_trades = len(df_trades)
@@ -3120,18 +3152,40 @@ class StrategyPerformance(object):
             
             #（2）計算各季報酬(Q1, Q2, Q3, Q4)
             q_returns = {}
-            for q in [1, 2, 3, 4]:
-                grp_q = grp[grp['quarter']==q]
-                if len(grp_q) > 0:
-                    q_start = year_start_nav  if q == 1 else grp[grp['quarter']<q].iloc[-1]['nav']
-                    q_end   = grp_q.iloc[-1]['nav']
-                    q_return_pct = (q_end - q_start) / q_start * 100
-                    q_returns[q] = q_return_pct
-                else:
-                    q_returns[q] = np.nan  # 該季沒交易日可留空
-            
+
+            if strategy_name =='季節性策略':
+                for q in [1, 2, 3, 4]:
+                    grp_q = grp[grp['quarter']==q]
+                    if len(grp_q) > 0:
+                        q_start = year_start_nav  if q == 1 else grp[grp['quarter']<q].iloc[-1]['nav']
+                        q_end   = grp_q.iloc[-1]['nav']
+                        q_return_pct = (q_end - q_start) / q_start
+                        q_returns[q] = q_return_pct
+                    else:
+                        q_returns[q] = np.nan  # 該季沒交易日可留空
+            elif strategy_name =='動能策略':
+
+                for q in [1, 2, 3, 4]:
+                    grp_q = grp[grp['quarter'] == q]
+                    if not grp_q.empty:
+                        # 若 q == 1，則直接用 year_start_nav；否則檢查上一季資料是否為空
+                        if q == 1:
+                            q_start = year_start_nav
+                        else:
+                            df_sub = grp[grp['quarter'] < q]
+                            if df_sub.empty:
+                                q_start = year_start_nav
+                            else:
+                                q_start = df_sub.iloc[-1]['nav']
+
+                        q_end = grp_q.iloc[-1]['nav']
+                        q_return_pct = (q_end - q_start) / q_start
+                        q_returns[q] = q_return_pct
+                    else:
+                        q_returns[q] = np.nan  # 該季若完全沒交易日，就以 NaN 表示
+
             #（3）年度報酬率(不嚴格年化，只是該年度漲幅)
-            apr = (year_end_nav - year_start_nav) / year_start_nav * 100
+            apr = (year_end_nav - year_start_nav) / year_start_nav
 
             yearly_data.append({
                 "year": y,
@@ -3147,14 +3201,21 @@ class StrategyPerformance(object):
         df_yearly = pd.DataFrame(yearly_data)
 
         # ---------------------------------------------------------
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_季節性策略回測_資產成長績效表.xlsx')
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_Daily_NAV.xlsx')
+        df_daily_nav.to_excel(path, index=False)  
+
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_資產成長績效表.xlsx')
         df_yearly.to_excel(path, index=False)        
-
         # ---------------------------------------------------------
-
+        if strategy_name == '季節性策略':
+            title_ = 'Assets Growth Trend (SEASONAL)'
+        elif strategy_name == '動能策略':
+            title_ = 'Assets Growth Trend (MOMENTUM)'
+        else:
+            title_ = 'Assets Growth Trend (Cash + Position)'
         plt.figure(figsize=(10,6))
-        plt.plot(df_daily_nav['date'], df_daily_nav['nav'], label='Portfolio NAV')
-        plt.title("資產成長走勢圖")
+        plt.plot(df_daily_nav['date'], df_daily_nav['nav'], label='Portfolio NAV', linewidth=0.5)
+        plt.title(title_)
         plt.xlabel("Date")
         plt.ylabel("Portfolio Value ($)")
         plt.legend()
