@@ -74,10 +74,15 @@ class StockStrategies(object):
         # target_table = self.config_obj.monthly_info
         # self.seasonal_strategy_obj.monthly_seasonality_stats(target_table)
 
-        ### 透過seasonal_summary資料，進行回測
-        path = os.path.join(self.config_obj.seasonal_summary, '2025-03-09_seasonal_summary(filtered).xlsx')
-        seasonal_filtered_df = pd.read_excel(path)
-        # final_result = self.seasonal_strategy_obj.monthly_seasonaly_strategy_backtest(seasonal_filtered_df)
+        ### 根據統計資料，進行標的自動篩選
+        # path = os.path.join(self.config_obj.seasonal_summary, '2025-04-06_seasonal_summary(2013-2022).xlsx')
+        # seasonal_summary_df = pd.read_excel(path)
+        # self.seasonal_strategy_obj.monthly_seasonal_summary_filtering(seasonal_summary_df)
+
+        ### 透過seasonal_summary(filtered)資料，進行回測，觀察哪種進出策略比較優異。
+        # path = os.path.join(self.config_obj.seasonal_summary, '2025-04-07_seasonal_summary(2013-2022_filtered).xlsx')
+        # seasonal_filtered_df = pd.read_excel(path)
+        # final_result = self.seasonal_strategy_obj.monthly_seasonaly_strategy_backtest(seasonal_filtered_df) ### 較不會用到，獨立計算回測用。
         strategies_dict = {
             '01分進': [0.5,0.5,999,999],
             '02分進分出1': [0.5,0.5,0.5,999],
@@ -101,26 +106,37 @@ class StockStrategies(object):
         #                                                                             OUT_LV2_STD_RATE=param[3],       # 提早停利時(全數出場)，最大漲幅標準差的係數 (↑越難停利) 
         #                                                                             principal=100000,)
 
-
+        '''
+        以下為整合策略結果用:
+        2025-03-09_seasonal_strategy_01分進(0.5-0.5-999-999)_backtest.xlsx
+        2025-03-09_seasonal_strategy_02分進分出1(0.5-0.5-0.5-999)_backtest.xlsx
+        ...
+        2025-03-09_seasonal_strategy_10單進分出2(1.0-999-1.0-2.0)_backtest.xlsx
+        產製比較表
+        '''
         # strategy_paths = []
         # for idx, (name, param) in enumerate(strategies_dict.items()):
-        #     path = os.path.join(self.config_obj.seasonal_summary, '2025-03-09' + f'_seasonal_strategy_{name}({param[0]}-{param[1]}-{param[2]}-{param[3]})_backtest.xlsx')
+        #     path = os.path.join(self.config_obj.seasonal_summary, '2025-04-07' + f'_seasonal_strategy_{name}({param[0]}-{param[1]}-{param[2]}-{param[3]})_backtest.xlsx')
         #     strategy_paths.append(path)
         # self.seasonal_strategy_obj.seasonal_strategies_comparison_function(strategy_paths)
 
+        ### 計算績效
         # self.seasonal_strategy_obj.monthly_seasonaly_strategy_2025v1(seasonal_filtered_df, strategies_dict)
+        ### 輸出逐筆交易紀錄
+        path = os.path.join(self.config_obj.seasonal_summary, '2025-04-07_seasonal_summary(2013-2022_filtered).xlsx')
+        seasonal_filtered_df = pd.read_excel(path)
         self.seasonal_strategy_obj.monthly_seasonaly_strategy_each_transaction_record(seasonal_filtered_df, strategies_dict)
     
     def strategy_performance_output(self):
 
         strategy_name = '季節性策略'
-        strategy_name = '動能策略'
+        # strategy_name = '動能策略'
         if strategy_name == '季節性策略':
-            path = os.path.join(self.config_obj.seasonal_summary, '2025-03-17_季節性策略回測_逐筆交易紀錄.xlsx')
+            path = os.path.join(self.config_obj.seasonal_summary, '2025-04-07_季節性策略回測_逐筆交易紀錄.xlsx')
             us_price_table = self.config_obj.us_stock_price_table
             ini_cap = 100000
         elif strategy_name == '動能策略':
-            path = os.path.join(self.config_obj.seasonal_summary, '2025-03-23_動能策略_逐筆交易紀錄.xlsx') ### Produced by hgdfmjg
+            path = os.path.join(self.config_obj.seasonal_summary, '2025-04-06_動能策略_逐筆交易紀錄.xlsx') ### Produced by hgdfmjg
             us_price_table = self.config_obj.us_stock_price_table_IBAPI ### 
             ini_cap = 100000
             

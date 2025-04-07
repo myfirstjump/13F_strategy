@@ -2104,12 +2104,14 @@ class StrategySeasonal(object):
                 StdDevPct2Low   : 跌幅標準差
                 AvgPct2High     : 平均漲幅
                 StdDevPct2High  : 漲幅標準差
+                sharpeMonth     : 月夏普值
         """
         stats_df = None
 
         query_stock_ids = f"""
         SELECT DISTINCT stock_id, market
         FROM {source_table}
+        WHERE [month] < '2023-01'
         """
         stock_info = self.sql_execute(query_stock_ids)
         
@@ -2125,6 +2127,7 @@ class StrategySeasonal(object):
             FROM {source_table}
             WHERE stock_id = '{s_id}'
             AND market = '{s_market}'
+            AND [month] < '2023-01'
             """
             data = self.sql_execute(query_stock_monthly_data)
             if not data: ### 處理無資料的狀況
@@ -2150,6 +2153,9 @@ class StrategySeasonal(object):
                 StdDevPct2Low=('pct_to_low', 'std'),
                 AvgPct2High=('pct_to_high', 'mean'),
                 StdDevPct2High=('pct_to_high', 'std'),
+                SharpeMonth=('monthly_return', 
+                 lambda x: ((x.mean() - 0.04 / 12) / x.std())
+                           if x.std() != 0 else float('nan'))
             ).reset_index()
             
             if stats_df is None:
@@ -2160,11 +2166,54 @@ class StrategySeasonal(object):
                                     'WinRate': '勝率', 'AvgReturn': '平均報酬率', 'StdDevReturn':'報酬率標準差',
                                       'AvgMaxDrawdown': '平均最大回撤', 'MaxDrawdown': '最大回撤', 
                                       'AvgVolume': '平均交易量', 'AvgPct2Low':'平均跌幅', 'AvgPct2High':'平均漲幅',
-                                      'StdDevPct2Low':'跌幅標準差', 'StdDevPct2High':'漲幅標準差',}, axis='columns')
+                                      'StdDevPct2Low':'跌幅標準差', 'StdDevPct2High':'漲幅標準差', 'SharpeMonth':'月夏普值'}, axis='columns')
         
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_seasonal_summary.xlsx')
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_seasonal_summary(2013-2022).xlsx')
         stats_df.to_excel(path, index=False)
         return stats_df
+
+    def monthly_seasonal_summary_filtering(self, seasonal_summary_df):
+        '''
+        篩選機制
+            	1. 0.9勝率 以上
+                2. 平均交易量 > 10萬 
+                    if 報酬率10% > 5檔
+                            if > 10檔
+                                用夏普值排序，取10
+                            else:
+                                取全部
+                    else:
+                        改為報酬率3%，取報酬率前10。
+        '''
+        
+        result_df = None
+        seasonal_summary_df = seasonal_summary_df[seasonal_summary_df['市場'] == 'US']
+        seasonal_summary_df = seasonal_summary_df[seasonal_summary_df['歷時年數'] >= 8]
+        seasonal_summary_df = seasonal_summary_df[seasonal_summary_df['勝率'] >= 0.9]
+        seasonal_summary_df = seasonal_summary_df[seasonal_summary_df['平均交易量'] >= 100000]
+        grouped_month = seasonal_summary_df.groupby(['月份'])
+        for m, grp in grouped_month:
+            
+            filtered_grp = grp[grp['平均報酬率'] > 0.1]
+            if len(filtered_grp) > 5:
+                if len(filtered_grp) > 10:
+                    filtered_grp = filtered_grp.sort_values(by='月夏普值', ascending=False)[0:10]
+                else:
+                    pass
+            else:
+                filtered_grp = grp[grp['平均報酬率'] > 0.03]
+                filtered_grp = filtered_grp.sort_values(by='平均報酬率', ascending=False)[0:10]
+
+            if result_df is None:
+                result_df = filtered_grp 
+            else:
+                result_df = pd.concat([result_df, filtered_grp ], ignore_index=True)
+
+        # ---------------------------------------------------------
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_seasonal_summary(2013-2022_filtered).xlsx')
+        result_df.to_excel(path, index=False)        
+        self.config_obj.logger.warning(f"完成(2013-2022_filtering)，輸出至Excel。")
+        # ---------------------------------------------------------
     
     def monthly_seasonaly_strategy_backtest(self, seasonal_filtered_df):
 
@@ -2671,7 +2720,7 @@ class StrategySeasonal(object):
         result_df = pd.DataFrame(result_rows, columns=columns)
 
         # ---------------------------------------------------------
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'strategies_backtest_comparison.xlsx')
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_strategies_backtest_comparison.xlsx')
         result_df.to_excel(path, index=False)        
         self.config_obj.logger.warning(f"完成比較，輸出至Excel。")
         # ---------------------------------------------------------
@@ -2729,10 +2778,10 @@ class StrategySeasonal(object):
                                                            seasonal_filtered_df,
                                                            strategies_dict,
                                                            principal=100000,
-                                                           start_year=2013,
+                                                           start_year=2023,
                                                            start_month=1,
                                                            end_year=2025,
-                                                           end_month=2):
+                                                           end_month=3):
         """
         單一投組，逐月分配資金給符合月份的標的，再逐日執行買/賣。
         僅輸出 5 欄位：stock_id, date, price, buy/sell, shares
@@ -3047,11 +3096,6 @@ class StrategyPerformance(object):
         df_price_pivot[df_price_pivot <= 0] = np.nan
         df_price_pivot.ffill(inplace=True) # 使用forward fill補值，每個股票的缺失值都會被自動填成該股票之前「最近一次」的有效收盤價
 
-        # self.config_obj.logger.warning(f"DF PRICE")
-        # print(df_price)
-        # self.config_obj.logger.warning(f"DF PRICE PIVOT")
-        # print(df_price_pivot)
-
         #-----------------------------------
         # 進行每日 NAV 計算
         #-----------------------------------
@@ -3060,20 +3104,8 @@ class StrategyPerformance(object):
         positions = {}
         # 收集每日資產淨值資料
         records = []  # list of (date, portfolio_value)
-
-        # 產生從 start_date 到 end_date 的所有曆日 (亦可只針對交易所開市日)
-
-        if strategy_name == '動能策略':
         
-            query = self.get_all_price_date(self.config_obj.us_stock_price_table_IBAPI) # 為了取得時間欄位
-        else:
-            query = self.get_all_price_date(self.config_obj.us_stock_price_table) # 為了取得時間欄位
-        all_date_list = self.sql_execute(query)
-        all_date_list = pd.DataFrame(all_date_list)['date'].values
-        us_sorted_dates = sorted(all_date_list)
-        self.us_sorted_dates = pd.to_datetime(us_sorted_dates)
-        
-        date_range = self.us_sorted_dates   # pd.date_range(start_date, end_date, freq='D') ### 應該使用開市日，不宜使用全部日期。 
+        date_range = df_price_pivot.index.sort_values()
 
         if strategy_name == '動能策略':
             date_range = date_range[date_range >= '2016-12-29']
@@ -3131,11 +3163,11 @@ class StrategyPerformance(object):
                     c_price = 0.0
                 portfolio_value += qty * c_price
             
-            records.append((current_date, portfolio_value))
+            records.append((current_date, current_cash, portfolio_value))
         #--------------------------------------------------------------
         # 4. 將每日 NAV 整理為 DataFrame，並計算年度、季度表
         #--------------------------------------------------------------
-        df_daily_nav = pd.DataFrame(records, columns=["date", "nav"])
+        df_daily_nav = pd.DataFrame(records, columns=["date", "cash", "nav"])
 
         # 幫助後續計算報酬率
         df_daily_nav['year'] = df_daily_nav['date'].dt.year
@@ -3153,36 +3185,48 @@ class StrategyPerformance(object):
             #（2）計算各季報酬(Q1, Q2, Q3, Q4)
             q_returns = {}
 
-            if strategy_name =='季節性策略':
-                for q in [1, 2, 3, 4]:
-                    grp_q = grp[grp['quarter']==q]
-                    if len(grp_q) > 0:
-                        q_start = year_start_nav  if q == 1 else grp[grp['quarter']<q].iloc[-1]['nav']
-                        q_end   = grp_q.iloc[-1]['nav']
-                        q_return_pct = (q_end - q_start) / q_start
-                        q_returns[q] = q_return_pct
-                    else:
-                        q_returns[q] = np.nan  # 該季沒交易日可留空
-            elif strategy_name =='動能策略':
 
-                for q in [1, 2, 3, 4]:
-                    grp_q = grp[grp['quarter'] == q]
-                    if not grp_q.empty:
-                        # 若 q == 1，則直接用 year_start_nav；否則檢查上一季資料是否為空
-                        if q == 1:
-                            q_start = year_start_nav
-                        else:
-                            df_sub = grp[grp['quarter'] < q]
-                            if df_sub.empty:
-                                q_start = year_start_nav
-                            else:
-                                q_start = df_sub.iloc[-1]['nav']
+            for q in [1, 2, 3, 4]:
+                grp_q = grp[grp['quarter']==q]
+                if len(grp_q) > 0:
+                    q_start = grp_q.iloc[0]['nav']
+                    q_end   = grp_q.iloc[-1]['nav']
+                    q_return_pct = (q_end - q_start) / q_start
+                    q_returns[q] = q_return_pct
+                else:
+                    q_returns[q] = np.nan  # 該季沒交易日可留空
 
-                        q_end = grp_q.iloc[-1]['nav']
-                        q_return_pct = (q_end - q_start) / q_start
-                        q_returns[q] = q_return_pct
-                    else:
-                        q_returns[q] = np.nan  # 該季若完全沒交易日，就以 NaN 表示
+
+            # if strategy_name =='季節性策略':
+            #     for q in [1, 2, 3, 4]:
+            #         grp_q = grp[grp['quarter']==q]
+            #         if len(grp_q) > 0:
+            #             q_start = year_start_nav  if q == 1 else grp[grp['quarter']<q].iloc[-1]['nav']
+            #             q_end   = grp_q.iloc[-1]['nav']
+            #             q_return_pct = (q_end - q_start) / q_start
+            #             q_returns[q] = q_return_pct
+            #         else:
+            #             q_returns[q] = np.nan  # 該季沒交易日可留空
+            # elif strategy_name =='動能策略':
+
+            #     for q in [1, 2, 3, 4]:
+            #         grp_q = grp[grp['quarter'] == q]
+            #         if not grp_q.empty:
+            #             # 若 q == 1，則直接用 year_start_nav；否則檢查上一季資料是否為空
+            #             if q == 1:
+            #                 q_start = year_start_nav
+            #             else:
+            #                 df_sub = grp[grp['quarter'] < q]
+            #                 if df_sub.empty:
+            #                     q_start = year_start_nav
+            #                 else:
+            #                     q_start = df_sub.iloc[-1]['nav']
+
+            #             q_end = grp_q.iloc[-1]['nav']
+            #             q_return_pct = (q_end - q_start) / q_start
+            #             q_returns[q] = q_return_pct
+            #         else:
+            #             q_returns[q] = np.nan  # 該季若完全沒交易日，就以 NaN 表示
 
             #（3）年度報酬率(不嚴格年化，只是該年度漲幅)
             apr = (year_end_nav - year_start_nav) / year_start_nav
@@ -3203,6 +3247,10 @@ class StrategyPerformance(object):
         # ---------------------------------------------------------
         path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_Daily_NAV.xlsx')
         df_daily_nav.to_excel(path, index=False)  
+
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_price_pivot.xlsx')
+        df_price_pivot.to_excel(path, index=True)  
+        
 
         path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_資產成長績效表.xlsx')
         df_yearly.to_excel(path, index=False)        
