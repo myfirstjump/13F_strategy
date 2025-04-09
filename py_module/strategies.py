@@ -2082,7 +2082,7 @@ class StrategySeasonal(object):
     def __init__(self):
         self.config_obj = Configuration()
     
-    def monthly_seasonality_stats(self, source_table) -> pd.DataFrame:
+    def monthly_seasonality_stats(self, source_table, before_month) -> pd.DataFrame:
         """
         針對 [SEASONAL_STAT_DB].[dbo].[MONTHLY_INFO] 結構的 DataFrame
         (包含 month, stock_id, monthly_return, max_drawdown 等欄位)，
@@ -2111,7 +2111,7 @@ class StrategySeasonal(object):
         query_stock_ids = f"""
         SELECT DISTINCT stock_id, market
         FROM {source_table}
-        WHERE [month] < '2023-01'
+        WHERE [month] < '{before_month}'
         """
         stock_info = self.sql_execute(query_stock_ids)
         
@@ -2119,15 +2119,15 @@ class StrategySeasonal(object):
             s_id = row['stock_id']
             s_market = row['market']
 
-            if idx % 250 == 0:
-                self.config_obj.logger.warning(f"計算{s_id}-{s_market}月統計量({idx+1}/{len(stock_info)})。")
+            # if idx % 250 == 0:
+            #     self.config_obj.logger.warning(f"計算{s_id}-{s_market}月統計量({idx+1}/{len(stock_info)})。")
 
             query_stock_monthly_data = f"""
             SELECT *
             FROM {source_table}
             WHERE stock_id = '{s_id}'
             AND market = '{s_market}'
-            AND [month] < '2023-01'
+            AND [month] < '{before_month}'
             """
             data = self.sql_execute(query_stock_monthly_data)
             if not data: ### 處理無資料的狀況
@@ -2168,8 +2168,8 @@ class StrategySeasonal(object):
                                       'AvgVolume': '平均交易量', 'AvgPct2Low':'平均跌幅', 'AvgPct2High':'平均漲幅',
                                       'StdDevPct2Low':'跌幅標準差', 'StdDevPct2High':'漲幅標準差', 'SharpeMonth':'月夏普值'}, axis='columns')
         
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_seasonal_summary(2013-2022).xlsx')
-        stats_df.to_excel(path, index=False)
+        # path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_seasonal_summary(2013-2022).xlsx')
+        # stats_df.to_excel(path, index=False)
         return stats_df
 
     def monthly_seasonal_summary_filtering(self, seasonal_summary_df):
@@ -2210,10 +2210,11 @@ class StrategySeasonal(object):
                 result_df = pd.concat([result_df, filtered_grp ], ignore_index=True)
 
         # ---------------------------------------------------------
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_seasonal_summary(2013-2022_filtered).xlsx')
-        result_df.to_excel(path, index=False)        
-        self.config_obj.logger.warning(f"完成(2013-2022_filtering)，輸出至Excel。")
+        # path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_seasonal_summary(2013-2022_filtered).xlsx')
+        # result_df.to_excel(path, index=False)        
+        # self.config_obj.logger.warning(f"完成(2013-2022_filtering)，輸出至Excel。")
         # ---------------------------------------------------------
+        return result_df
     
     def monthly_seasonaly_strategy_backtest(self, seasonal_filtered_df):
 
@@ -2792,7 +2793,7 @@ class StrategySeasonal(object):
         """
 
         cash_balance = float(principal)
-        self.config_obj.logger.warning(f"現金異動 {cash_balance}")
+        self.config_obj.logger.warning(f"       起始現金 {cash_balance}")
         positions = {}         # stock_id -> shares
         trades_list = []       # 最終輸出結果
         stock_budget = {}      # 子資金池: stock_id -> leftover
@@ -3018,13 +3019,13 @@ class StrategySeasonal(object):
 
         trades_df = pd.DataFrame(trades_list, columns=['stock_id','date','price','buy/sell','shares'])
 
-        # ---------------------------------------------------------
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_季節性策略回測_逐筆交易紀錄.xlsx')
-        trades_df.to_excel(path, index=False)        
-        self.config_obj.logger.warning(f"回測完成，輸逐筆交易紀錄出至Excel。")
-        # ---------------------------------------------------------
+        # # ---------------------------------------------------------
+        # path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_季節性策略回測_逐筆交易紀錄.xlsx')
+        # trades_df.to_excel(path, index=False)        
+        # self.config_obj.logger.warning(f"回測完成，輸逐筆交易紀錄出至Excel。")
+        # # ---------------------------------------------------------
 
-        return trades_df
+        return trades_df, cash_balance
 
     def sql_execute(self, query):
 
@@ -3196,38 +3197,6 @@ class StrategyPerformance(object):
                 else:
                     q_returns[q] = np.nan  # 該季沒交易日可留空
 
-
-            # if strategy_name =='季節性策略':
-            #     for q in [1, 2, 3, 4]:
-            #         grp_q = grp[grp['quarter']==q]
-            #         if len(grp_q) > 0:
-            #             q_start = year_start_nav  if q == 1 else grp[grp['quarter']<q].iloc[-1]['nav']
-            #             q_end   = grp_q.iloc[-1]['nav']
-            #             q_return_pct = (q_end - q_start) / q_start
-            #             q_returns[q] = q_return_pct
-            #         else:
-            #             q_returns[q] = np.nan  # 該季沒交易日可留空
-            # elif strategy_name =='動能策略':
-
-            #     for q in [1, 2, 3, 4]:
-            #         grp_q = grp[grp['quarter'] == q]
-            #         if not grp_q.empty:
-            #             # 若 q == 1，則直接用 year_start_nav；否則檢查上一季資料是否為空
-            #             if q == 1:
-            #                 q_start = year_start_nav
-            #             else:
-            #                 df_sub = grp[grp['quarter'] < q]
-            #                 if df_sub.empty:
-            #                     q_start = year_start_nav
-            #                 else:
-            #                     q_start = df_sub.iloc[-1]['nav']
-
-            #             q_end = grp_q.iloc[-1]['nav']
-            #             q_return_pct = (q_end - q_start) / q_start
-            #             q_returns[q] = q_return_pct
-            #         else:
-            #             q_returns[q] = np.nan  # 該季若完全沒交易日，就以 NaN 表示
-
             #（3）年度報酬率(不嚴格年化，只是該年度漲幅)
             apr = (year_end_nav - year_start_nav) / year_start_nav
 
@@ -3248,10 +3217,9 @@ class StrategyPerformance(object):
         path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_Daily_NAV.xlsx')
         df_daily_nav.to_excel(path, index=False)  
 
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_price_pivot.xlsx')
-        df_price_pivot.to_excel(path, index=True)  
+        # path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_price_pivot.xlsx')
+        # df_price_pivot.to_excel(path, index=True)  
         
-
         path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_資產成長績效表.xlsx')
         df_yearly.to_excel(path, index=False)        
         # ---------------------------------------------------------

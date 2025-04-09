@@ -8,6 +8,7 @@ import os
 import pandas as pd
 import logging
 import time
+import datetime
 
 class StockStrategies(object):
 
@@ -69,7 +70,7 @@ class StockStrategies(object):
         #     mcap_weighted_flag=True,
         # )
     
-    def strategy_seasonal_investing(self):
+    def strategy_seasonal_investing(self, ini_cap):
         ### 製作seasonal_summary資料
         # target_table = self.config_obj.monthly_info
         # self.seasonal_strategy_obj.monthly_seasonality_stats(target_table)
@@ -106,14 +107,14 @@ class StockStrategies(object):
         #                                                                             OUT_LV2_STD_RATE=param[3],       # 提早停利時(全數出場)，最大漲幅標準差的係數 (↑越難停利) 
         #                                                                             principal=100000,)
 
-        '''
-        以下為整合策略結果用:
-        2025-03-09_seasonal_strategy_01分進(0.5-0.5-999-999)_backtest.xlsx
-        2025-03-09_seasonal_strategy_02分進分出1(0.5-0.5-0.5-999)_backtest.xlsx
-        ...
-        2025-03-09_seasonal_strategy_10單進分出2(1.0-999-1.0-2.0)_backtest.xlsx
-        產製比較表
-        '''
+        # '''
+        # 以下為整合策略結果用:
+        # 2025-03-09_seasonal_strategy_01分進(0.5-0.5-999-999)_backtest.xlsx
+        # 2025-03-09_seasonal_strategy_02分進分出1(0.5-0.5-0.5-999)_backtest.xlsx
+        # ...
+        # 2025-03-09_seasonal_strategy_10單進分出2(1.0-999-1.0-2.0)_backtest.xlsx
+        # 產製比較表
+        # '''
         # strategy_paths = []
         # for idx, (name, param) in enumerate(strategies_dict.items()):
         #     path = os.path.join(self.config_obj.seasonal_summary, '2025-04-07' + f'_seasonal_strategy_{name}({param[0]}-{param[1]}-{param[2]}-{param[3]})_backtest.xlsx')
@@ -123,24 +124,69 @@ class StockStrategies(object):
         ### 計算績效
         # self.seasonal_strategy_obj.monthly_seasonaly_strategy_2025v1(seasonal_filtered_df, strategies_dict)
         ### 輸出逐筆交易紀錄
-        path = os.path.join(self.config_obj.seasonal_summary, '2025-04-07_seasonal_summary(2013-2022_filtered).xlsx')
-        seasonal_filtered_df = pd.read_excel(path)
-        self.seasonal_strategy_obj.monthly_seasonaly_strategy_each_transaction_record(seasonal_filtered_df, strategies_dict)
-    
-    def strategy_performance_output(self):
+        # path = os.path.join(self.config_obj.seasonal_summary, '2025-04-07_seasonal_summary(2013-2022_filtered).xlsx')
+        # seasonal_filtered_df = pd.read_excel(path)
+        # self.seasonal_strategy_obj.monthly_seasonaly_strategy_each_transaction_record(seasonal_filtered_df, strategies_dict)
 
-        strategy_name = '季節性策略'
-        # strategy_name = '動能策略'
+
+        ### 完整回測流程
+        '''
+        1. 製作seasonal_summary資料: 確認範圍初始為 2013-2022 (2023 reference) -> 2013-2023 (2024 reference) -> 2013-2024 (2025 reference)
+        2. 進行標的自動篩選
+        3. 策略套用
+        4. 輸出逐筆交易紀錄
+        以上每年資料(2023, 2024, 2025)合併輸出整體逐筆交易紀錄
+        '''
+        transaction_df = pd.DataFrame()
+        cash_balance = ini_cap
+        for year in (2023, 2024, 2025):
+            self.config_obj.logger.warning(f"   ======  執行 {year} 季節性交易策略  ")
+            self.config_obj.logger.warning(f"   ======      Step1. Monthly Stats       ")
+            target_table = self.config_obj.monthly_info
+            before_month = str(year) + '-01' ### 2023-01 代表計算 最初月份~2022-12
+            stats_df = self.seasonal_strategy_obj.monthly_seasonality_stats(target_table, before_month)
+
+            self.config_obj.logger.warning(f"   ======      Step2. Filtering       ")
+            filtered_stats_df = self.seasonal_strategy_obj.monthly_seasonal_summary_filtering(stats_df)
+
+            self.config_obj.logger.warning(f"   ======      Step3. Fit Transaction Strategies      ")
+            filtered_stats_df['建議策略'] = '10單進分出2'
+
+            self.config_obj.logger.warning(f"   ======      Step4. Transaction Records      ")
+            end_month = 12 if year < 2025 else 3
+            trades_df, cash = self.seasonal_strategy_obj.monthly_seasonaly_strategy_each_transaction_record(filtered_stats_df, strategies_dict,
+                                                                                                                    principal=cash_balance,
+                                                                                                                    start_year=year,
+                                                                                                                    start_month=1,
+                                                                                                                    end_year=year,
+                                                                                                                    end_month=end_month)
+            cash_balance = cash
+            if transaction_df.empty:
+                transaction_df = trades_df
+            else:
+                transaction_df = pd.concat([transaction_df, trades_df], ignore_index=True)
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_季節性策略回測_逐筆交易紀錄.xlsx')
+        trades_df.to_excel(path, index=False)        
+        self.config_obj.logger.warning(f"回測完成，輸逐筆交易紀錄出至Excel。")
+        return transaction_df
+            
+
+    
+    def strategy_performance_output(self, strategy_name, ini_cap, transaction_df):
+
+        # strategy_name = '季節性策略'
+        # # strategy_name = '動能策略'
         if strategy_name == '季節性策略':
             path = os.path.join(self.config_obj.seasonal_summary, '2025-04-07_季節性策略回測_逐筆交易紀錄.xlsx')
             us_price_table = self.config_obj.us_stock_price_table
-            ini_cap = 100000
+            ini_cap = ini_cap
         elif strategy_name == '動能策略':
             path = os.path.join(self.config_obj.seasonal_summary, '2025-04-06_動能策略_逐筆交易紀錄.xlsx') ### Produced by hgdfmjg
             us_price_table = self.config_obj.us_stock_price_table_IBAPI ### 
-            ini_cap = 100000
+            ini_cap = ini_cap
             
-        trade_records = pd.read_excel(path)
+        # trade_records = pd.read_excel(path)
+        trade_records = transaction_df
         self.performance.generate_types_of_performance_output(strategy_name, trade_records, us_price_table, initial_capital=ini_cap)
 
 
@@ -162,8 +208,10 @@ def main_flow():
 
     '''13F投資策略回測'''
     # main_obj.strategy_13F_investing()
-    # main_obj.strategy_seasonal_investing()
-    main_obj.strategy_performance_output()
+    strategy_name = '季節性策略'
+    ini_cap = 100000
+    transaction_df = main_obj.strategy_seasonal_investing(ini_cap)
+    main_obj.strategy_performance_output(strategy_name, ini_cap, transaction_df)
 
     '''Dash篩選'''
     # data_path = os.path.join(main_obj.config_obj.backtest_summary, '2024-01-28_summary_table.csv')
