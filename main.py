@@ -33,9 +33,9 @@ class StockStrategies(object):
         target_table = self.config_obj.monthly_info
         self.db_obj.generate_monthly_stock_info(source_table=source_table, target_table=target_table)
 
-        source_table = self.config_obj.tw_stock_price_table
-        target_table = self.config_obj.monthly_info
-        self.db_obj.generate_monthly_stock_info(source_table=source_table, target_table=target_table)
+        # source_table = self.config_obj.tw_stock_price_table
+        # target_table = self.config_obj.monthly_info
+        # self.db_obj.generate_monthly_stock_info(source_table=source_table, target_table=target_table)
 
     def strategy_13F_investing(self):
         # self.strategy_obj.customize_fund_components(industry_top_selection=3, company_top_selection=3)
@@ -70,7 +70,7 @@ class StockStrategies(object):
         #     mcap_weighted_flag=True,
         # )
     
-    def strategy_seasonal_investing(self, ini_cap):
+    def strategy_seasonal_investing(self, ini_cap, strategy_exit):
         ### 製作seasonal_summary資料
         # target_table = self.config_obj.monthly_info
         # self.seasonal_strategy_obj.monthly_seasonality_stats(target_table)
@@ -133,13 +133,13 @@ class StockStrategies(object):
         '''
         1. 製作seasonal_summary資料: 確認範圍初始為 2013-2022 (2023 reference) -> 2013-2023 (2024 reference) -> 2013-2024 (2025 reference)
         2. 進行標的自動篩選
-        3. 策略套用
+        3. 策略套用: (先固定用 '10單進分出2': [1.0,999,1.0,2.0],)
         4. 輸出逐筆交易紀錄
         以上每年資料(2023, 2024, 2025)合併輸出整體逐筆交易紀錄
         '''
         transaction_df = pd.DataFrame()
         cash_balance = ini_cap
-        for year in (2023, 2024, 2025):
+        for year in (2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025):
             self.config_obj.logger.warning(f"   ======  執行 {year} 季節性交易策略  ")
             self.config_obj.logger.warning(f"   ======      Step1. Monthly Stats       ")
             target_table = self.config_obj.monthly_info
@@ -147,10 +147,16 @@ class StockStrategies(object):
             stats_df = self.seasonal_strategy_obj.monthly_seasonality_stats(target_table, before_month)
 
             self.config_obj.logger.warning(f"   ======      Step2. Filtering       ")
-            filtered_stats_df = self.seasonal_strategy_obj.monthly_seasonal_summary_filtering(stats_df)
+            filter_parameters = {
+                'market': 'US',
+                'year_long': 8,
+                'win_rate': 0.9,
+                'volume':100000,
+            }
+            filtered_stats_df = self.seasonal_strategy_obj.monthly_seasonal_summary_filtering(stats_df, filter_parameters)
 
             self.config_obj.logger.warning(f"   ======      Step3. Fit Transaction Strategies      ")
-            filtered_stats_df['建議策略'] = '10單進分出2'
+            filtered_stats_df['建議策略'] = strategy_exit #'10單進分出2'
 
             self.config_obj.logger.warning(f"   ======      Step4. Transaction Records      ")
             end_month = 12 if year < 2025 else 3
@@ -165,14 +171,14 @@ class StockStrategies(object):
                 transaction_df = trades_df
             else:
                 transaction_df = pd.concat([transaction_df, trades_df], ignore_index=True)
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_季節性策略回測_逐筆交易紀錄.xlsx')
-        trades_df.to_excel(path, index=False)        
-        self.config_obj.logger.warning(f"回測完成，輸逐筆交易紀錄出至Excel。")
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_季節性策略回測_逐筆交易紀錄(策略:{strategy_exit}).xlsx')
+        transaction_df.to_excel(path, index=False)        
+        self.config_obj.logger.warning(f"回測完成，輸出至Excel。")
         return transaction_df
             
 
     
-    def strategy_performance_output(self, strategy_name, ini_cap, transaction_df):
+    def strategy_performance_output(self, strategy_name, ini_cap, transaction_df, strategy_exit):
 
         # strategy_name = '季節性策略'
         # # strategy_name = '動能策略'
@@ -187,7 +193,7 @@ class StockStrategies(object):
             
         # trade_records = pd.read_excel(path)
         trade_records = transaction_df
-        self.performance.generate_types_of_performance_output(strategy_name, trade_records, us_price_table, initial_capital=ini_cap)
+        self.performance.generate_types_of_performance_output(strategy_name, trade_records, us_price_table, initial_capital=ini_cap, strategy_exit=strategy_exit)
 
 
 
@@ -209,9 +215,26 @@ def main_flow():
     '''13F投資策略回測'''
     # main_obj.strategy_13F_investing()
     strategy_name = '季節性策略'
-    ini_cap = 100000
-    transaction_df = main_obj.strategy_seasonal_investing(ini_cap)
-    main_obj.strategy_performance_output(strategy_name, ini_cap, transaction_df)
+    strategies_dict = {
+        '01分進': [0.5,0.5,999,999],
+        '02分進分出1': [0.5,0.5,0.5,999],
+        '03分進分出1': [0.5,0.5,1.0,999],
+        '04分進分出2': [0.5,0.5,0.5,1.0],
+        '05分進分出2': [0.5,0.5,1.0,2.0],
+
+        '06單進': [1.0,999,999,999],
+        '07單進分出1': [1.0,999,0.5,999],
+        '08單進分出1': [1.0,999,1.0,999],
+        '09單進分出2': [1.0,999,0.5,1.0],
+        '10單進分出2': [1.0,999,1.0,2.0],
+    }
+
+    for k in strategies_dict.keys():
+        strategy_exit = k
+        print(f"執行{strategy_name} 策略:{k}")
+        ini_cap = 100000
+        transaction_df = main_obj.strategy_seasonal_investing(ini_cap, strategy_exit)
+        main_obj.strategy_performance_output(strategy_name, ini_cap, transaction_df, strategy_exit)
 
     '''Dash篩選'''
     # data_path = os.path.join(main_obj.config_obj.backtest_summary, '2024-01-28_summary_table.csv')

@@ -2172,7 +2172,7 @@ class StrategySeasonal(object):
         # stats_df.to_excel(path, index=False)
         return stats_df
 
-    def monthly_seasonal_summary_filtering(self, seasonal_summary_df):
+    def monthly_seasonal_summary_filtering(self, seasonal_summary_df, filter_parameters):
         '''
         篩選機制
             	1. 0.9勝率 以上
@@ -2185,15 +2185,28 @@ class StrategySeasonal(object):
                     else:
                         改為報酬率3%，取報酬率前10。
         '''
-        
+        market = filter_parameters['market']
+        year_long = filter_parameters['year_long']
+        win_rate = filter_parameters['win_rate']
+        volume = filter_parameters['volume']
+
+        def count_elements_by_month(df):
+            result = df.groupby('月份').agg(Count=('月份','count')).reset_index().values.tolist()
+            return result
+
         result_df = None
-        seasonal_summary_df = seasonal_summary_df[seasonal_summary_df['市場'] == 'US']
-        seasonal_summary_df = seasonal_summary_df[seasonal_summary_df['歷時年數'] >= 8]
-        seasonal_summary_df = seasonal_summary_df[seasonal_summary_df['勝率'] >= 0.9]
-        seasonal_summary_df = seasonal_summary_df[seasonal_summary_df['平均交易量'] >= 100000]
+        # self.config_obj.logger.warning(f"                   Filter前各月份資料數:{count_elements_by_month(seasonal_summary_df)}")
+        seasonal_summary_df = seasonal_summary_df[seasonal_summary_df['市場'] == market]
+        seasonal_summary_df = seasonal_summary_df[seasonal_summary_df['歷時年數'] >= year_long]
+        # self.config_obj.logger.warning(f"                   歷時年數 >= 8:      {count_elements_by_month(seasonal_summary_df)}")
+        seasonal_summary_df = seasonal_summary_df[seasonal_summary_df['勝率'] >= win_rate]
+        # self.config_obj.logger.warning(f"                     勝率 >= 0.9:      {count_elements_by_month(seasonal_summary_df)}")
+        seasonal_summary_df = seasonal_summary_df[seasonal_summary_df['平均交易量'] >= volume]
+        # self.config_obj.logger.warning(f"             平均交易量 >= 100000:      {count_elements_by_month(seasonal_summary_df)}")
         grouped_month = seasonal_summary_df.groupby(['月份'])
         for m, grp in grouped_month:
             
+            ### 2025-04-07討論
             filtered_grp = grp[grp['平均報酬率'] > 0.1]
             if len(filtered_grp) > 5:
                 if len(filtered_grp) > 10:
@@ -2203,6 +2216,10 @@ class StrategySeasonal(object):
             else:
                 filtered_grp = grp[grp['平均報酬率'] > 0.03]
                 filtered_grp = filtered_grp.sort_values(by='平均報酬率', ascending=False)[0:10]
+            
+            ### 只使用夏普值
+            # filtered_grp = grp.sort_values(by='月夏普值', ascending=False)[0:10]
+
 
             if result_df is None:
                 result_df = filtered_grp 
@@ -2969,7 +2986,7 @@ class StrategySeasonal(object):
                                             
                                             pos_info['is_half_sold']=True
 
-                                            self._record_trade(trades_list, stock_id, day, pos_info['stop_lv1'], 'SELL', -half_shares)
+                                            self._record_trade(trades_list, stock_id, day, pos_info['stop_lv1'], 'SELL', half_shares)
                                             # self.config_obj.logger.warning(f"SELL停利Lv1        現金異動 {cash_balance}")
 
                                     # 2.2 全出
@@ -2981,7 +2998,7 @@ class StrategySeasonal(object):
                                             cash_balance += gain
                                             pos_info['exited'] = True
 
-                                            self._record_trade(trades_list, stock_id, day, pos_info['stop_lv2'], 'SELL', -final_sh)
+                                            self._record_trade(trades_list, stock_id, day, pos_info['stop_lv2'], 'SELL', final_sh)
                                             # self.config_obj.logger.warning(f"SELL停利Lv2        現金異動 {cash_balance}")
 
                         # ============= (D) 月末強制平倉 =============
@@ -2998,7 +3015,7 @@ class StrategySeasonal(object):
                                     cash_balance+=gain
                                     # self.config_obj.logger.warning(f"SELL ALL           現金異動 {cash_balance}")
 
-                                    self._record_trade(trades_list, st_id, last_day, c_p, 'SELL', -sh)
+                                    self._record_trade(trades_list, st_id, last_day, c_p, 'SELL', sh)
                                     if st_id in self.positions_extra:
                                         self.positions_extra[st_id]['exited']=True
 
@@ -3022,7 +3039,7 @@ class StrategySeasonal(object):
         # # ---------------------------------------------------------
         # path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_季節性策略回測_逐筆交易紀錄.xlsx')
         # trades_df.to_excel(path, index=False)        
-        # self.config_obj.logger.warning(f"回測完成，輸逐筆交易紀錄出至Excel。")
+        # self.config_obj.logger.warning(f"回測完成，輸出逐筆交易紀錄至Excel。")
         # # ---------------------------------------------------------
 
         return trades_df, cash_balance
@@ -3064,7 +3081,7 @@ class StrategyPerformance(object):
         FROM {}
         '''.format(price_table)
         return query
-    def generate_types_of_performance_output(self, strategy_name, df_trades, us_price_table, initial_capital):
+    def generate_types_of_performance_output(self, strategy_name, df_trades, us_price_table, initial_capital, strategy_exit):
 
         '''
         輸入逐日交易紀錄，並輸出所需的績效圖表。
@@ -3137,7 +3154,7 @@ class StrategyPerformance(object):
                     current_cash -= cost
                     positions[stock_id] = positions.get(stock_id, 0.0) + shares
                 else:  # SELL
-                    current_cash += abs(cost)  # shares 可能是負號，故取 abs
+                    current_cash += abs(cost)  
                     positions[stock_id] = positions.get(stock_id, 0.0) - abs(shares)
                     
                     # 若賣到持股歸零，可刪除該 stock_id
@@ -3214,13 +3231,13 @@ class StrategyPerformance(object):
         df_yearly = pd.DataFrame(yearly_data)
 
         # ---------------------------------------------------------
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_Daily_NAV.xlsx')
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_Daily_NAV(策略:{strategy_exit}).xlsx')
         df_daily_nav.to_excel(path, index=False)  
 
         # path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_price_pivot.xlsx')
         # df_price_pivot.to_excel(path, index=True)  
         
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_資產成長績效表.xlsx')
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_資產成長績效表(策略:{strategy_exit}).xlsx')
         df_yearly.to_excel(path, index=False)        
         # ---------------------------------------------------------
         if strategy_name == '季節性策略':
@@ -3236,9 +3253,11 @@ class StrategyPerformance(object):
         plt.ylabel("Portfolio Value ($)")
         plt.legend()
         plt.grid(True)
-        plt.show()
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_資產成長趨勢圖(策略:{strategy_exit}).xlsx')
+        plt.savefig(path, dpi=300, bbox_inches='tight')
+        plt.close()
 
-        self.config_obj.logger.warning(f"回測完成，輸逐筆交易紀錄出至Excel。")
+        self.config_obj.logger.warning(f"回測完成，輸出逐筆交易紀錄至Excel。")
 
 
     def get_close_price(self, stock_id, date_str):
