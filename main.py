@@ -150,7 +150,7 @@ class StockStrategies(object):
             filter_parameters = {
                 'market': 'US',
                 'year_long': 8,
-                'win_rate': 0.9,
+                'win_rate': 1.0,
                 'volume':100000,
             }
             filtered_stats_df = self.seasonal_strategy_obj.monthly_seasonal_summary_filtering(stats_df, filter_parameters)
@@ -171,7 +171,7 @@ class StockStrategies(object):
                 transaction_df = trades_df
             else:
                 transaction_df = pd.concat([transaction_df, trades_df], ignore_index=True)
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_季節性策略回測_逐筆交易紀錄(策略:{strategy_exit}).xlsx')
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_季節性策略回測_逐筆交易紀錄(策略_{strategy_exit}).xlsx')
         transaction_df.to_excel(path, index=False)        
         self.config_obj.logger.warning(f"回測完成，輸出至Excel。")
         return transaction_df
@@ -214,27 +214,47 @@ def main_flow():
 
     '''13F投資策略回測'''
     # main_obj.strategy_13F_investing()
-    strategy_name = '季節性策略'
-    strategies_dict = {
-        '01分進': [0.5,0.5,999,999],
-        '02分進分出1': [0.5,0.5,0.5,999],
-        '03分進分出1': [0.5,0.5,1.0,999],
-        '04分進分出2': [0.5,0.5,0.5,1.0],
-        '05分進分出2': [0.5,0.5,1.0,2.0],
 
-        '06單進': [1.0,999,999,999],
-        '07單進分出1': [1.0,999,0.5,999],
-        '08單進分出1': [1.0,999,1.0,999],
-        '09單進分出2': [1.0,999,0.5,1.0],
-        '10單進分出2': [1.0,999,1.0,2.0],
-    }
 
-    for k in strategies_dict.keys():
-        strategy_exit = k
-        print(f"執行{strategy_name} 策略:{k}")
-        ini_cap = 100000
-        transaction_df = main_obj.strategy_seasonal_investing(ini_cap, strategy_exit)
-        main_obj.strategy_performance_output(strategy_name, ini_cap, transaction_df, strategy_exit)
+    '''季節性策略回測'''
+    # strategy_name = '季節性策略'
+    # strategies_dict = {
+    #     '01分進': [0.5,0.5,999,999],
+    #     '02分進分出1': [0.5,0.5,0.5,999],
+    #     '03分進分出1': [0.5,0.5,1.0,999],
+    #     '04分進分出2': [0.5,0.5,0.5,1.0],
+    #     '05分進分出2': [0.5,0.5,1.0,2.0],
+
+    #     '06單進': [1.0,999,999,999],
+    #     '07單進分出1': [1.0,999,0.5,999],
+    #     '08單進分出1': [1.0,999,1.0,999],
+    #     '09單進分出2': [1.0,999,0.5,1.0],
+    #     '10單進分出2': [1.0,999,1.0,2.0],
+    # }
+
+    # for k in strategies_dict.keys():
+    #     strategy_exit = k
+    #     print(f"執行{strategy_name} 策略:{k}")
+    #     ini_cap = 100000
+    #     transaction_df = main_obj.strategy_seasonal_investing(ini_cap, strategy_exit)
+    #     main_obj.strategy_performance_output(strategy_name, ini_cap, transaction_df, strategy_exit)
+
+    '''動能策略回測'''
+    strategy_name = '動能策略'
+    ini_cap = 100000
+
+    file_str = 'plot_data_5_10_60_40_2025-04-27.csv'
+
+    data_path = os.path.join(main_obj.config_obj.backtest_summary, file_str)
+    if data_path.split('.')[-1] == 'xlsx':
+        transaction_df = pd.read_excel(data_path)
+        print(transaction_df)
+    else:
+        transaction_df = pd.read_csv(data_path, header=0)
+        print(transaction_df)
+    
+    strategy_exit = file_str.split('.')[-2]
+    main_obj.strategy_performance_output(strategy_name, ini_cap, transaction_df, strategy_exit)
 
     '''Dash篩選'''
     # data_path = os.path.join(main_obj.config_obj.backtest_summary, '2024-01-28_summary_table.csv')

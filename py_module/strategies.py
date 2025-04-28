@@ -2177,6 +2177,7 @@ class StrategySeasonal(object):
         篩選機制
             	1. 0.9勝率 以上
                 2. 平均交易量 > 10萬 
+                3. 歷時年數 >=8
                     if 報酬率10% > 5檔
                             if > 10檔
                                 用夏普值排序，取10
@@ -2207,18 +2208,18 @@ class StrategySeasonal(object):
         for m, grp in grouped_month:
             
             ### 2025-04-07討論
-            filtered_grp = grp[grp['平均報酬率'] > 0.1]
-            if len(filtered_grp) > 5:
-                if len(filtered_grp) > 10:
-                    filtered_grp = filtered_grp.sort_values(by='月夏普值', ascending=False)[0:10]
-                else:
-                    pass
-            else:
-                filtered_grp = grp[grp['平均報酬率'] > 0.03]
-                filtered_grp = filtered_grp.sort_values(by='平均報酬率', ascending=False)[0:10]
+            # filtered_grp = grp[grp['平均報酬率'] > 0.1]
+            # if len(filtered_grp) > 5:
+            #     if len(filtered_grp) > 10:
+            #         filtered_grp = filtered_grp.sort_values(by='月夏普值', ascending=False)[0:10]
+            #     else:
+            #         pass
+            # else:
+            #     filtered_grp = grp[grp['平均報酬率'] > 0.03]
+            #     filtered_grp = filtered_grp.sort_values(by='平均報酬率', ascending=False)[0:10]
             
             ### 只使用夏普值
-            # filtered_grp = grp.sort_values(by='月夏普值', ascending=False)[0:10]
+            filtered_grp = grp.sort_values(by='月夏普值', ascending=False)[0:10]
 
 
             if result_df is None:
@@ -3125,11 +3126,11 @@ class StrategyPerformance(object):
         
         date_range = df_price_pivot.index.sort_values()
 
-        if strategy_name == '動能策略':
-            date_range = date_range[date_range >= '2016-12-29']
-            date_range = date_range[date_range < '2024-11-20']   
-        elif strategy_name == '季節性策略':
-            date_range = date_range[date_range < '2025-03-01']  
+        # if strategy_name == '動能策略':
+        #     date_range = date_range[date_range >= '2016-12-29']
+        #     date_range = date_range[date_range < '2024-11-20']   
+        # elif strategy_name == '季節性策略':
+        #     date_range = date_range[date_range < '2025-03-01']  
 
         trade_idx = 0  # df_trades 的 row index
         n_trades = len(df_trades)
@@ -3231,13 +3232,13 @@ class StrategyPerformance(object):
         df_yearly = pd.DataFrame(yearly_data)
 
         # ---------------------------------------------------------
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_Daily_NAV(策略:{strategy_exit}).xlsx')
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_Daily_NAV(策略_{strategy_exit}).xlsx')
         df_daily_nav.to_excel(path, index=False)  
 
         # path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_price_pivot.xlsx')
         # df_price_pivot.to_excel(path, index=True)  
         
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_資產成長績效表(策略:{strategy_exit}).xlsx')
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_資產成長績效表(策略_{strategy_exit}).xlsx')
         df_yearly.to_excel(path, index=False)        
         # ---------------------------------------------------------
         if strategy_name == '季節性策略':
@@ -3253,7 +3254,7 @@ class StrategyPerformance(object):
         plt.ylabel("Portfolio Value ($)")
         plt.legend()
         plt.grid(True)
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_資產成長趨勢圖(策略:{strategy_exit}).xlsx')
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_資產成長趨勢圖(策略_{strategy_exit}).png')
         plt.savefig(path, dpi=300, bbox_inches='tight')
         plt.close()
 
