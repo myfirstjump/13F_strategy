@@ -81,8 +81,12 @@ class DatabaseManipulation(object):
         print(data_only)
         # self.insert_records_to_DB(table_name=self.config_obj.us_stock_gics_table, data=data_only)
 
-    def generate_monthly_stock_info(self, source_table, target_table):
+    def generate_monthly_stock_info(self, source_table, target_table, before_month):
 
+        '''
+        讀取DB裡面的每日price數據，進行月統計計算後回存至DB另一個table。
+        由於是月統計，最好設定before_month為某年某月1日，讓統計資料完整。
+        '''
         # Step 1: Fetch unique stock IDs from the source table
         query_stock_ids = f"""
         SELECT DISTINCT stock_id
@@ -113,12 +117,14 @@ class DatabaseManipulation(object):
                 SELECT [date], [Close], [Open], [Volume]
                 FROM {source_table} WITH(NOLOCK)
                 WHERE stock_id = '{stock_id}'
+                AND [date] < '{before_month}'
                 """
             elif "TW_STOCK" in source_table:
                 query_daily_data = f"""
                 SELECT [date], [close], [open], [Trading_Volume]
                 FROM {source_table} WITH(NOLOCK)
                 WHERE stock_id = '{stock_id}'
+                AND [date] < '{before_month}'
                 """
             daily_data = self.sql_execute(query_daily_data)
 

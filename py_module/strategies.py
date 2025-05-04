@@ -2105,6 +2105,7 @@ class StrategySeasonal(object):
                 AvgPct2High     : 平均漲幅
                 StdDevPct2High  : 漲幅標準差
                 sharpeMonth     : 月夏普值
+                WinRateLastNYear: 勝率(近N年)
         """
         stats_df = None
 
@@ -2128,6 +2129,99 @@ class StrategySeasonal(object):
             WHERE stock_id = '{s_id}'
             AND market = '{s_market}'
             AND [month] < '{before_month}'
+            """
+            data = self.sql_execute(query_stock_monthly_data)
+            if not data: ### 處理無資料的狀況
+                continue
+            df = pd.DataFrame(data)
+
+            # STEP 1: 將 'month' 從 'YYYY-MM' 格式解析出年、月
+            # 若 'month' 已是 datetime 型態，可改用 df['month'].dt.year, df['month'].dt.month
+            df['Year'] = df['month'].astype(str).str[:4].astype(int)
+            df['MonthVal'] = df['month'].astype(str).str[5:7].astype(int)
+
+            # STEP 2: 以 stock_id + MonthVal 為群組，進行聚合計算
+            each_stats_df  = df.groupby(['stock_id', 'market', 'MonthVal']).agg(
+                TotalYears=('Year', 'nunique'),
+                # Count=('monthly_return', 'count'),
+                WinRate=('monthly_return', lambda x: (x > 0).sum() / len(x)),
+                AvgReturn=('monthly_return', 'mean'),
+                StdDevReturn=('monthly_return', 'std'),
+                AvgMaxDrawdown=('max_drawdown', 'mean'),
+                MaxDrawdown=('max_drawdown', 'min'),
+                AvgVolume=('avg_volume', 'mean'),
+                AvgPct2Low=('pct_to_low', 'mean'),
+                StdDevPct2Low=('pct_to_low', 'std'),
+                AvgPct2High=('pct_to_high', 'mean'),
+                StdDevPct2High=('pct_to_high', 'std'),
+                SharpeMonth=('monthly_return', 
+                 lambda x: ((x.mean() - 0.04 / 12) / x.std())
+                           if x.std() != 0 else float('nan'))
+            ).reset_index()
+            
+            if stats_df is None:
+                stats_df = each_stats_df 
+            else:
+                stats_df = pd.concat([stats_df, each_stats_df ], ignore_index=True)
+        stats_df = stats_df.rename({'stock_id': '股票代號', 'market':'市場', 'MonthVal': '月份', 'TotalYears':'歷時年數',
+                                    'WinRate': '勝率', 'AvgReturn': '平均報酬率', 'StdDevReturn':'報酬率標準差',
+                                      'AvgMaxDrawdown': '平均最大回撤', 'MaxDrawdown': '最大回撤', 
+                                      'AvgVolume': '平均交易量', 'AvgPct2Low':'平均跌幅', 'AvgPct2High':'平均漲幅',
+                                      'StdDevPct2Low':'跌幅標準差', 'StdDevPct2High':'漲幅標準差', 'SharpeMonth':'月夏普值'}, axis='columns')
+        
+        # path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + '_seasonal_summary(2013-2022).xlsx')
+        # stats_df.to_excel(path, index=False)
+        return stats_df
+    
+    def monthly_seasonality_stats_n_years_interval(self, source_table, after_year, before_year) -> pd.DataFrame:
+        """
+        針對 [SEASONAL_STAT_DB].[dbo].[MONTHLY_INFO] 結構的 DataFrame
+        (包含 month, stock_id, monthly_return, max_drawdown 等欄位)，
+        計算每檔股票在 1~12 月份的季節性統計量。
+        
+        回傳值:
+            DataFrame，欄位包括:
+                stock_id        : 股票代號
+                MonthVal        : 月份(1~12)
+                TotalYears      : 資料期間內，該股票在此月份出現的不同年份總數
+                #Count           : 該月份在歷史資料中總筆數
+                WinRate         : 勝率(報酬率>0 之次數 / 總次數)
+                AvgReturn       : 平均報酬率
+                StdDevReturn    : 報酬率標準差
+                AvgMaxDrawdown  : 平均最大回撤
+                MaxDrawdown     : 最大回撤
+                AvgVolume       : 平均交易量
+                AvgPct2Low      : 平均跌幅
+                StdDevPct2Low   : 跌幅標準差
+                AvgPct2High     : 平均漲幅
+                StdDevPct2High  : 漲幅標準差
+                sharpeMonth     : 月夏普值
+                WinRateLastNYear: 勝率(近N年)
+        """
+        stats_df = None
+
+        query_stock_ids = f"""
+        SELECT DISTINCT stock_id, market
+        FROM {source_table}
+        WHERE [month] >= '{after_year}'
+        AND [month] < '{before_year}'
+        """
+        stock_info = self.sql_execute(query_stock_ids)
+        
+        for idx, row in enumerate(stock_info):
+            s_id = row['stock_id']
+            s_market = row['market']
+
+            # if idx % 250 == 0:
+            #     self.config_obj.logger.warning(f"計算{s_id}-{s_market}月統計量({idx+1}/{len(stock_info)})。")
+
+            query_stock_monthly_data = f"""
+            SELECT *
+            FROM {source_table}
+            WHERE stock_id = '{s_id}'
+            AND market = '{s_market}'
+            AND [month] >= '{after_year}'
+            AND [month] < '{before_year}'
             """
             data = self.sql_execute(query_stock_monthly_data)
             if not data: ### 處理無資料的狀況
@@ -3082,7 +3176,7 @@ class StrategyPerformance(object):
         FROM {}
         '''.format(price_table)
         return query
-    def generate_types_of_performance_output(self, strategy_name, df_trades, us_price_table, initial_capital, strategy_exit):
+    def generate_types_of_performance_output(self, strategy_name, df_trades, us_price_table, initial_capital, output_str, rf_annual = 0.02, ):
 
         '''
         輸入逐日交易紀錄，並輸出所需的績效圖表。
@@ -3192,54 +3286,107 @@ class StrategyPerformance(object):
         df_daily_nav['year'] = df_daily_nav['date'].dt.year
         df_daily_nav['quarter'] = df_daily_nav['date'].dt.quarter
 
+        def max_drawdown(nav_series: pd.Series) -> float:
+            """
+            nav_series : 連續淨值序列
+            回傳區間內最大回撤 (負值；例 −0.23 表示 −23 %)
+            """
+            cum_max = nav_series.expanding(min_periods=1).max()
+            drawdown = nav_series / cum_max - 1.0
+            return drawdown.min()            # 最深那一次回撤 (為負值)
+
+        def sharpe_monthly(month_ret: pd.Series, rf_ann: float = 0.0) -> float:
+            """
+            month_ret : 同一年內的月報酬率序列 (通常 ≤12 筆)
+            rf_ann    : 年化無風險利率
+            回傳年化 Sharpe；若樣本不足或 stdev=0 則 NaN
+            """
+            if month_ret.empty or month_ret.std(ddof=0) == 0:
+                return np.nan
+            rf_month = rf_ann / 12
+            excess   = month_ret - rf_month
+            return (excess.mean() / excess.std(ddof=0)) * np.sqrt(12)
+
         #（1）年度初始/結束資金
         #    groupby 年份後，取當年第一天與最後一天 nav
         grouped_year = df_daily_nav.groupby('year')
         yearly_data = []
         for y, grp in grouped_year:
+            '''
+            計算季/年 報酬率/最大回撤/夏普值
+            '''
             grp = grp.sort_values('date')
-            year_start_nav = grp.iloc[0]['nav']
-            year_end_nav   = grp.iloc[-1]['nav']
+
+            # === 1. 月末 NAV & 月報酬 ===
+            nav_month_end = grp.resample('M', on='date').last()['nav']
+            month_ret = nav_month_end.pct_change().dropna()
+
+            # === 2. 年層級 ===
+            yr_start = grp.iloc[0]['nav']
+            yr_end   = grp.iloc[-1]['nav']
+            yr_ret   = (yr_end - yr_start) / yr_start
+            yr_dd    = max_drawdown(grp['nav'])
+            yr_sr    = sharpe_monthly(month_ret, rf_annual)
             
-            #（2）計算各季報酬(Q1, Q2, Q3, Q4)
-            q_returns = {}
-
-
+            # === 3. 季層級（以 3 個月報酬序列計 Sharpe）===
+            q_stats = {}
             for q in [1, 2, 3, 4]:
-                grp_q = grp[grp['quarter']==q]
-                if len(grp_q) > 0:
-                    q_start = grp_q.iloc[0]['nav']
-                    q_end   = grp_q.iloc[-1]['nav']
-                    q_return_pct = (q_end - q_start) / q_start
-                    q_returns[q] = q_return_pct
-                else:
-                    q_returns[q] = np.nan  # 該季沒交易日可留空
+                # 該季的月報酬 (1,2,3)(4,5,6)...
+                m_in_q = [1+3*(q-1), 2+3*(q-1), 3+3*(q-1)]
+                month_ret_q = month_ret[month_ret.index.month.isin(m_in_q)]
 
-            #（3）年度報酬率(不嚴格年化，只是該年度漲幅)
-            apr = (year_end_nav - year_start_nav) / year_start_nav
+                if month_ret_q.empty:
+                    q_stats[q] = dict(ret=np.nan, dd=np.nan, sr=np.nan)
+                    continue
 
-            yearly_data.append({
-                "year": y,
-                "start_capital": year_start_nav,
-                "end_capital": year_end_nav,
-                "Q1": q_returns[1],
-                "Q2": q_returns[2],
-                "Q3": q_returns[3],
-                "Q4": q_returns[4],
-                "APR": apr
-            })
+                # 取該季首/末 NAV 算季報酬
+                grp_q = grp[grp['quarter'] == q]
+                q_start = grp_q.iloc[0]['nav']
+                q_end   = grp_q.iloc[-1]['nav']
+                q_ret   = (q_end - q_start) / q_start
+                q_dd    = max_drawdown(grp_q['nav'])
+                q_sr    = sharpe_monthly(month_ret_q, rf_annual)
+
+                q_stats[q] = dict(ret=q_ret, dd=q_dd, sr=q_sr)
+
+            # === 4. 月層級（僅回報；DD/SR 若需要可類似計）===
+            m_ret_cols = {f"M{m:02d}_ret": np.nan for m in range(1, 13)}
+            for idx, nav_end in nav_month_end.items():
+                m = idx.month
+                if m == 1:      # 1 月沒有上月 NAV，跳過
+                    continue
+                m_ret_cols[f"M{m:02d}_ret"] = month_ret[month_ret.index.month == m].iloc[0]
+
+            # === 5. 組裝欄位 ===
+            row = {
+                "year"         : y,
+                "start_capital": yr_start,
+                "end_capital"  : yr_end,
+                # ---- 季 ----
+                "Q1_ret": q_stats[1]['ret'], "Q1_dd": q_stats[1]['dd'], "Q1_sr": q_stats[1]['sr'],
+                "Q2_ret": q_stats[2]['ret'], "Q2_dd": q_stats[2]['dd'], "Q2_sr": q_stats[2]['sr'],
+                "Q3_ret": q_stats[3]['ret'], "Q3_dd": q_stats[3]['dd'], "Q3_sr": q_stats[3]['sr'],
+                "Q4_ret": q_stats[4]['ret'], "Q4_dd": q_stats[4]['dd'], "Q4_sr": q_stats[4]['sr'],
+                # ---- 年 ----
+                "Year_ret": yr_ret,
+                "Year_dd" : yr_dd,
+                "Year_sr" : yr_sr,
+            }
+            # 加入月回報欄位
+            row.update(m_ret_cols)
+            yearly_data.append(row)
 
         df_yearly = pd.DataFrame(yearly_data)
 
         # ---------------------------------------------------------
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_Daily_NAV(策略_{strategy_exit}).xlsx')
-        df_daily_nav.to_excel(path, index=False)  
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_Daily_NAV(策略_{output_str}).csv')
+        df_daily_nav.to_csv(path, index=False)  
 
-        # path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_price_pivot.xlsx')
+        # path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_price_pivot.csv')
         # df_price_pivot.to_excel(path, index=True)  
         
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_資產成長績效表(策略_{strategy_exit}).xlsx')
-        df_yearly.to_excel(path, index=False)        
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_資產成長績效表(策略_{output_str}).csv')
+        df_yearly.to_csv(path, index=False)        
         # ---------------------------------------------------------
         if strategy_name == '季節性策略':
             title_ = 'Assets Growth Trend (SEASONAL)'
@@ -3254,11 +3401,11 @@ class StrategyPerformance(object):
         plt.ylabel("Portfolio Value ($)")
         plt.legend()
         plt.grid(True)
-        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_資產成長趨勢圖(策略_{strategy_exit}).png')
+        path = os.path.join(self.config_obj.seasonal_summary, str(datetime.datetime.now()).split()[0] + f'_{strategy_name}回測_資產成長趨勢圖(策略_{output_str}).png')
         plt.savefig(path, dpi=300, bbox_inches='tight')
         plt.close()
 
-        self.config_obj.logger.warning(f"回測完成，輸出逐筆交易紀錄至Excel。")
+        self.config_obj.logger.warning(f"回測完成，輸出逐筆交易紀錄至CSV。")
 
 
     def get_close_price(self, stock_id, date_str):
