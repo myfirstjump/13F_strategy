@@ -3278,14 +3278,11 @@ class StrategyPerformance(object):
             
             records.append((current_date, current_cash, portfolio_value))
         #--------------------------------------------------------------
-        # 4. 將每日 NAV 整理為 DataFrame，並計算年度、季度表
+        # 4. 將每日 NAV 整理為 DataFrame，並計算年度、季、月度表
         #--------------------------------------------------------------
         df_daily_nav = pd.DataFrame(records, columns=["date", "cash", "nav"])
 
         # 幫助後續計算報酬率
-        df_daily_nav['year'] = df_daily_nav['date'].dt.year
-        df_daily_nav['quarter'] = df_daily_nav['date'].dt.quarter
-
         def max_drawdown(nav_series: pd.Series) -> float:
             """
             nav_series : 連續淨值序列
@@ -3306,75 +3303,71 @@ class StrategyPerformance(object):
             rf_month = rf_ann / 12
             excess   = month_ret - rf_month
             return (excess.mean() / excess.std(ddof=0)) * np.sqrt(12)
-
-        #（1）年度初始/結束資金
-        #    groupby 年份後，取當年第一天與最後一天 nav
-        grouped_year = df_daily_nav.groupby('year')
+        
+        df_daily_nav['year'] = df_daily_nav['date'].dt.year
+        df_daily_nav['quarter'] = df_daily_nav['date'].dt.quarter
+        df_daily_nav['month'] = df_daily_nav['date'].dt.month
+        
         yearly_data = []
-        for y, grp in grouped_year:
-            '''
-            計算季/年 報酬率/最大回撤/夏普值
-            '''
-            grp = grp.sort_values('date')
+        grouped_year = df_daily_nav.groupby('year')
+        ### 年迴圈
+        for year, grp_y in grouped_year:
+            grp_y = grp_y.sort_values('date')
 
-            # === 1. 月末 NAV & 月報酬 ===
-            nav_month_end = grp.resample('M', on='date').last()['nav']
-            month_ret = nav_month_end.pct_change().dropna()
+            year_start_nav = grp_y.iloc[0]['nav']
+            year_end_nav = grp_y.iloc[-1]['nav']
+            year_ret = (year_end_nav - year_start_nav) / year_start_nav
+            year_dd = max_drawdown(grp_y['nav'])
+            year_sr = sharpe_monthly(grp_y['nav'])
 
-            # === 2. 年層級 ===
-            yr_start = grp.iloc[0]['nav']
-            yr_end   = grp.iloc[-1]['nav']
-            yr_ret   = (yr_end - yr_start) / yr_start
-            yr_dd    = max_drawdown(grp['nav'])
-            yr_sr    = sharpe_monthly(month_ret, rf_annual)
-            
-            # === 3. 季層級（以 3 個月報酬序列計 Sharpe）===
-            q_stats = {}
-            for q in [1, 2, 3, 4]:
-                # 該季的月報酬 (1,2,3)(4,5,6)...
-                m_in_q = [1+3*(q-1), 2+3*(q-1), 3+3*(q-1)]
-                month_ret_q = month_ret[month_ret.index.month.isin(m_in_q)]
+            ### 季迴圈
+            quarter_metrics = {}
+            grouped_quarter = grp_y.groupby('quarter')
+            for quarter, grp_q in grouped_quarter:
 
-                if month_ret_q.empty:
-                    q_stats[q] = dict(ret=np.nan, dd=np.nan, sr=np.nan)
-                    continue
+                q_start_nav = grp_q.iloc[0]['nav']
+                q_end_nav = grp_q.iloc[-1]['nav']
+                q_ret = (q_end_nav - q_start_nav) / q_start_nav
+                q_dd = max_drawdown(grp_q['nav'])
+                q_sr = sharpe_monthly(grp_q['nav'])
+                
+                quarter_metrics.update(
+                    {
+                        f'Q{quarter}_ret': q_ret,
+                        f'Q{quarter}_dd': q_dd,
+                        f'Q{quarter}_sr': q_sr,
+                    }
+                )
 
-                # 取該季首/末 NAV 算季報酬
-                grp_q = grp[grp['quarter'] == q]
-                q_start = grp_q.iloc[0]['nav']
-                q_end   = grp_q.iloc[-1]['nav']
-                q_ret   = (q_end - q_start) / q_start
-                q_dd    = max_drawdown(grp_q['nav'])
-                q_sr    = sharpe_monthly(month_ret_q, rf_annual)
+                ### 月迴圈
+                month_metrics = {}
+                grouped_month = grp_q.groupby('month')
+                for month, grp_m in grouped_month:
 
-                q_stats[q] = dict(ret=q_ret, dd=q_dd, sr=q_sr)
+                    m_start_nav = grp_m.iloc[0]['nav']
+                    m_end_nav = grp_m.iloc[-1]['nav']
+                    m_ret = (m_end_nav - m_start_nav) / m_start_nav
+                    m_dd = max_drawdown(grp_m['nav'])
+                    m_sr = sharpe_monthly(grp_m['nav'])
+                    
+                    month_metrics.update(
+                        {
+                            f'M{month}_ret': m_ret,
+                            f'M{month}_dd': m_dd,
+                            f'M{month}_sr': m_sr,
+                        }
+                    )
 
-            # === 4. 月層級（僅回報；DD/SR 若需要可類似計）===
-            m_ret_cols = {f"M{m:02d}_ret": np.nan for m in range(1, 13)}
-            for idx, nav_end in nav_month_end.items():
-                m = idx.month
-                if m == 1:      # 1 月沒有上月 NAV，跳過
-                    continue
-                m_ret_cols[f"M{m:02d}_ret"] = month_ret[month_ret.index.month == m].iloc[0]
-
-            # === 5. 組裝欄位 ===
-            row = {
-                "year"         : y,
-                "start_capital": yr_start,
-                "end_capital"  : yr_end,
-                # ---- 季 ----
-                "Q1_ret": q_stats[1]['ret'], "Q1_dd": q_stats[1]['dd'], "Q1_sr": q_stats[1]['sr'],
-                "Q2_ret": q_stats[2]['ret'], "Q2_dd": q_stats[2]['dd'], "Q2_sr": q_stats[2]['sr'],
-                "Q3_ret": q_stats[3]['ret'], "Q3_dd": q_stats[3]['dd'], "Q3_sr": q_stats[3]['sr'],
-                "Q4_ret": q_stats[4]['ret'], "Q4_dd": q_stats[4]['dd'], "Q4_sr": q_stats[4]['sr'],
-                # ---- 年 ----
-                "Year_ret": yr_ret,
-                "Year_dd" : yr_dd,
-                "Year_sr" : yr_sr,
-            }
-            # 加入月回報欄位
-            row.update(m_ret_cols)
-            yearly_data.append(row)
+            yearly_data.append({
+                'year': year,
+                'start_cap': year_start_nav,
+                'end_cap': year_end_nav,
+                **month_metrics,
+                **quarter_metrics,
+                'year_ret': year_ret,
+                'year_dd': year_dd,
+                'year_sr': year_sr
+            })
 
         df_yearly = pd.DataFrame(yearly_data)
 

@@ -172,7 +172,7 @@ class StockStrategies(object):
         transaction_df = pd.DataFrame()
         cash_balance = ini_cap
         start_year = 2002 + n_years
-        end_year = 2005
+        end_year = 2025
         for year in range(start_year, end_year + 1):
             self.config_obj.logger.warning(f"   ======  執行 {year} 季節性交易策略  ")
             self.config_obj.logger.warning(f"   ======      Step1. Monthly Stats       ")
